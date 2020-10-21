@@ -1,0 +1,11 @@
+PROGRESS REPORTS FOLDER
+
+In this folder, store your weekly progress reports.  Use following file name convention:
+
+    progress_report_group_xx_week_yy.txt
+
+where xx is your group number (e.g. 03) and yy is the ISO week date number as defined in https://en.wikipedia.org/wiki/ISO_week_date
+The week starting Monday, October 16th 2017 is week 42. Next week is week 43 etc...
+The format of the progress reports is free form. You do not need to use the raw txt format. 
+If you prefer, you can make it a .docx, .rtf, .pdf file or anything mainstream enough for us 
+to be able to open the document on all major general purpose operating systems.

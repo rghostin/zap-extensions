@@ -1,0 +1,9 @@
+SIGNOFF CARDS FOLDER
+
+In this folder, store the signoff cards for completed user stories.  Use following file name convention:
+
+   signoff_group_xx_story_yy.txt
+
+where xx is your group number (e.g. 03) and yy is the user story number (e.g. 01).
+
+A sample signoff card is provided as signoff_group_00_story_00.txt .  Please use this document as your template.
