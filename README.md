@@ -25,3 +25,5 @@ https://chat.whatsapp.com/JF22U9ofW6D5wMBqqKl0Rx
 Was any of us able to contact Xinhai, he seems to be not enrolled at CW-OSS so far? Or maybe I was not able to see him on the members list. -Deniz
 
 I sent him a mail, waiting for his input. - Rawad
+
+git try
