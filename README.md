@@ -26,4 +26,4 @@ Was any of us able to contact Xinhai, he seems to be not enrolled at CW-OSS so f
 
 I sent him a mail, waiting for his input. - Rawad
 
-git try
+Just trying git - Deniz
