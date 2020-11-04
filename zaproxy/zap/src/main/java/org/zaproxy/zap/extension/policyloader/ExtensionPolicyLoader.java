@@ -2,7 +2,12 @@ package org.zaproxy.zap.extension.policyloader;
 
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ZapMenuItem;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
 
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
@@ -28,6 +33,17 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         super.unload();
     }
 
+    public File[] getSelectedJARFiles() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.jar", "jar", "jar");
+        chooser.setFileFilter(filter);
+        chooser.setMultiSelectionEnabled(true);
+        chooser.showOpenDialog(View.getSingleton().getMainFrame());
+        File[] files = chooser.getSelectedFiles();
+        return files;
+    }
+
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
             menuPolicyLoader = new ZapMenuItem("PolicyLoader"); // TODO checkout external strings
@@ -36,7 +52,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            System.out.println("OK button ");
+                            File[] files = getSelectedJARFiles();
+                            for (File file: files) {
+                                System.out.println(file.getName());
+                            }
                         }
                     });
         }
