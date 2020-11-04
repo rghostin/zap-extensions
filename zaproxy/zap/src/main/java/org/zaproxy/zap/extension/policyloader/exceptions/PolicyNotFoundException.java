@@ -1,7 +1,7 @@
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.policyloader.exceptions;
 
 public class PolicyNotFoundException extends Exception {
-    PolicyNotFoundException() {
+    public PolicyNotFoundException() {
         super("Policy not found");
     }
 }

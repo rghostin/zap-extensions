@@ -3,7 +3,7 @@ package org.zaproxy.zap.extension.pscan.scanner;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
-import org.zaproxy.zap.extension.policyloader.PolicyNotFoundException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;

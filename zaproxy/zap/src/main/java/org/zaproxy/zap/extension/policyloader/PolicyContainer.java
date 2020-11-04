@@ -1,5 +1,8 @@
 package org.zaproxy.zap.extension.policyloader;
 
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
+
 import java.util.*;
 
 public class PolicyContainer {

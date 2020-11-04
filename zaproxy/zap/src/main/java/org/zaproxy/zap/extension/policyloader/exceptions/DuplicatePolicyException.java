@@ -1,7 +1,7 @@
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.policyloader.exceptions;
 
 public class DuplicatePolicyException extends Exception {
-    DuplicatePolicyException() {
+    public DuplicatePolicyException() {
         super("Duplicate policy");
     }
 }
