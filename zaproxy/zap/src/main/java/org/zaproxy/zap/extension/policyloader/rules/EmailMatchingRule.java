@@ -5,13 +5,13 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class EmailMatchingRule implements Rule {
+
+    private final String REGEX_EMAIL = "(.{1,64})@(.{1,255})\\.(.{1,24})";
+    private Pattern pattern = Pattern.compile(REGEX_EMAIL);
 
     @Override
     public String getName() {
@@ -28,9 +28,6 @@ public class EmailMatchingRule implements Rule {
         return true;
     }
 
-    String regex = "^(.+)@(.+)\\.(.+)$";
-    Pattern pattern = Pattern.compile(regex);
-
     @Override
     public boolean isViolated(HttpMessage msg) {
         String bodySend = msg.getRequestBody().toString();
@@ -38,7 +35,10 @@ public class EmailMatchingRule implements Rule {
         String body = bodySend + bodyReceive;
         Matcher matcher = pattern.matcher(body);
         if (matcher.find()) {
+            System.out.println("matched !!");
             return true;
+        } else {
+            System.out.println(" NO MATCH");
         }
         return false;
     }
