@@ -19,13 +19,8 @@ public class EmailMatchingRule implements Rule {
     }
 
     @Override
-    public boolean isActiveForSend() {
-        return true;
-    }
-
-    @Override
-    public boolean isActiveForReceive() {
-        return true;
+    public String getDescription() {
+        return "The HTTP message contains an email address.";
     }
 
     @Override

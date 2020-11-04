@@ -8,31 +8,25 @@ import java.util.regex.Pattern;
 
 public class HTTPSRule implements Rule {
 
-    private final String MY_APP_HOST = "kuleuven.be";
+    private final String MY_APP_HOST = "cern.ch";
 
-    private Pattern regex_myapp = Pattern.compile(
+    private Pattern reMyappDomain = Pattern.compile(
             "^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$",
             Pattern.CASE_INSENSITIVE
         );
 
     @Override
     public String getName() {
-        return null;
+        return "HTTPS";
     }
-
     @Override
-    public boolean isActiveForSend() {
-        return true;
-    }
-
-    @Override
-    public boolean isActiveForReceive() {
-        return false;
+    public String getDescription() {
+        return String.format("The HTTP message going to %s is not secure.", MY_APP_HOST);
     }
 
     private boolean isGoingToMyApp(HttpMessage msg) {
         String outgoingHostname = msg.getRequestHeader().getHostName();
-        Matcher matcher = regex_myapp.matcher(outgoingHostname);
+        Matcher matcher = reMyappDomain.matcher(outgoingHostname);
         return matcher.matches();
     }
 

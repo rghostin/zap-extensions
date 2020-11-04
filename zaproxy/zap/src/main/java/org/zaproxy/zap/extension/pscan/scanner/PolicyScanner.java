@@ -30,9 +30,9 @@ public class PolicyScanner extends PluginPassiveScanner {
         return "Policy scanner";
     }
 
-    private void raiseAlert(String policyName, String ruleName, HttpMessage msg) {
-        String description = String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
-        newAlert().setName("Policy rule violation")
+    private void raiseAlert(String policyName, String ruleName, String description, HttpMessage msg) {
+        String title = String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
+        newAlert().setName(title)
                 .setDescription(description)
                 .setMessage(msg)
                 .setUri(msg.getRequestHeader().getURI().toString())
@@ -41,7 +41,7 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     private void enforceOrRaise(Rule rule, String policyName, HttpMessage msg) {
         if (rule.isViolated(msg)) {
-            raiseAlert(policyName, rule.getName(), msg);
+            raiseAlert(policyName, rule.getName(), rule.getDescription(), msg);
         }
     }
 
@@ -61,12 +61,7 @@ public class PolicyScanner extends PluginPassiveScanner {
             }
 
             for (Rule rule : rules) {
-                if (rule.isActiveForSend()) {
-                    enforceOrRaise(rule, policyName, msg);
-                }
-                if (rule.isActiveForReceive()) {
-                    enforceOrRaise(rule, policyName, msg);
-                }
+                enforceOrRaise(rule, policyName, msg);
             }
         }
     }

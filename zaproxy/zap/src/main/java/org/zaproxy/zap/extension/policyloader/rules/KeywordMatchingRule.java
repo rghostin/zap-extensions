@@ -16,13 +16,8 @@ public class KeywordMatchingRule implements Rule {
     }
 
     @Override
-    public boolean isActiveForSend() {
-        return true;
-    }
-
-    @Override
-    public boolean isActiveForReceive() {
-        return true;
+    public String getDescription() {
+        return "The HTTP message contains a flagged keyword.";
     }
 
     private List<String> getFlaggedKeywords() {

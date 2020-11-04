@@ -20,13 +20,8 @@ public class HSTSRule implements Rule {
     }
 
     @Override
-    public boolean isActiveForSend() {
-        return false;
-    }
-
-    @Override
-    public boolean isActiveForReceive() {
-        return true;
+    public String getDescription() {
+        return "The HTTP response message does not enforce HSTS.";
     }
 
     @Override

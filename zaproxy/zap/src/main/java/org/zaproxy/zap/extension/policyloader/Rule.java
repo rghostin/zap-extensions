@@ -4,7 +4,6 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public interface Rule {
     String getName();
-    boolean isActiveForSend();
-    boolean isActiveForReceive();
+    String getDescription();
     boolean isViolated(HttpMessage msg);
 }
