@@ -3,9 +3,20 @@ package org.zaproxy.zap.extension.policyloader;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+<<<<<<< HEAD
+import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
+import org.zaproxy.zap.view.ZapMenuItem;
+
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+=======
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.rules.CookieAttrRule;
 import org.zaproxy.zap.extension.policyloader.rules.KeywordMatchingRule;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
@@ -16,12 +27,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+>>>>>>> origin/develop
 
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
+
+    /** either implementation, delete one eventually */
+    private PolicyScanner policyScanner = new PolicyScanner();
 
     private ZapMenuItem menuPolicyLoader;
     private final int SCANNER_PLUGIN_ID = 500001;
     private PolicyScanner policyScanner = null;
+
+    /** constructor */
+    public ExtensionPolicyLoader() {}
 
     @Override
     public void hook(ExtensionHook extensionHook) {
@@ -66,7 +84,6 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         String policyName = "testpolicy";
         List<Rule> testRules = new ArrayList<>();
         testRules.add(new KeywordMatchingRule());
-        testRules.add(new CookieAttrRule());
         getPolicyScanner().addPolicy(policyName, testRules);
     }
 
@@ -78,6 +95,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
+<<<<<<< HEAD
+                            // todo
+                            System.out.println("OK button ");
+=======
 //                            File[] files = getSelectedJARFiles();
 //                            for (File file: files) {
 //                                System.out.println(file.getName());
@@ -89,10 +110,45 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                             } catch (DuplicatePolicyException e) {
                                 View.getSingleton().showMessageDialog("Test policy already loaded");
                             }
+>>>>>>> origin/develop
                         }
                     });
         }
         return menuPolicyLoader;
     }
 
+<<<<<<< HEAD
+    /**
+     * Load policy from a Jarfile
+     * @param jarFile
+     * @return
+     */
+    public void loadPolicyFromJar(JarFile jarFile) throws IOException {
+
+        // ArrayList<Object> classes = new ArrayList<>();
+        Enumeration<JarEntry> entries = jarFile.entries();
+
+        while(entries.hasMoreElements()) {
+            JarEntry jarEntry = entries.nextElement();
+            if (!jarEntry.getName().endsWith(".class")){
+                continue;
+            }
+            String className = jarEntry.getName().substring(0,jarEntry.getName().length()-6);
+            className = className.replace('/', ',');
+            System.out.println(className);
+
+        }
+
+        policyScanner.addPolicy(jarFile.getName(), null);
+
+        return null;
+    }
+
+    public static void main(String[] args) throws IOException {
+        JarFile jarFile = new JarFile("D:\\1_Study\\KU LEUVEN - CS\\[1] Design of Software Systems Lecture\\[10] Projects\\Group17\\zaproxy\\zap\\src\\main\\java\\org\\zaproxy\\zap\\extension\\policyloader\\TestPolicy.jar");
+        ExtensionPolicyLoader extensionPolicyLoader = new ExtensionPolicyLoader();
+        extensionPolicyLoader.loadPolicyFromJar(jarFile);
+    }
+=======
+>>>>>>> origin/develop
 }
