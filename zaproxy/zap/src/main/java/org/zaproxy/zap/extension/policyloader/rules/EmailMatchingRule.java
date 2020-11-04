@@ -35,10 +35,7 @@ public class EmailMatchingRule implements Rule {
         String body = bodySend + bodyReceive;
         Matcher matcher = pattern.matcher(body);
         if (matcher.find()) {
-            System.out.println("matched !!");
             return true;
-        } else {
-            System.out.println(" NO MATCH");
         }
         return false;
     }

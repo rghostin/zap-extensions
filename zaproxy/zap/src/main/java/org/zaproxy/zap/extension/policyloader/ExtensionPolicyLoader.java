@@ -5,6 +5,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.rules.HSTSRule;
 import org.zaproxy.zap.extension.policyloader.rules.KeywordMatchingRule;
 import org.zaproxy.zap.extension.policyloader.rules.EmailMatchingRule;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
@@ -66,6 +67,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         String policyName = "testpolicy";
         List<Rule> testRules = new ArrayList<>();
         testRules.add(new KeywordMatchingRule());
+        testRules.add(new HSTSRule());
         testRules.add(new EmailMatchingRule());
         getPolicyScanner().addPolicy(policyName, testRules);
     }
