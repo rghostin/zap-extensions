@@ -28,7 +28,9 @@ public class KeywordMatchingRule implements Rule {
     private List<String> getFlaggedKeywords() {
         return new ArrayList<>(Arrays.asList(
                 "hacker",
-                "phishing"
+                "phishing",
+                "eavesdropping",
+                "hacking"
         ));
     }
 
