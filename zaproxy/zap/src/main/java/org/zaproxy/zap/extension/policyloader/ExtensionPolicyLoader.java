@@ -1,17 +1,26 @@
 package org.zaproxy.zap.extension.policyloader;
 
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.rules.KeywordMatchingRule;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
+    private final int SCANNER_PLUGIN_ID = 500001;
+    private PolicyScanner policyScanner = null;
 
     @Override
     public void hook(ExtensionHook extensionHook) {
@@ -33,6 +42,14 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         super.unload();
     }
 
+    private PolicyScanner getPolicyScanner() {
+        if (policyScanner == null) {
+            ExtensionPassiveScan extPassiveScan =  Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+            policyScanner = (PolicyScanner) extPassiveScan.getPluginPassiveScanner(SCANNER_PLUGIN_ID);
+        }
+        return policyScanner;
+    }
+
     public File[] getSelectedJARFiles() {
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
@@ -44,6 +61,13 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return files;
     }
 
+    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
+        String policyName = "testpolicy";
+        List<Rule> testRules = new ArrayList<>();
+        testRules.add(new KeywordMatchingRule());
+        getPolicyScanner().addPolicy(policyName, testRules);
+    }
+
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
             menuPolicyLoader = new ZapMenuItem("PolicyLoader"); // TODO checkout external strings
@@ -52,13 +76,21 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            File[] files = getSelectedJARFiles();
-                            for (File file: files) {
-                                System.out.println(file.getName());
+//                            File[] files = getSelectedJARFiles();
+//                            for (File file: files) {
+//                                System.out.println(file.getName());
+//                            }
+
+                            try {
+                                loadRulesTest();
+                                View.getSingleton().showMessageDialog("Test policy successfully loaded");
+                            } catch (DuplicatePolicyException e) {
+                                View.getSingleton().showMessageDialog("Test policy already loaded");
                             }
                         }
                     });
         }
         return menuPolicyLoader;
     }
+
 }

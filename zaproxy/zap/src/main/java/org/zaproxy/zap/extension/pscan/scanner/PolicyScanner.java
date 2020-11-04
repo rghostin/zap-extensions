@@ -3,6 +3,7 @@ package org.zaproxy.zap.extension.pscan.scanner;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
@@ -15,6 +16,11 @@ public class PolicyScanner extends PluginPassiveScanner {
     private PolicyContainer policies = new PolicyContainer();
 
     @Override
+    public int getPluginId() {
+        return 500001;
+    }
+
+        @Override
     public void setParent(PassiveScanThread parent) {
         // do nothing here
     }
@@ -63,6 +69,10 @@ public class PolicyScanner extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    public void addPolicy(String policyName, List<Rule> rules) throws DuplicatePolicyException {
+        policies.addPolicy(policyName,rules);
     }
 
 }
