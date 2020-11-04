@@ -132,6 +132,7 @@ public final class CoreFunctionality {
             extensions.add(new org.zaproxy.zap.extension.uiutils.ExtensionUiUtils());
             extensions.add(new org.zaproxy.zap.extension.users.ExtensionUserManagement());
             extensions.add(new org.zaproxy.zap.extension.custompages.ExtensionCustomPages());
+            extensions.add(new org.zaproxy.zap.extension.policyloader.ExtensionPolicyLoader());
             extensions.trimToSize();
 
             builtInExtensions = Collections.unmodifiableList(extensions);
