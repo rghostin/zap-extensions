@@ -24,13 +24,13 @@ import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyExceptio
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 
 public class PolicyContainer {
-    private Map<String, List<Rule>> policies = new HashMap<>();
+    private Map<String, Set<Rule>> policies = new HashMap<>();
 
     private boolean policyExists(String policyName) {
         return policies.containsKey(policyName);
     }
 
-    public void addPolicy(String policyName, List<Rule> rules) throws DuplicatePolicyException {
+    public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
         if (policyExists(policyName)) {
             throw new DuplicatePolicyException();
         }
@@ -44,7 +44,7 @@ public class PolicyContainer {
         policies.remove(policyName);
     }
 
-    public List<Rule> getPolicyRules(String policyName) throws PolicyNotFoundException {
+    public Set<Rule> getPolicyRules(String policyName) throws PolicyNotFoundException {
         if (!policyExists(policyName)) {
             throw new PolicyNotFoundException();
         }

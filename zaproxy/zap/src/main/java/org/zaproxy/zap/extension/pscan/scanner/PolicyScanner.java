@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscan.scanner;
 
 import java.util.List;
+import java.util.Set;
+
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
@@ -73,7 +75,7 @@ public class PolicyScanner extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         for (String policyName : policies.getPolicies()) {
-            List<Rule> rules = null;
+            Set<Rule> rules = null;
             try {
                 rules = policies.getPolicyRules(policyName);
             } catch (PolicyNotFoundException e) {
@@ -86,7 +88,7 @@ public class PolicyScanner extends PluginPassiveScanner {
         }
     }
 
-    public void addPolicy(String policyName, List<Rule> rules) throws DuplicatePolicyException {
+    public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
         policies.addPolicy(policyName, rules);
     }
 }

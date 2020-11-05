@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.swing.*;
@@ -94,7 +92,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private void loadRulesTest() throws DuplicatePolicyException { // todo remove
         String policyName = "testpolicy";
-        List<Rule> testRules = new ArrayList<>();
+        Set<Rule> testRules = new HashSet<>();
         testRules.add(new KeywordMatchingRule());
         testRules.add(new HSTSRule());
         testRules.add(new EmailMatchingRule());
@@ -110,58 +108,36 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            //                            File[] files = getSelectedJARFiles();
-                            //                            for (File file: files) {
-                            //                                System.out.println(file.getName());
-                            //                            }
+                            File[] files = getSelectedJARFiles();
+                            for (File file: files) {
+                                // load policy from jar
+                                PolicyRuleLoader policyLoader = null;
+                                try {
+                                    policyLoader = new PolicyRuleLoader(file.getAbsolutePath());
+                                } catch (Exception e) {
+                                    View.getSingleton().showMessageDialog("Error: loading policy in "+ file.getName()+".");
+                                    continue;
+                                }
 
-//                            try {
-//                                loadRulesTest();
-//                                View.getSingleton()
-//                                        .showMessageDialog("Test policy successfully loaded");
-//                            } catch (DuplicatePolicyException e) {
-//                                View.getSingleton().showMessageDialog("Test policy already loaded");
-//                            }
+                                // add policy to scanner
+                                try {
+                                    getPolicyScanner().addPolicy(
+                                            policyLoader.getPolicyName(),
+                                            policyLoader.getRules()
+                                    );
+                                } catch (DuplicatePolicyException e) {
+                                    View.getSingleton().showMessageDialog("Error: Policy "+ policyLoader.getPolicyName() + " already exists.");
+                                    continue;
+                                }
 
-                            try {
-                                loadPolicyJar("/home/black/WS/Group17/policyx.jar");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (ClassNotFoundException e) {
-                                e.printStackTrace();
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            } catch (InstantiationException e) {
-                                e.printStackTrace();
+                                View.getSingleton().showMessageDialog(" Policy "+ policyLoader.getPolicyName() + " loaded successfully.");
+
                             }
-
                         }
                     });
         }
         return menuPolicyLoader;
     }
 
-    // todo manage exceptions
-    private void loadPolicyJar(String pathToJar) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        JarFile jarFile = new JarFile(pathToJar);
-        Enumeration<JarEntry> e = jarFile.entries();
 
-        URL[] urls = { new URL("jar:file:" + pathToJar+"!/") };
-        URLClassLoader cl = URLClassLoader.newInstance(urls);
-
-        while (e.hasMoreElements()) {
-            JarEntry je = e.nextElement();
-            if(je.isDirectory() || !je.getName().endsWith(".class")){
-                continue;
-            }
-            // -6 because of .class
-            String className = je.getName().substring(0,je.getName().length()-6);
-            className = className.replace('/', '.');
-            System.out.println(className);
-            Class<?> pluginRule = cl.loadClass(className);
-            Rule rule = (Rule) pluginRule.newInstance();
-            System.out.println("YEEE" + rule.getName());
-
-        }
-    }
 }
