@@ -10,12 +10,18 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class PolicyRuleLoader {
+public class PolicyJarLoader {
     private String policyName;
     private Set<Rule> rules = new HashSet<>();
 
-    public PolicyRuleLoader(String pathToJar) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    public PolicyJarLoader(String pathToJar) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+        policyName = extractPolicyName(pathToJar);
         loadPolicyJar(pathToJar);
+    }
+
+    static private String extractPolicyName(String pathToJar) {
+        // todo fix
+        return pathToJar.substring(pathToJar.lastIndexOf(File.separator)+1);
     }
 
     public String getPolicyName() {
@@ -28,8 +34,6 @@ public class PolicyRuleLoader {
 
     private void loadPolicyJar(String pathToJar) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         JarFile jarFile = new JarFile(pathToJar);
-        policyName = jarFile.getName();
-
         URL[] urls = { new URL("jar:file:" + pathToJar+"!/") };
         URLClassLoader cl = URLClassLoader.newInstance(urls);
 

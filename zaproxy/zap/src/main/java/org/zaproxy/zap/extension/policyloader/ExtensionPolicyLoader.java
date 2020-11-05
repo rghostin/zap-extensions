@@ -20,12 +20,7 @@
 package org.zaproxy.zap.extension.policyloader;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
@@ -111,9 +106,9 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                             File[] files = getSelectedJARFiles();
                             for (File file: files) {
                                 // load policy from jar
-                                PolicyRuleLoader policyLoader = null;
+                                PolicyJarLoader policyLoader = null;
                                 try {
-                                    policyLoader = new PolicyRuleLoader(file.getAbsolutePath());
+                                    policyLoader = new PolicyJarLoader(file.getAbsolutePath());
                                 } catch (Exception e) {
                                     View.getSingleton().showMessageDialog("Error: loading policy in "+ file.getName()+".");
                                     continue;
