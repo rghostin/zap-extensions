@@ -7,17 +7,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CookieAttrRule implements Rule {
 
     private final String NAME = "COOKIE REQUIRED ATTRIBUTES";
 
-    private List<String> getNeededAttrs() {
-        return new ArrayList<>(Arrays.asList(
-                "HttpOnly",
-                "Secure",
-                "SameSite"
-        ));
-    }
+    private Pattern attributes = Pattern.compile("(;?)(\\s*)HttpOnly(;?)|(;?)(\\s*)Secure(;?)|(;?)(\\s*)SameSite=(.*)(;?)");
 
     @Override
     public String getName() {
@@ -39,10 +36,10 @@ public class CookieAttrRule implements Rule {
 
         String cookie = msg.getCookieParamsAsString();
 
-        for (String keyword : getNeededAttrs()) {
-            if (cookie.contains(keyword)) {
-                return true;
-            }
+        Matcher matcher = attributes.matcher(cookie);
+
+        if(!matcher.find()) {
+            return true;
         }
 
         return false;
