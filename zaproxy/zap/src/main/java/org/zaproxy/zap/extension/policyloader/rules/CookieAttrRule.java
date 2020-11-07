@@ -19,14 +19,13 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
-/**
- * This is a rule for matching cookies containing HttpOnly/Secure/SameSite
- */
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/** This is a rule for matching cookies containing HttpOnly/Secure/SameSite */
 public class CookieAttrRule implements Rule {
 
     private final String NAME = "COOKIE REQUIRED ATTRIBUTES";
@@ -47,6 +46,7 @@ public class CookieAttrRule implements Rule {
 
     /**
      * Checks whether the HttpMessage violates the cookies-matching rule or not
+     *
      * @param msg the HttpMessage that will be checked
      * @return true if the HttpMessage violates the rule, false if not
      */

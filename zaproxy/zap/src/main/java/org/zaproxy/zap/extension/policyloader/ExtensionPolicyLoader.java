@@ -24,7 +24,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.rules.*;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -32,12 +31,8 @@ import org.zaproxy.zap.view.ZapMenuItem;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * This is a policy loader for policies of jar file
- */
+/** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
@@ -73,6 +68,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     /**
      * Returns the PolicyScanner
+     *
      * @return Returns the PolicyScanner
      */
     private PolicyScanner getPolicyScanner() {
@@ -89,6 +85,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     /**
      * Returns an array of selected policies of jar files
+     *
      * @return Returns an array of selected policies of jar files
      */
     public File[] getSelectedJARFiles() {
@@ -117,6 +114,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     /**
      * Loads the policies and returns the GUI menu button
+     *
      * @return Returns the GUI menu button
      */
     private ZapMenuItem getMenuPolicyLoader() {
@@ -168,5 +166,4 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         }
         return menuPolicyLoader;
     }
-
 }

@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This is a rule for checking whether the ExpectCT rule exist
- * in the response HTTPMessage of our application
+ * This is a rule for checking whether the ExpectCT rule exist in the response HTTPMessage of our
+ * application
  */
 public class ExpectCTRule implements Rule {
 
@@ -35,10 +35,8 @@ public class ExpectCTRule implements Rule {
     private final Pattern expectPattern = Pattern.compile("max-age=(\\d+)");
     private final String MY_APP_HOST = "cern.ch";
 
-    private Pattern reMyappDomain = Pattern.compile(
-            "^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$",
-            Pattern.CASE_INSENSITIVE
-    );
+    private Pattern reMyappDomain =
+            Pattern.compile("^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public String getName() {
@@ -52,6 +50,7 @@ public class ExpectCTRule implements Rule {
 
     /**
      * Checks whether the hostname in message whether matches
+     *
      * @param msg the HttpMessage that will be checked
      * @return true if the hostname matches, false if not
      */
@@ -63,6 +62,7 @@ public class ExpectCTRule implements Rule {
 
     /**
      * Checks whether the HttpMessage violates the ExpectCT rule rule or not
+     *
      * @param msg the HttpMessage that will be checked
      * @return true if the HttpMessage violates the rule, false if not
      */
