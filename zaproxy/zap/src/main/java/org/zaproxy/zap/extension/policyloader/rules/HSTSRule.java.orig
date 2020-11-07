@@ -19,59 +19,52 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.Rule;
-
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
 /**
- * This is a rule for matching bad keywords
+ * This is a rule for checking the HSTS header exist in the response HTTPMessage
  */
-public class KeywordMatchingRule implements Rule {
+public class HSTSRule implements Rule {
+
+    private final String HSTS_HEADER_NAME = "Strict-Transport-Security";
+<<<<<<< HEAD
+    private final Pattern hstsPattern = Pattern.compile(
+                "^max-age=(\\d+)(?:\\s*;\\s*includeSubDomains)?(?:\\s*;\\s*preload)?$"
+            );
+=======
+
+    private final Pattern hstsPattern =
+            Pattern.compile("^max-age=(\\d+)(?:\\s*;\\s*includeSubDomains)?(?:\\s*;\\s*preload)?$");
+>>>>>>> develop
 
     @Override
     public String getName() {
-        return "Keyword_matching_rule";
+        return "HSTS_Rule";
     }
 
     @Override
     public String getDescription() {
-        return "The HTTP message contains a flagged keyword.";
+        return "The HTTP response message does not enforce HSTS.";
     }
 
     /**
-     * Returns the keywords to flag
-     * @return Returns the keywords to flag
-     */
-    public List<String> getFlaggedKeywords() {
-        return new ArrayList<>(Arrays.asList(
-                "hacker",
-                "phishing",
-                "eavesdropping",
-                "hacking"
-        ));
-    }
-
-    /**
-     * Checks whether the HttpMessage violates the keyword-matching rule or not
+     * Checks whether the HttpMessage violates the HSTS rule rule or not
      * @param msg the HttpMessage that will be checked
      * @return true if the HttpMessage violates the rule, false if not
      */
     @Override
     public boolean isViolated(HttpMessage msg) {
-        String bodySend = msg.getRequestBody().toString();
-        String bodyReceive = msg.getResponseBody().toString();
-        String body = bodySend + bodyReceive;
-
-        for (String keyword : getFlaggedKeywords()) {
-            if (body.contains(keyword)) {
-                return true;
-            }
+        String hstsHeader = msg.getResponseHeader().getHeader(HSTS_HEADER_NAME);
+        if (hstsHeader == null) {
+            return true;
+        }
+        hstsHeader = hstsHeader.trim();
+        Matcher hstsMatcher = hstsPattern.matcher(hstsHeader);
+        if (!hstsMatcher.matches()) {
+            return true;
         }
         return false;
     }

@@ -19,16 +19,19 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import java.io.File;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.rules.*;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+<<<<<<< HEAD
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
@@ -38,6 +41,8 @@ import java.util.List;
 /**
  * This is a policy loader for policies of jar file
  */
+=======
+>>>>>>> develop
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
@@ -102,6 +107,24 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return files;
     }
 
+<<<<<<< HEAD
+    /**
+     * Loads the policy for testing
+     * @throws DuplicatePolicyException is thrown when the policy is duplicated
+     */
+    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
+        String policyName = "testpolicy";
+        List<Rule> testRules = new ArrayList<>();
+        testRules.add(new CookieAttrRule());
+        testRules.add(new KeywordMatchingRule());
+        testRules.add(new HSTSRule());
+        testRules.add(new EmailMatchingRule());
+        testRules.add(new HTTPSRule());
+        testRules.add(new DomainMatchingRule());
+        testRules.add(new ExpectCTRule());
+        getPolicyScanner().addPolicy(policyName, testRules);
+    }
+=======
     //    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
     //        String policyName = "testpolicy";
     //        Set<Rule> testRules = new HashSet<>();
@@ -114,6 +137,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     //	testRules.add(new CookieAttrRule());
     //        getPolicyScanner().addPolicy(policyName, testRules);
     //    }
+>>>>>>> develop
 
     /**
      * Loads the policies and returns the GUI menu button
@@ -168,5 +192,4 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         }
         return menuPolicyLoader;
     }
-
 }

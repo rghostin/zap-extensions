@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
+import java.util.List;
 import java.util.Set;
+
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
@@ -89,7 +91,10 @@ public class PolicyScanner extends PluginPassiveScanner {
     public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
         policies.addPolicy(policyName, rules);
     }
+<<<<<<< HEAD
+=======
 
     // todo remove policy
 
+>>>>>>> develop
 }

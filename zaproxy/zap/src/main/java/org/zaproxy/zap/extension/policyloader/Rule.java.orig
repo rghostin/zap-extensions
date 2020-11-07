@@ -32,6 +32,7 @@ public interface Rule {
      */
     String getName();
 
+<<<<<<< HEAD
     /**
      * Returns this rule's description
      * @return Returns this rule's description
@@ -43,5 +44,9 @@ public interface Rule {
      * @param msg the HttpMessage that will be checked
      * @return true if the HttpMessage violates the rule, false if not
      */
+=======
+    String getDescription();
+
+>>>>>>> develop
     boolean isViolated(HttpMessage msg);
 }

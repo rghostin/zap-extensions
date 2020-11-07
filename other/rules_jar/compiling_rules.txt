@@ -1,0 +1,12 @@
+
+cd <>/Group17/zaproxy/zap/src/main/java/org/zaproxy/zap/extension/policyloader
+
+
+javac -cp <>/Group17/zaproxy/zap/build/libs/zap-D-2020-11-07.jar -d /tmp/policyX/ rules/HSTSRule.java rules/HTTPSRule.java rules/ExpectCTRule.java rules/KeywordMatchingRule.java
+javac -cp /home/black/WS/Group17/zaproxy/zap/build/libs/zap-D-2020-11-07.jar -d /tmp/policyY rules/CookieAttrRule.java rules/DomainMatchingRule.java rules/EmailMatchingRule.java
+
+cd policyX
+jar cvf policyX.jar *
+
+cd policyY
+jar cf policyY.jar

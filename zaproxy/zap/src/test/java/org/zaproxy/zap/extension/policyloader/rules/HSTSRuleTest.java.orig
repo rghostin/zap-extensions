@@ -17,31 +17,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.policyloader.rules;
 
+<<<<<<< HEAD
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * This is public interface for runtime rule inspection
- */
-public interface Rule {
+=======
+>>>>>>> develop
+import static org.junit.jupiter.api.Assertions.*;
 
-    /**
-     * Returns this rule's name
-     * @return Returns this rule's name
-     */
-    String getName();
+import org.junit.jupiter.api.Test;
 
-    /**
-     * Returns this rule's description
-     * @return Returns this rule's description
-     */
-    String getDescription();
+// todo test
 
-    /**
-     * Checks whether the HttpMessage violates a specific rule
-     * @param msg the HttpMessage that will be checked
-     * @return true if the HttpMessage violates the rule, false if not
-     */
-    boolean isViolated(HttpMessage msg);
+class HSTSRuleTest {
+
+    @Test
+    void getName() {}
+
+    @Test
+<<<<<<< HEAD
+    void getDescription() {
+
+    }
+
+    @Test
+    void isViolated(){
+
+    }
+
 }
+=======
+    void getDescription() {}
+
+    @Test
+    void isViolated() {}
+}
+>>>>>>> develop

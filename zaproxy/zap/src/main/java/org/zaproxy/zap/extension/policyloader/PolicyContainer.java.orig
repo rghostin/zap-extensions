@@ -25,13 +25,19 @@ import java.util.Set;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 
+<<<<<<< HEAD
 import java.util.*;
 
 /**
  * A container for holding policies
  */
 public class PolicyContainer {
+
+    private Map<String, List<Rule>> policies = new HashMap<>();
+=======
+public class PolicyContainer {
     private Map<String, Set<Rule>> policies = new HashMap<>();
+>>>>>>> develop
 
     /**
      * Checks whether the selected policy is exist
@@ -42,13 +48,17 @@ public class PolicyContainer {
         return policies.containsKey(policyName);
     }
 
+<<<<<<< HEAD
     /**
      * Adds a new policy to the policy container
      * @param policyName the name of the policy that to be added to the container
      * @param rules the rules of the policy that to be added to the container
      * @throws DuplicatePolicyException is thrown when the policy is duplicated
      */
+    public void addPolicy(String policyName, List<Rule> rules) throws DuplicatePolicyException {
+=======
     public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
+>>>>>>> develop
         if (policyExists(policyName)) {
             throw new DuplicatePolicyException();
         }
@@ -67,14 +77,19 @@ public class PolicyContainer {
         policies.remove(policyName);
     }
 
+<<<<<<< HEAD
     /**
      * Returns the rules of a policy by its name
      * @param policyName the name of the policy that is selected
      * @return the rules of the policy that is selected
      * @throws PolicyNotFoundException is thrown when the policy is not exist
      */
+    public List<Rule> getPolicyRules(String policyName) throws PolicyNotFoundException {
+        if (! policyExists(policyName)) {
+=======
     public Set<Rule> getPolicyRules(String policyName) throws PolicyNotFoundException {
         if (!policyExists(policyName)) {
+>>>>>>> develop
             throw new PolicyNotFoundException();
         }
         return policies.get(policyName);
@@ -88,5 +103,3 @@ public class PolicyContainer {
         return policies.keySet();
     }
 }
-
-

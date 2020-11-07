@@ -19,59 +19,58 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.Rule;
-
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
 /**
- * This is a rule for matching bad keywords
+ * This is a rule for returning whether the traffic goes over HTTPS
  */
-public class KeywordMatchingRule implements Rule {
+public class HTTPSRule implements Rule {
+
+    private final String MY_APP_HOST = "cern.ch";
+<<<<<<< HEAD
+    private Pattern reMyappDomain = Pattern.compile(
+            "^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$",
+            Pattern.CASE_INSENSITIVE
+        );
+=======
+
+    private Pattern reMyappDomain =
+            Pattern.compile("^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$", Pattern.CASE_INSENSITIVE);
+>>>>>>> develop
 
     @Override
     public String getName() {
-        return "Keyword_matching_rule";
+        return "HTTPS";
     }
 
     @Override
     public String getDescription() {
-        return "The HTTP message contains a flagged keyword.";
+        return String.format("The HTTP message going to %s is not secure.", MY_APP_HOST);
     }
 
     /**
-     * Returns the keywords to flag
-     * @return Returns the keywords to flag
+     * Checks whether the hostname in message whether matches
+     * @param msg the HttpMessage that will be checked
+     * @return true if the hostname matches, false if not
      */
-    public List<String> getFlaggedKeywords() {
-        return new ArrayList<>(Arrays.asList(
-                "hacker",
-                "phishing",
-                "eavesdropping",
-                "hacking"
-        ));
+    private boolean isGoingToMyApp(HttpMessage msg) {
+        String outgoingHostname = msg.getRequestHeader().getHostName();
+        Matcher matcher = reMyappDomain.matcher(outgoingHostname);
+        return matcher.matches();
     }
 
     /**
-     * Checks whether the HttpMessage violates the keyword-matching rule or not
+     * Checks whether the HttpMessage violates the HTTPS rule or not
      * @param msg the HttpMessage that will be checked
      * @return true if the HttpMessage violates the rule, false if not
      */
     @Override
     public boolean isViolated(HttpMessage msg) {
-        String bodySend = msg.getRequestBody().toString();
-        String bodyReceive = msg.getResponseBody().toString();
-        String body = bodySend + bodyReceive;
-
-        for (String keyword : getFlaggedKeywords()) {
-            if (body.contains(keyword)) {
-                return true;
-            }
+        if (isGoingToMyApp(msg)) {
+            return !msg.getRequestHeader().isSecure();
         }
         return false;
     }
