@@ -31,8 +31,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
@@ -100,19 +98,6 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         File[] files = chooser.getSelectedFiles();
         return files;
     }
-
-    //    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
-    //        String policyName = "testpolicy";
-    //        Set<Rule> testRules = new HashSet<>();
-    //        testRules.add(new KeywordMatchingRule());
-    //        testRules.add(new HSTSRule());
-    //        testRules.add(new EmailMatchingRule());
-    //        testRules.add(new HTTPSRule());
-    //        testRules.add(new DomainMatchingRule());
-    //        testRules.add(new ExpectCTRule());
-    //	testRules.add(new CookieAttrRule());
-    //        getPolicyScanner().addPolicy(policyName, testRules);
-    //    }
 
     /**
      * Loads the policies and returns the GUI menu button

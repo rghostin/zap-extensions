@@ -99,6 +99,7 @@ public class PolicyScanner extends PluginPassiveScanner {
         policies.addPolicy(policyName, rules);
     }
 
-    // todo remove policy
-
+    public void removePolicy(String policyName) throws PolicyNotFoundException {
+        policies.removePolicy(policyName);
+    }
 }
