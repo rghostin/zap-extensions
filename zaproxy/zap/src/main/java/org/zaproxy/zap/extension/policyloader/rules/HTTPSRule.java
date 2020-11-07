@@ -43,6 +43,10 @@ public class HTTPSRule implements Rule {
         return String.format("The HTTP message going to %s is not secure.", MY_APP_HOST);
     }
 
+    public String getMyAppName() {
+        return MY_APP_HOST;
+    }
+
     /**
      * Checks whether the hostname in message whether matches
      *
