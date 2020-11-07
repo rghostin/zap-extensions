@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// todo test
 class KeywordMatchingRuleTest {
     KeywordMatchingRule kwordRule ;
     String BODY = "<html><head></head><body>%s</body><html>";
