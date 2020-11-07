@@ -20,7 +20,7 @@ public class KeywordMatchingRule implements Rule {
         return "The HTTP message contains a flagged keyword.";
     }
 
-    private List<String> getFlaggedKeywords() {
+    public List<String> getFlaggedKeywords() {
         return new ArrayList<>(Arrays.asList(
                 "hacker",
                 "phishing",
