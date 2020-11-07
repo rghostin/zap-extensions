@@ -50,23 +50,24 @@ class KeywordMatchingRuleTest {
                 "3lLerf2oIVWdQGy",
                 "5CQftcNPn1ID9Wb"
         ));
-
     }
 
     @Test
-    void isViolated() throws HttpMalformedHeaderException, URIException {
+    void isViolatedFlaggedKeywords() throws HttpMalformedHeaderException, URIException {
 
         for (String kword : kwordRule.getFlaggedKeywords()) {
             HttpMessage msg = createHttpMsg();
             msg.setRequestBody(String.format(BODY, kword));
             assertTrue(kwordRule.isViolated(msg));
         }
+    }
 
+    @Test
+    void isViolatedUnflaggedKeywords() throws HttpMalformedHeaderException, URIException {
         for (String kword : getPreGeneratedRandomString()) {
             HttpMessage msg = createHttpMsg();
             msg.setRequestBody(String.format(BODY, kword));
             assertFalse(kwordRule.isViolated(msg));
         }
-
     }
 }
