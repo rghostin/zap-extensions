@@ -31,6 +31,8 @@ import org.zaproxy.zap.view.ZapMenuItem;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
@@ -126,6 +128,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
                             File[] files = getSelectedJARFiles();
+                            StringBuilder loadedPolicyNames = new StringBuilder();
                             for (File file : files) {
                                 // load policy from jar
                                 PolicyJarLoader policyLoader = null;
@@ -155,12 +158,16 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                                     continue;
                                 }
 
+                                loadedPolicyNames.append(policyLoader.getPolicyName()).append("\n");
+                            }
+
+                            if (!loadedPolicyNames.toString().isEmpty()){
                                 View.getSingleton()
                                         .showMessageDialog(
-                                                " Policy "
-                                                        + policyLoader.getPolicyName()
-                                                        + " loaded successfully.");
+                                                "Policies loaded successfully: \n" + loadedPolicyNames.toString()
+                                        );
                             }
+
                         }
                     });
         }
