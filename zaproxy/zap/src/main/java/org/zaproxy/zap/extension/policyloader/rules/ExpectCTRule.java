@@ -48,6 +48,10 @@ public class ExpectCTRule implements Rule {
         return "The HTTP response message does not enforce ExpectCT Rule.";
     }
 
+    public String getMyAppName() {
+        return MY_APP_HOST;
+    }
+
     /**
      * Checks whether the hostname in message whether matches
      *

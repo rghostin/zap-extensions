@@ -31,10 +31,21 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * Responsible of loading a JAR file containing policies
+ */
 public class PolicyJarLoader {
     private String policyName;
     private Set<Rule> rules = new HashSet<>();
 
+    /**
+     * Load the jar file's rules
+     * @param pathToJar : path to jar file on the filesystem
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IOException
+     */
     public PolicyJarLoader(String pathToJar)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
                     IOException {
@@ -42,6 +53,11 @@ public class PolicyJarLoader {
         loadPolicyJar(pathToJar);
     }
 
+    /**
+     * Helper method to extract policyname from the path to jar
+     * @param pathToJar : path to the jar file
+     * @return
+     */
     private static String extractPolicyName(String pathToJar) {
         // remove path
         String policyNameNoPath = pathToJar.substring(pathToJar.lastIndexOf(File.separator) + 1);
@@ -58,6 +74,14 @@ public class PolicyJarLoader {
         return rules;
     }
 
+    /**
+     * Loads the jar file containing rules
+     * @param pathToJar
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
     private void loadPolicyJar(String pathToJar)
             throws IOException, ClassNotFoundException, IllegalAccessException,
                     InstantiationException {
