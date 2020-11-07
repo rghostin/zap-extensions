@@ -30,13 +30,11 @@ public class HSTSRule implements Rule {
         if (hstsHeader == null) {
             return true;
         }
-
         hstsHeader = hstsHeader.trim();
         Matcher hstsMatcher = hstsPattern.matcher(hstsHeader);
         if (! hstsMatcher.matches()) {
             return true;
         }
-
         return false;
     }
 }

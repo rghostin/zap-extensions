@@ -10,6 +10,7 @@ import org.zaproxy.zap.extension.policyloader.rules.HTTPSRule;
 import org.zaproxy.zap.extension.policyloader.rules.KeywordMatchingRule;
 import org.zaproxy.zap.extension.policyloader.rules.EmailMatchingRule;
 import org.zaproxy.zap.extension.policyloader.rules.DomainMatchingRule;
+import org.zaproxy.zap.extension.policyloader.rules.ExpectCTRule;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -73,6 +74,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         testRules.add(new EmailMatchingRule());
         testRules.add(new HTTPSRule());
         testRules.add(new DomainMatchingRule());
+        testRules.add(new ExpectCTRule());
         getPolicyScanner().addPolicy(policyName, testRules);
     }
 
