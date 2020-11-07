@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-// TODO test
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -81,11 +79,7 @@ class PolicyContainerTest {
         }
 
         Set<String> policies = this.policies.getPolicies();
-        if (policies.contains("addpolicy")) {
-            assertTrue(true);
-        } else {
-            assertTrue(false);
-        }
+        assertTrue(policies.contains("addpolicy"));
     }
 
     @Test
@@ -98,11 +92,8 @@ class PolicyContainerTest {
         }
 
         Set<String> policies = this.policies.getPolicies();
-        if (policies.contains("existPolicy")) {
-            assertTrue(false);
-        } else {
-            assertTrue(true);
-        }
+        assertFalse(policies.contains("existPolicy"));
+
     }
 
     @Test
@@ -130,28 +121,15 @@ class PolicyContainerTest {
     @Test
     void getPolicies() {
         Set<String> policies = this.policies.getPolicies();
-        if (policies.contains("existPolicy")) {
-            assertTrue(true);
-        } else {
-            assertTrue(false);
-        }
+        assertTrue(policies.contains("existPolicy"));
+
     }
 
     private boolean equal(Set<String> targetRulesName, Set<Rule> checkRules) {
-        if(checkRules ==null){
-            return false;
+        Set<String> names = new HashSet<>();
+        for (Rule rule : checkRules) {
+            names.add(rule.getName());
         }
-        Set<String> targetRulesNameCompare = new HashSet<>();
-        targetRulesNameCompare.addAll(targetRulesName);
-        for (Rule checkRulesElem : checkRules) {
-            if (targetRulesNameCompare.contains(checkRulesElem.getName())) {
-                targetRulesNameCompare.remove(checkRulesElem.getName());
-            }
-        }
-        if (targetRulesNameCompare.size() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return targetRulesName.equals(names);
     }
 }
