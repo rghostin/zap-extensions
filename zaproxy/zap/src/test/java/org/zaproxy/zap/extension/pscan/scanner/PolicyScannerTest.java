@@ -1,33 +1,58 @@
 package org.zaproxy.zap.extension.pscan.scanner;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.policyloader.Rule;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// todo test
 class PolicyScannerTest {
+    PolicyScanner policyScanner;
 
-    @Test
-    void getPluginId() {
+    @BeforeEach
+    void setup() {
+        policyScanner = new PolicyScanner();
     }
 
     @Test
-    void setParent() {
+    void getPluginId() {
+        assertEquals( 500001,    policyScanner.getPluginId());
     }
 
     @Test
     void getName() {
-    }
-
-    @Test
-    void scanHttpRequestSend() {
-    }
-
-    @Test
-    void scanHttpResponseReceive() {
+        assertEquals("Policy scanner", policyScanner.getName());
     }
 
     @Test
     void addPolicy() {
+        String policyName= "testPolicy";
+        List<Rule> rules = new ArrayList<>();
+
+        try {
+            policyScanner.addPolicy("testPolicy", rules);
+        } catch (DuplicatePolicyException e) {
+            fail("Should not have thrown exception");
+        }
+        assertThrows(DuplicatePolicyException.class, () -> {
+            policyScanner.addPolicy("testPolicy", rules);
+        });
     }
+
+    @Test
+    void scanHttpRequestSend() {
+        // not active for now
+    }
+
+    @Test
+    void scanHttpResponseReceive() {
+        // todo test
+    }
+
+    // todo test remove policy
 }
