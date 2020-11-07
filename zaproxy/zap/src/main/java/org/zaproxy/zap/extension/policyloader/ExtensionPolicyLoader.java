@@ -19,25 +19,23 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import java.io.File;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
-    private final static int SCANNER_PLUGIN_ID = 500001;
-    private final static String NAME = "Policy Loader";
+    private static final int SCANNER_PLUGIN_ID = 500001;
+    private static final String NAME = "Policy Loader";
     protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
 
@@ -89,18 +87,18 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return files;
     }
 
-//    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
-//        String policyName = "testpolicy";
-//        Set<Rule> testRules = new HashSet<>();
-//        testRules.add(new KeywordMatchingRule());
-//        testRules.add(new HSTSRule());
-//        testRules.add(new EmailMatchingRule());
-//        testRules.add(new HTTPSRule());
-//        testRules.add(new DomainMatchingRule());
-//        testRules.add(new ExpectCTRule());
-//	testRules.add(new CookieAttrRule());
-//        getPolicyScanner().addPolicy(policyName, testRules);
-//    }
+    //    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
+    //        String policyName = "testpolicy";
+    //        Set<Rule> testRules = new HashSet<>();
+    //        testRules.add(new KeywordMatchingRule());
+    //        testRules.add(new HSTSRule());
+    //        testRules.add(new EmailMatchingRule());
+    //        testRules.add(new HTTPSRule());
+    //        testRules.add(new DomainMatchingRule());
+    //        testRules.add(new ExpectCTRule());
+    //	testRules.add(new CookieAttrRule());
+    //        getPolicyScanner().addPolicy(policyName, testRules);
+    //    }
 
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
@@ -111,34 +109,44 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
                             File[] files = getSelectedJARFiles();
-                            for (File file: files) {
+                            for (File file : files) {
                                 // load policy from jar
                                 PolicyJarLoader policyLoader = null;
                                 try {
                                     policyLoader = new PolicyJarLoader(file.getAbsolutePath());
                                 } catch (Exception e) {
-                                    View.getSingleton().showMessageDialog("Error: loading policy in "+ file.getName()+".");
+                                    View.getSingleton()
+                                            .showMessageDialog(
+                                                    "Error: loading policy in "
+                                                            + file.getName()
+                                                            + ".");
                                     continue;
                                 }
 
                                 // add policy to scanner
                                 try {
-                                    getPolicyScanner().addPolicy(
-                                            policyLoader.getPolicyName(),
-                                            policyLoader.getRules()
-                                    );
+                                    getPolicyScanner()
+                                            .addPolicy(
+                                                    policyLoader.getPolicyName(),
+                                                    policyLoader.getRules());
                                 } catch (DuplicatePolicyException e) {
-                                    View.getSingleton().showMessageDialog("Error: Policy "+ policyLoader.getPolicyName() + " already exists.");
+                                    View.getSingleton()
+                                            .showMessageDialog(
+                                                    "Error: Policy "
+                                                            + policyLoader.getPolicyName()
+                                                            + " already exists.");
                                     continue;
                                 }
 
-                                View.getSingleton().showMessageDialog(" Policy "+ policyLoader.getPolicyName() + " loaded successfully.");
-
+                                View.getSingleton()
+                                        .showMessageDialog(
+                                                " Policy "
+                                                        + policyLoader.getPolicyName()
+                                                        + " loaded successfully.");
                             }
                         }
                     });
         }
         return menuPolicyLoader;
     }
-
 }

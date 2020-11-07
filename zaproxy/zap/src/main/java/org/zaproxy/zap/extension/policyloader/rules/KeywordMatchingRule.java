@@ -19,16 +19,13 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.Rule;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.policyloader.Rule;
 
-/**
- * Rule for matching bad keywords
- */
+/** Rule for matching bad keywords */
 public class KeywordMatchingRule implements Rule {
 
     @Override
@@ -41,17 +38,9 @@ public class KeywordMatchingRule implements Rule {
         return "The HTTP message contains a flagged keyword.";
     }
 
-    /**
-     *
-     * @return Return the keywords to flag
-     */
+    /** @return Return the keywords to flag */
     public List<String> getFlaggedKeywords() {
-        return new ArrayList<>(Arrays.asList(
-                "hacker",
-                "phishing",
-                "eavesdropping",
-                "hacking"
-        ));
+        return new ArrayList<>(Arrays.asList("hacker", "phishing", "eavesdropping", "hacking"));
     }
 
     @Override
