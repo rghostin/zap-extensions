@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.policyloader;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.security.CertData;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
@@ -35,8 +36,15 @@ import java.io.File;
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
-    private final int SCANNER_PLUGIN_ID = 500001;
+    private final static int SCANNER_PLUGIN_ID = 500001;
+    private final static String NAME = "Policy Loader";
+    protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
+
+    public ExtensionPolicyLoader() {
+        super(NAME);
+        setI18nPrefix(PREFIX);
+    }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
@@ -96,7 +104,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
-            menuPolicyLoader = new ZapMenuItem("PolicyLoader"); // TODO checkout external strings
+            menuPolicyLoader = new ZapMenuItem(PREFIX + ".panel.title");
 
             menuPolicyLoader.addActionListener(
                     new java.awt.event.ActionListener() {
