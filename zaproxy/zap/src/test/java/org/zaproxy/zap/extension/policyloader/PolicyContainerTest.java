@@ -115,7 +115,6 @@ class PolicyContainerTest {
             fail("Should not have thrown PolicyNotFoundException");
             e.printStackTrace();
         }
-
     }
 
     @Test
