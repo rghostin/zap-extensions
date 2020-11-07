@@ -28,11 +28,15 @@ import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Set;
 
 public class PolicyScanner extends PluginPassiveScanner {
 
     private PolicyContainer policies = new PolicyContainer();
+    private Report report = new Report();
+
 
     @Override
     public int getPluginId() {
@@ -63,6 +67,7 @@ public class PolicyScanner extends PluginPassiveScanner {
     private void enforceOrRaise(Rule rule, String policyName, HttpMessage msg) {
         if (rule.isViolated(msg)) {
             raiseAlert(policyName, rule.getName(), rule.getDescription(), msg);
+            report.addViolation(policyName, rule.getName(), rule.getDescription());
         }
     }
 
@@ -85,6 +90,9 @@ public class PolicyScanner extends PluginPassiveScanner {
                 enforceOrRaise(rule, policyName, msg);
             }
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String date = sdf.format(new Date(Long.parseLong(String.valueOf(System.currentTimeMillis()))));
+        report.writeToFile("report" + date + ".html");
     }
 
     public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
