@@ -19,16 +19,11 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import java.io.File;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.rules.*;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -36,8 +31,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
@@ -88,18 +81,18 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return files;
     }
 
-    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
-        String policyName = "testpolicy";
-        Set<Rule> testRules = new HashSet<>();
-        testRules.add(new KeywordMatchingRule());
-        testRules.add(new HSTSRule());
-        testRules.add(new EmailMatchingRule());
-        testRules.add(new HTTPSRule());
-        testRules.add(new DomainMatchingRule());
-        testRules.add(new ExpectCTRule());
-	testRules.add(new CookieAttrRule());
-        getPolicyScanner().addPolicy(policyName, testRules);
-    }
+//    private void loadRulesTest() throws DuplicatePolicyException { // todo remove
+//        String policyName = "testpolicy";
+//        Set<Rule> testRules = new HashSet<>();
+//        testRules.add(new KeywordMatchingRule());
+//        testRules.add(new HSTSRule());
+//        testRules.add(new EmailMatchingRule());
+//        testRules.add(new HTTPSRule());
+//        testRules.add(new DomainMatchingRule());
+//        testRules.add(new ExpectCTRule());
+//	testRules.add(new CookieAttrRule());
+//        getPolicyScanner().addPolicy(policyName, testRules);
+//    }
 
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {

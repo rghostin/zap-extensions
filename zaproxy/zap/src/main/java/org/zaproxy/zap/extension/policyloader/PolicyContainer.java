@@ -19,9 +19,12 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import java.util.*;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class PolicyContainer {
     private Map<String, Set<Rule>> policies = new HashMap<>();
