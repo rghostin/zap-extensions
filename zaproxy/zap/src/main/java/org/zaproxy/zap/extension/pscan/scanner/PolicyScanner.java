@@ -86,9 +86,6 @@ public class PolicyScanner extends PluginPassiveScanner {
                 enforceOrRaise(rule, policyName, msg);
             }
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date =
-                sdf.format(new Date(Long.parseLong(String.valueOf(System.currentTimeMillis()))));
     }
 
     public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {

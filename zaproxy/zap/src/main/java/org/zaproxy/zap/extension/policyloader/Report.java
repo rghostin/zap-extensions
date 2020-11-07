@@ -31,6 +31,7 @@ public class Report {
     private List<String> rows = new ArrayList<>();
 
     private String html_template_content;
+    private final static String TEMPLATE_REP_VAR = "III_TABLE_CONTENT_III";
 
     public Report() throws IOException {
         File html_template_file =
@@ -47,23 +48,17 @@ public class Report {
 
     public void addViolation(String policyName, String ruleName, String description) {
         rows.add(
-                "<tr>\n"
-                        + "    <td>"
-                        + policyName
-                        + "</td>\n"
-                        + "    <td>"
-                        + ruleName
-                        + "</td>\n"
-                        + "    <td>"
-                        + description
-                        + "</td>\n"
-                        + "  </tr>");
+                String.format(
+                        "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
+                        , policyName, ruleName, description
+                ));
+
     }
 
     private String getTableContent() {
         StringBuilder tableContent = new StringBuilder();
         for (String row : rows) {
-            tableContent.append(tableContent).append(row);
+            tableContent.append(row).append("\n");
         }
         return tableContent.toString();
     }
@@ -80,7 +75,7 @@ public class Report {
 
     @Override
     public String toString() {
-        return getTemplateContent();
+        return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
     }
 
     public static void main(String[] args) throws IOException {

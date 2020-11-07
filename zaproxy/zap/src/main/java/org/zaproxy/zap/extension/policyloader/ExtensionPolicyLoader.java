@@ -52,6 +52,12 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         } catch (IOException e) {
             View.getSingleton().showMessageDialog("Unable to fetch report template");
         }
+
+        // todo rm
+        scanReport.addViolation("A", "B", "C");
+        scanReport.addViolation("D", "B", "C");
+        scanReport.addViolation("F", "B", "C");
+
     }
 
     @Override
