@@ -70,4 +70,6 @@ public class PolicyScanner extends PluginPassiveScanner {
         policies.addPolicy(policyName,rules);
     }
 
+    // todo remove policy
+
 }
