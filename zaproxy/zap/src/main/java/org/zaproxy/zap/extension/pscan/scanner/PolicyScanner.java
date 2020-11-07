@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscan.scanner;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Set;
 import net.htmlparser.jericho.Source;

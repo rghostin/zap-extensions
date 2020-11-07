@@ -63,14 +63,11 @@ public class Report {
         return tableContent.toString();
     }
 
-    public void writeToFile(String fileName) {
-        try {
+    public void writeToFile(String fileName) throws IOException {
             FileWriter fileWriter = new FileWriter(fileName);
             fileWriter.write(toString());
             fileWriter.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     @Override
@@ -78,8 +75,4 @@ public class Report {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
     }
 
-    public static void main(String[] args) throws IOException {
-        Report r = new Report();
-        System.out.println(r.toString());
-    }
 }
