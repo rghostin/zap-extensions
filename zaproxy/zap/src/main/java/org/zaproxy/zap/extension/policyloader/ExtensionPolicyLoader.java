@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import java.io.File;
+import java.io.IOException;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -27,10 +31,6 @@ import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyExceptio
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
 
 /** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
@@ -41,9 +41,17 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
 
+    private Report scanReport;
+
     public ExtensionPolicyLoader() {
         super(NAME);
         setI18nPrefix(PREFIX);
+
+        try {
+            scanReport = new Report();
+        } catch (IOException e) {
+            View.getSingleton().showMessageDialog("Unable to fetch report template");
+        }
     }
 
     @Override
@@ -112,6 +120,8 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            System.out.println(scanReport.toString());
+
                             File[] files = getSelectedJARFiles();
                             StringBuilder loadedPolicyNames = new StringBuilder();
                             for (File file : files) {
@@ -146,13 +156,12 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                                 loadedPolicyNames.append(policyLoader.getPolicyName()).append("\n");
                             }
 
-                            if (!loadedPolicyNames.toString().isEmpty()){
+                            if (!loadedPolicyNames.toString().isEmpty()) {
                                 View.getSingleton()
                                         .showMessageDialog(
-                                                "Policies loaded successfully: \n" + loadedPolicyNames.toString()
-                                        );
+                                                "Policies loaded successfully: \n"
+                                                        + loadedPolicyNames.toString());
                             }
-
                         }
                     });
         }

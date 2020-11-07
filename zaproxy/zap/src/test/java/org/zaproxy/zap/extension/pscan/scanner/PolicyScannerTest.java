@@ -64,7 +64,6 @@ class PolicyScannerTest {
                 });
     }
 
-
     @Test
     void removePolicy() {
         String policyName = "testPolicy";

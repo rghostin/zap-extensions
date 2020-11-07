@@ -19,12 +19,11 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 
 /** A container for holding policies */
 public class PolicyContainer {

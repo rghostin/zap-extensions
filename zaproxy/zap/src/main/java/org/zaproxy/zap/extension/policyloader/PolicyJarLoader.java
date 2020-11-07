@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -30,16 +28,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import org.apache.commons.io.FilenameUtils;
 
-/**
- * Responsible of loading a JAR file containing policies
- */
+/** Responsible of loading a JAR file containing policies */
 public class PolicyJarLoader {
     private String policyName;
     private Set<Rule> rules = new HashSet<>();
 
     /**
      * Load the jar file's rules
+     *
      * @param pathToJar : path to jar file on the filesystem
      * @throws ClassNotFoundException
      * @throws InstantiationException
@@ -55,6 +53,7 @@ public class PolicyJarLoader {
 
     /**
      * Helper method to extract policyname from the path to jar
+     *
      * @param pathToJar : path to the jar file
      * @return
      */
@@ -76,6 +75,7 @@ public class PolicyJarLoader {
 
     /**
      * Loads the jar file containing rules
+     *
      * @param pathToJar
      * @throws IOException
      * @throws ClassNotFoundException

@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
@@ -28,15 +31,9 @@ import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Set;
-
 public class PolicyScanner extends PluginPassiveScanner {
 
     private PolicyContainer policies = new PolicyContainer();
-    private Report report = new Report();
-
 
     @Override
     public int getPluginId() {
@@ -67,7 +64,6 @@ public class PolicyScanner extends PluginPassiveScanner {
     private void enforceOrRaise(Rule rule, String policyName, HttpMessage msg) {
         if (rule.isViolated(msg)) {
             raiseAlert(policyName, rule.getName(), rule.getDescription(), msg);
-            report.addViolation(policyName, rule.getName(), rule.getDescription());
         }
     }
 
@@ -91,8 +87,8 @@ public class PolicyScanner extends PluginPassiveScanner {
             }
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String date = sdf.format(new Date(Long.parseLong(String.valueOf(System.currentTimeMillis()))));
-        report.writeToFile("report" + date + ".html");
+        String date =
+                sdf.format(new Date(Long.parseLong(String.valueOf(System.currentTimeMillis()))));
     }
 
     public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {

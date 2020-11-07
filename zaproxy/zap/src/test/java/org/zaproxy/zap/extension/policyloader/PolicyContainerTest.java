@@ -19,18 +19,17 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
-import org.zaproxy.zap.extension.policyloader.rules.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
+import org.zaproxy.zap.extension.policyloader.rules.*;
 
 class PolicyContainerTest {
 
@@ -65,7 +64,6 @@ class PolicyContainerTest {
             fail("Should not have thrown DuplicatePolicyException");
             e.printStackTrace();
         }
-
     }
 
     @Test
@@ -92,7 +90,6 @@ class PolicyContainerTest {
 
         Set<String> policies = this.policies.getPolicies();
         assertFalse(policies.contains("existPolicy"));
-
     }
 
     @Test
@@ -120,7 +117,6 @@ class PolicyContainerTest {
     void getPolicies() {
         Set<String> policies = this.policies.getPolicies();
         assertTrue(policies.contains("existPolicy"));
-
     }
 
     private boolean equal(Set<String> targetRulesName, Set<Rule> checkRules) {
