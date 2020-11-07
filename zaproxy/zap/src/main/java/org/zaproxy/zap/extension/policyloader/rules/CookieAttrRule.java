@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This is a rule for matching cookies containing HttpOnly/Secure/SameSite
+ */
 public class CookieAttrRule implements Rule {
 
     private final String NAME = "COOKIE REQUIRED ATTRIBUTES";
@@ -26,6 +29,11 @@ public class CookieAttrRule implements Rule {
         return "Msg has certain attributes in Cookie";
     }
 
+    /**
+     * Checks whether the HttpMessage violates the cookies-matching rule or not
+     * @param msg the HttpMessage that will be checked
+     * @return true if the HttpMessage violates the rule, false if not
+     */
     @Override
     public boolean isViolated(HttpMessage msg) {
 

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Rule for matching bad keywords
+ * This is a rule for matching bad keywords
  */
 public class KeywordMatchingRule implements Rule {
 
@@ -24,8 +24,8 @@ public class KeywordMatchingRule implements Rule {
     }
 
     /**
-     *
-     * @return Return the keywords to flag
+     * Returns the keywords to flag
+     * @return Returns the keywords to flag
      */
     public List<String> getFlaggedKeywords() {
         return new ArrayList<>(Arrays.asList(
@@ -36,6 +36,11 @@ public class KeywordMatchingRule implements Rule {
         ));
     }
 
+    /**
+     * Checks whether the HttpMessage violates the keyword-matching rule or not
+     * @param msg the HttpMessage that will be checked
+     * @return true if the HttpMessage violates the rule, false if not
+     */
     @Override
     public boolean isViolated(HttpMessage msg) {
         String bodySend = msg.getRequestBody().toString();

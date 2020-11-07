@@ -16,6 +16,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is a policy loader for policies of jar file
+ */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
@@ -42,6 +45,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         super.unload();
     }
 
+    /**
+     * Returns the PolicyScanner
+     * @return Returns the PolicyScanner
+     */
     private PolicyScanner getPolicyScanner() {
         if (policyScanner == null) {
             ExtensionPassiveScan extPassiveScan =  Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
@@ -50,6 +57,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return policyScanner;
     }
 
+    /**
+     * Returns an array of selected policies of jar files
+     * @return Returns an array of selected policies of jar files
+     */
     public File[] getSelectedJARFiles() {
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
@@ -61,6 +72,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return files;
     }
 
+    /**
+     * Loads the policy for testing
+     * @throws DuplicatePolicyException is thrown when the policy is duplicated
+     */
     private void loadRulesTest() throws DuplicatePolicyException { // todo remove
         String policyName = "testpolicy";
         List<Rule> testRules = new ArrayList<>();
@@ -74,6 +89,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         getPolicyScanner().addPolicy(policyName, testRules);
     }
 
+    /**
+     * Loads the policies and returns the GUI menu button
+     * @return Returns the GUI menu button
+     */
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
             menuPolicyLoader = new ZapMenuItem("PolicyLoader"); // TODO checkout external strings

@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This is a rule for matching domains from a given list
+ */
 public class DomainMatchingRule implements Rule {
 
     @Override
@@ -23,6 +26,10 @@ public class DomainMatchingRule implements Rule {
         return "The request is going to a flagged domain.";
     }
 
+    /**
+     * Returns for domains' string from a given list
+     * @return Returns for domains' string from a given list
+     */
     private List<String> getFlaggedDomains() {
         return new ArrayList<>(Arrays.asList(
                 "zerohedge.com",
@@ -31,6 +38,10 @@ public class DomainMatchingRule implements Rule {
         ));
     }
 
+    /**
+     * Returns for domains' regex from a given list
+     * @return Returns for domains' regex from a given list
+     */
     private ArrayList<Pattern> getRegexDomains() {
         ArrayList<Pattern> regFlaggedDomains = new ArrayList<Pattern>();
         for (String domain : getFlaggedDomains()) {
@@ -42,6 +53,11 @@ public class DomainMatchingRule implements Rule {
         return regFlaggedDomains;
     }
 
+    /**
+     * Checks whether the HttpMessage violates the domain-matching rule or not
+     * @param msg the HttpMessage that will be checked
+     * @return true if the HttpMessage violates the rule, false if not
+     */
     @Override
     public boolean isViolated(HttpMessage msg) {
         for (Pattern pattern : getRegexDomains()){
