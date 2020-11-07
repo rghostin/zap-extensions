@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 
 class PolicyScannerTest {
     PolicyScanner policyScanner;
@@ -63,6 +64,31 @@ class PolicyScannerTest {
                 });
     }
 
+
+    @Test
+    void removePolicy() {
+        String policyName = "testPolicy";
+        Set<Rule> rules = new HashSet<>();
+
+        try {
+            policyScanner.addPolicy("testPolicy", rules);
+        } catch (DuplicatePolicyException e) {
+            fail("Should not have thrown exception");
+        }
+
+        try {
+            policyScanner.removePolicy(policyName);
+        } catch (PolicyNotFoundException e) {
+            fail("Should not have thrown exception");
+        }
+
+        assertThrows(
+                PolicyNotFoundException.class,
+                () -> {
+                    policyScanner.removePolicy("testPolicy");
+                });
+    }
+
     @Test
     void scanHttpRequestSend() {
         // not active for now
@@ -72,6 +98,4 @@ class PolicyScannerTest {
     void scanHttpResponseReceive() {
         // todo test
     }
-
-    // todo test remove policy
 }
