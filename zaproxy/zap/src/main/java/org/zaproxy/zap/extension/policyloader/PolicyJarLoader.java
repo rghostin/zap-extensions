@@ -1,5 +1,7 @@
 package org.zaproxy.zap.extension.policyloader;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -20,8 +22,11 @@ public class PolicyJarLoader {
     }
 
     static private String extractPolicyName(String pathToJar) {
-        // todo fix
-        return pathToJar.substring(pathToJar.lastIndexOf(File.separator)+1);
+        // remove path
+        String policyNameNoPath =  pathToJar.substring(pathToJar.lastIndexOf(File.separator)+1);
+        // remove extension
+        String policyNameClean = FilenameUtils.removeExtension(policyNameNoPath);
+        return policyNameClean;
     }
 
     public String getPolicyName() {

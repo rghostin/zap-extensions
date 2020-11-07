@@ -19,38 +19,55 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
-public class HSTSRule implements Rule {
-
-    private final String HSTS_HEADER_NAME = "Strict-Transport-Security";
-
-    private final Pattern hstsPattern =
-            Pattern.compile("^max-age=(\\d+)(?:\\s*;\\s*includeSubDomains)?(?:\\s*;\\s*preload)?$");
+/**
+ * Rule for matching bad keywords
+ */
+public class KeywordMatchingRule implements Rule {
 
     @Override
     public String getName() {
-        return "HSTS_Rule";
+        return "Keyword_matching_rule";
     }
 
     @Override
     public String getDescription() {
-        return "The HTTP response message does not enforce HSTS.";
+        return "The HTTP message contains a flagged keyword.";
+    }
+
+<<<<<<< HEAD
+    private List<String> getFlaggedKeywords() {
+        return new ArrayList<>(Arrays.asList("hacker", "phishing", "eavesdropping", "hacking"));
+=======
+    /**
+     *
+     * @return Return the keywords to flag
+     */
+    public List<String> getFlaggedKeywords() {
+        return new ArrayList<>(Arrays.asList(
+                "hacker",
+                "phishing",
+                "eavesdropping",
+                "hacking"
+        ));
+>>>>>>> develop
     }
 
     @Override
     public boolean isViolated(HttpMessage msg) {
-        String hstsHeader = msg.getResponseHeader().getHeader(HSTS_HEADER_NAME);
-        if (hstsHeader == null) {
-            return true;
-        }
-        hstsHeader = hstsHeader.trim();
-        Matcher hstsMatcher = hstsPattern.matcher(hstsHeader);
-        if (!hstsMatcher.matches()) {
-            return true;
+        String bodySend = msg.getRequestBody().toString();
+        String bodyReceive = msg.getResponseBody().toString();
+        String body = bodySend + bodyReceive;
+
+        for (String keyword : getFlaggedKeywords()) {
+            if (body.contains(keyword)) {
+                return true;
+            }
         }
         return false;
     }

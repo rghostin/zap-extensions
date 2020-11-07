@@ -28,13 +28,16 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.rules.EmailMatchingRule;
-import org.zaproxy.zap.extension.policyloader.rules.HSTSRule;
-import org.zaproxy.zap.extension.policyloader.rules.HTTPSRule;
-import org.zaproxy.zap.extension.policyloader.rules.KeywordMatchingRule;
+import org.zaproxy.zap.extension.policyloader.rules.*;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
@@ -92,6 +95,9 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         testRules.add(new HSTSRule());
         testRules.add(new EmailMatchingRule());
         testRules.add(new HTTPSRule());
+        testRules.add(new DomainMatchingRule());
+        testRules.add(new ExpectCTRule());
+	testRules.add(new CookieAttrRule());
         getPolicyScanner().addPolicy(policyName, testRules);
     }
 
@@ -133,6 +139,5 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         }
         return menuPolicyLoader;
     }
-
 
 }
