@@ -46,11 +46,11 @@ public class Report {
         return html_template_content;
     }
 
-    public void addViolation(String policyName, String ruleName, String description) {
+    public void addViolation(Violation violation) {
         rows.add(
                 String.format(
                         "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
-                        , policyName, ruleName, description
+                        , violation.getPolicyName(), violation.getRuleName(), violation.getDescription()
                 ));
     }
 
@@ -72,12 +72,6 @@ public class Report {
     @Override
     public String toString() {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
-    }
-
-    public static void main(String[] args) throws IOException {
-        Report r= new Report();
-        r.addViolation("aa", "bbb", "ccc");
-        System.out.println(r.toString());
     }
 
 }

@@ -19,10 +19,11 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** This is a rule for checking the HSTS header exist in the response HTTPMessage */
 public class HSTSRule implements Rule {

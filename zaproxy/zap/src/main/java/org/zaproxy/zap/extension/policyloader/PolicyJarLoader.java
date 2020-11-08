@@ -19,16 +19,15 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.commons.io.FilenameUtils;
 
 /** Responsible of loading a JAR file containing policies */
 public class PolicyJarLoader {

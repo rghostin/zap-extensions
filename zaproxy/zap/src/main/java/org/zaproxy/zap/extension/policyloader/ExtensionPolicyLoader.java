@@ -19,10 +19,6 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
-import java.io.File;
-import java.io.IOException;
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -32,26 +28,26 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.File;
+import java.io.IOException;
+
 /** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
+    private ZapMenuItem menuPolicyViolationsReport;
+
     private static final int SCANNER_PLUGIN_ID = 500001;
     private static final String NAME = "Policy Loader";
     protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
 
-    private Report scanReport;
 
     public ExtensionPolicyLoader() {
         super(NAME);
         setI18nPrefix(PREFIX);
-
-        try {
-            scanReport = new Report();
-        } catch (IOException e) {
-            View.getSingleton().showMessageDialog("Unable to fetch report template");
-        }
     }
 
     @Override
@@ -61,6 +57,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
+            extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
 
@@ -114,7 +111,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
      */
     private ZapMenuItem getMenuPolicyLoader() {
         if (menuPolicyLoader == null) {
-            menuPolicyLoader = new ZapMenuItem(PREFIX + ".panel.title");
+            menuPolicyLoader = new ZapMenuItem(PREFIX + ".panel.loader_title");
 
             menuPolicyLoader.addActionListener(
                     new java.awt.event.ActionListener() {
@@ -163,5 +160,36 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     });
         }
         return menuPolicyLoader;
+    }
+
+    private ZapMenuItem getMenuReportPolicyViolations() {
+        if (menuPolicyViolationsReport == null) {
+            menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
+
+            menuPolicyViolationsReport.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            // todo ask for path
+                            String path = "/tmp/myrep.html";
+                            try {
+                                buildViolationsReport(path);
+                                View.getSingleton().showMessageDialog("Report built: "+path);
+                            } catch (IOException e) {
+                                View.getSingleton().showMessageDialog("Error building report");
+                            }
+                        }
+                    }
+            );
+        }
+        return menuPolicyViolationsReport;
+    }
+
+    public void buildViolationsReport(String path) throws IOException {
+        Report scanReport = new Report();
+        for (Violation violation : policyScanner.getViolationHistory()) {
+            scanReport.addViolation(violation);
+        }
+        scanReport.writeToFile(path);
     }
 }
