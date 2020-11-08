@@ -1,5 +1,27 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2020 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.policyloader;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.*;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,13 +30,9 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.rules.*;
 
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class PolicyTest {
 
-    Policy testPolicy= new Policy("testPolicy");
+    Policy testPolicy = new Policy("testPolicy");
     Set<Rule> rulesContainer = new HashSet<>();
     Map<String, String> violationsTitlesContainer = new HashMap<>();
     String COOKIE_NAME = "Cookie_Attribute_Rule";
@@ -89,7 +107,7 @@ class PolicyTest {
         Set<Rule> activatedRules = new HashSet<>();
         for (int i = 0; i < POLICY_SIZE; i++) {
             Rule rule = getRandomRule(testPolicy.getRules());
-            if (! contains(activatedRules, rule)) {
+            if (!contains(activatedRules, rule)) {
                 activatedRules.add(rule);
                 targetViolationsTitles.add(violationsTitlesContainer.get(rule.getName()));
                 activatedRuleName.add(rule.getName());
@@ -102,19 +120,19 @@ class PolicyTest {
     }
 
     private boolean contains(Set<Rule> rules, Rule newRule) {
-        for (Rule rule: rules) {
-            if (rule.getName().equals(newRule.getName())){
+        for (Rule rule : rules) {
+            if (rule.getName().equals(newRule.getName())) {
                 return true;
             }
         }
         return false;
     }
 
-    private Rule getRandomRule(Set<Rule> rules){
+    private Rule getRandomRule(Set<Rule> rules) {
         int randomNum = new Random().nextInt(rules.size());
         int i = 0;
         for (Rule rule : rules) {
-            if(i == randomNum){
+            if (i == randomNum) {
                 return rule;
             }
             i++;
@@ -136,7 +154,8 @@ class PolicyTest {
         return targetViolationsTitles.equals(cVTitles);
     }
 
-    private HttpMessage createHttpMsg(List<String> ruleNames) throws URIException, HttpMalformedHeaderException {
+    private HttpMessage createHttpMsg(List<String> ruleNames)
+            throws URIException, HttpMalformedHeaderException {
         String url = "http://www.example.com/";
         String keyWord = "";
         String cookieAttribute = "HttpOnly; Secure; SameSite=None";

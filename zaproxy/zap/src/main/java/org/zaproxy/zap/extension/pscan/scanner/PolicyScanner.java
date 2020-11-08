@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Policy;
@@ -28,15 +32,7 @@ import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-
-/**
- * Responsible of checking passively whether any loaded policy is violated
- */
+/** Responsible of checking passively whether any loaded policy is violated */
 public class PolicyScanner extends PluginPassiveScanner {
     private Set<Policy> policies = new HashSet<>();
     private List<Violation> violationHistory = new ArrayList<>();
@@ -58,6 +54,7 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     /**
      * Log an alert in the Zap gui
+     *
      * @param violation : the violation to logged
      */
     private void raiseAlert(Violation violation) {
@@ -69,9 +66,7 @@ public class PolicyScanner extends PluginPassiveScanner {
                 .raise();
     }
 
-    /**
-     * @return the history of all violations encountered
-     */
+    /** @return the history of all violations encountered */
     public List<Violation> getViolationHistory() {
         return violationHistory;
     }
@@ -82,8 +77,9 @@ public class PolicyScanner extends PluginPassiveScanner {
     }
 
     /**
-     * Scan HTTP messages upon reception
-     * If any policy is violated raise an alert and store the violation in history
+     * Scan HTTP messages upon reception If any policy is violated raise an alert and store the
+     * violation in history
+     *
      * @param msg
      * @param id
      * @param source
@@ -95,14 +91,15 @@ public class PolicyScanner extends PluginPassiveScanner {
 
             violationHistory.addAll(violations);
 
-           for (Violation violation : violations) {
-               raiseAlert(violation);
-           }
+            for (Violation violation : violations) {
+                raiseAlert(violation);
+            }
         }
     }
 
     /**
      * Checks whether a policy zith a given name is loaded
+     *
      * @param policyName : the policy name
      * @return : boolean
      */
@@ -117,6 +114,7 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     /**
      * Add a new policy
+     *
      * @param policy: the policy to be added
      * @throws DuplicatePolicyException : a policy with same name already exists
      */
@@ -129,11 +127,12 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     /**
      * Remove a policy
+     *
      * @param policyName the policy name
      * @throws PolicyNotFoundException : a policy with this name is not registered
      */
     public void removePolicy(String policyName) throws PolicyNotFoundException {
-        if (! hasPolicy(policyName)) {
+        if (!hasPolicy(policyName)) {
             throw new PolicyNotFoundException();
         }
         policies.removeIf(policy -> policy.getName().equals(policyName));

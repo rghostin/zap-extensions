@@ -19,17 +19,16 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.policyloader.Policy;
 import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class PolicyScannerTest {
     PolicyScanner policyScanner;
@@ -54,7 +53,6 @@ class PolicyScannerTest {
         String policyName = "testPolicy";
         Set<Rule> rules = new HashSet<>();
         Policy policy = new Policy(policyName);
-
 
         try {
             policyScanner.addPolicy(policy);

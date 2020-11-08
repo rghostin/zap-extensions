@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.extension.Extension;
+import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -185,7 +186,7 @@ public final class CoreFunctionality {
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner());
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner());
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.StatsPassiveScanner());
-            rules.add(new org.zaproxy.zap.extension.pscan.scanner.PolicyScanner()); // todo remove
+            rules.add(new PolicyScanner()); // todo remove
             rules.trimToSize();
 
             for (PluginPassiveScanner rule : rules) {

@@ -19,15 +19,12 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-/**
- * A rule for checking whether cookies have security flags enabled
- */
+/** A rule for checking whether cookies have security flags enabled */
 public class CookieAttrRule implements Rule {
 
     private final Pattern httpOnly = Pattern.compile("(;?)(\\s*)HttpOnly(;?)");
@@ -46,6 +43,7 @@ public class CookieAttrRule implements Rule {
 
     /**
      * Checks whether the cookies in message (request or response) have all security flags on
+     *
      * @param msg the HttpMessage that will be checked
      * @return
      */

@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import java.io.File;
+import java.io.IOException;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -27,11 +31,6 @@ import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyExceptio
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.scanner.PolicyScanner;
 import org.zaproxy.zap.view.ZapMenuItem;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.IOException;
 
 /** This is a policy loader for policies of jar file */
 public class ExtensionPolicyLoader extends ExtensionAdaptor {
@@ -43,7 +42,6 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     private static final String NAME = "Policy Loader";
     protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
-
 
     public ExtensionPolicyLoader() {
         super(NAME);
@@ -126,8 +124,9 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     }
 
     /**
-     * load jar files as policies into {@code PolicyScanner}
-     * display status message (failure or success)
+     * load jar files as policies into {@code PolicyScanner} display status message (failure or
+     * success)
+     *
      * @param files: Array of jar file objects
      */
     private void loadPolicyJars(File[] files) {
@@ -143,24 +142,24 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                 getPolicyScanner().addPolicy(policy);
                 loadedPolicyNames.append(policy.getName()).append("\n");
             } catch (DuplicatePolicyException e) {
-                View.getSingleton().showMessageDialog("Error: Policy "+ policy.getName()
-                        + " already exists.");
+                View.getSingleton()
+                        .showMessageDialog(
+                                "Error: Policy " + policy.getName() + " already exists.");
             } catch (Exception e) {
-                View.getSingleton().showMessageDialog("Error: loading policy in "
-                        + file.getName());
+                View.getSingleton().showMessageDialog("Error: loading policy in " + file.getName());
             }
-
         }
 
         if (!loadedPolicyNames.toString().isEmpty()) {
-            View.getSingleton().showMessageDialog(
-                            "Policies loaded successfully: \n"
-                                    + loadedPolicyNames.toString());
+            View.getSingleton()
+                    .showMessageDialog(
+                            "Policies loaded successfully: \n" + loadedPolicyNames.toString());
         }
     }
 
     /**
      * Menu button for building a violations report
+     *
      * @return the menu button
      */
     private ZapMenuItem getMenuReportPolicyViolations() {
@@ -174,8 +173,9 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                             String path;
 
                             JFileChooser fileChooser = new JFileChooser();
-                            int option = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
-                            if(option == JFileChooser.APPROVE_OPTION){
+                            int option =
+                                    fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
+                            if (option == JFileChooser.APPROVE_OPTION) {
                                 path = fileChooser.getSelectedFile().getAbsolutePath();
                             } else {
                                 // canceled
@@ -184,20 +184,20 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
 
                             try {
                                 buildViolationsReport(path);
-                                View.getSingleton().showMessageDialog("Report built: "+path);
+                                View.getSingleton().showMessageDialog("Report built: " + path);
                             } catch (IOException e) {
                                 View.getSingleton().showMessageDialog("Error building report");
                             }
                         }
-                    }
-            );
+                    });
         }
         return menuPolicyViolationsReport;
     }
 
     /**
      * Build a violation report with the violations encountered so far
-      * @param path : the file path of the report
+     *
+     * @param path : the file path of the report
      * @throws IOException
      */
     public void buildViolationsReport(String path) throws IOException {

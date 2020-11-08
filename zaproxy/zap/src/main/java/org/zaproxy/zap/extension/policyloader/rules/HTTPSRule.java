@@ -19,11 +19,10 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.Rule;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.policyloader.Rule;
 
 /** This is a rule for returning whether the traffic goes over HTTPS */
 public class HTTPSRule implements Rule {
