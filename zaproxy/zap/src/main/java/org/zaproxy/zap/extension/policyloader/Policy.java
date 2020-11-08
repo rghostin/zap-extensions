@@ -43,6 +43,10 @@ public class Policy {
         rules.remove(rule);
     }
 
+    public Set<Rule> getRules() {
+        return rules;
+    }
+
     public List<Violation> checkViolations(HttpMessage msg) {
         List<Violation> violations = new ArrayList<>();
         for (Rule rule : rules) {
