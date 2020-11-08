@@ -30,7 +30,7 @@ public class HTTPSRule implements Rule {
 
     private final String MY_APP_HOST = "cern.ch";
 
-    private Pattern reMyappDomain =
+    private final Pattern reMyappDomain =
             Pattern.compile("^(?:[a-z0-9]+[.])*" + MY_APP_HOST + "$", Pattern.CASE_INSENSITIVE);
 
     @Override
@@ -48,7 +48,7 @@ public class HTTPSRule implements Rule {
     }
 
     /**
-     * Checks whether the hostname in message whether matches
+     * Checks whether the message is going to our app
      *
      * @param msg the HttpMessage that will be checked
      * @return true if the hostname matches, false if not

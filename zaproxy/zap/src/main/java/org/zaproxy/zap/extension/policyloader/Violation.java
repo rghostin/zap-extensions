@@ -2,6 +2,9 @@ package org.zaproxy.zap.extension.policyloader;
 
 import org.parosproxy.paros.network.HttpMessage;
 
+/**
+ * Represents a rule violation
+ */
 public class Violation {
     private String policyName;
     private String ruleName;

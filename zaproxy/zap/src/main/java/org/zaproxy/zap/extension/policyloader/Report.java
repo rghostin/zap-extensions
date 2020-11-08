@@ -91,6 +91,9 @@ public class Report {
             fileWriter.close();
     }
 
+    /**
+     * @return : the HTML report in string format
+     */
     @Override
     public String toString() {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());

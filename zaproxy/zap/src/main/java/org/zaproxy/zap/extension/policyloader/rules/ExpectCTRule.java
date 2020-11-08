@@ -53,7 +53,7 @@ public class ExpectCTRule implements Rule {
     }
 
     /**
-     * Checks whether the hostname in message whether matches
+     * Checks whether the message is going to our app
      *
      * @param msg the HttpMessage that will be checked
      * @return true if the hostname matches, false if not

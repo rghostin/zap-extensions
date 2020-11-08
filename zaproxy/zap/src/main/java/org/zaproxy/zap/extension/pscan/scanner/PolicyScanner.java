@@ -34,7 +34,9 @@ import java.util.List;
 import java.util.Set;
 
 
-// todo javadoc
+/**
+ * Responsible of checking passively whether any loaded policy is violated
+ */
 public class PolicyScanner extends PluginPassiveScanner {
     private Set<Policy> policies = new HashSet<>();
     private List<Violation> violationHistory = new ArrayList<>();
@@ -54,6 +56,10 @@ public class PolicyScanner extends PluginPassiveScanner {
         return "Policy scanner";
     }
 
+    /**
+     * Log an alert in the Zap gui
+     * @param violation : the violation to logged
+     */
     private void raiseAlert(Violation violation) {
         newAlert()
                 .setName(violation.getTitle())
@@ -63,6 +69,9 @@ public class PolicyScanner extends PluginPassiveScanner {
                 .raise();
     }
 
+    /**
+     * @return the history of all violations encountered
+     */
     public List<Violation> getViolationHistory() {
         return violationHistory;
     }
@@ -72,6 +81,13 @@ public class PolicyScanner extends PluginPassiveScanner {
         // the work is done when the message is received
     }
 
+    /**
+     * Scan HTTP messages upon reception
+     * If any policy is violated raise an alert and store the violation in history
+     * @param msg
+     * @param id
+     * @param source
+     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         for (Policy policy : policies) {
@@ -85,6 +101,11 @@ public class PolicyScanner extends PluginPassiveScanner {
         }
     }
 
+    /**
+     * Checks whether a policy zith a given name is loaded
+     * @param policyName : the policy name
+     * @return : boolean
+     */
     public boolean hasPolicy(String policyName) {
         for (Policy policy : policies) {
             if (policy.getName().equals(policyName)) {
@@ -94,6 +115,11 @@ public class PolicyScanner extends PluginPassiveScanner {
         return false;
     }
 
+    /**
+     * Add a new policy
+     * @param policy: the policy to be added
+     * @throws DuplicatePolicyException : a policy with same name already exists
+     */
     public void addPolicy(Policy policy) throws DuplicatePolicyException {
         if (hasPolicy(policy.getName())) {
             throw new DuplicatePolicyException();
@@ -101,6 +127,11 @@ public class PolicyScanner extends PluginPassiveScanner {
         policies.add(policy);
     }
 
+    /**
+     * Remove a policy
+     * @param policyName the policy name
+     * @throws PolicyNotFoundException : a policy with this name is not registered
+     */
     public void removePolicy(String policyName) throws PolicyNotFoundException {
         if (! hasPolicy(policyName)) {
             throw new PolicyNotFoundException();
