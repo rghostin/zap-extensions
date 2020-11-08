@@ -22,19 +22,22 @@ package org.zaproxy.zap.extension.pscan.scanner;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.policyloader.Policy;
 import org.zaproxy.zap.extension.policyloader.PolicyContainer;
 import org.zaproxy.zap.extension.policyloader.Rule;
+import org.zaproxy.zap.extension.policyloader.Violation;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class PolicyScanner extends PluginPassiveScanner {
-
-    private PolicyContainer policies = new PolicyContainer();
+    private List<Policy> policies = new ArrayList<>();
+    private List<Violation> violationHistory = new ArrayList<>();
 
     @Override
     public int getPluginId() {
@@ -51,14 +54,13 @@ public class PolicyScanner extends PluginPassiveScanner {
         return "Policy scanner";
     }
 
-    private void raiseAlert(
-            String policyName, String ruleName, String description, HttpMessage msg) {
-        String title = String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
+    private void raiseAlert(Violation violation) {
+        String title =
         newAlert()
-                .setName(title)
-                .setDescription(description)
-                .setMessage(msg)
-                .setUri(msg.getRequestHeader().getURI().toString())
+                .setName(violation.getTitle())
+                .setDescription(violation.getDescription())
+                .setMessage(violation.getMsg())
+                .setUri(violation.getMsg().getRequestHeader().getURI().toString())
                 .raise();
     }
 
@@ -75,17 +77,14 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        for (String policyName : policies.getPolicies()) {
-            Set<Rule> rules = null;
-            try {
-                rules = policies.getPolicyRules(policyName);
-            } catch (PolicyNotFoundException e) {
-                // wont happen
-            }
+        for (Policy policy : policies) {
+            List<Violation> violations = policy.checkViolations(msg);
 
-            for (Rule rule : rules) {
-                enforceOrRaise(rule, policyName, msg);
-            }
+            violationHistory.addAll(violations);
+
+           for (Violation violation : violations) {
+               raiseAlert(violation);
+           }
         }
     }
 
