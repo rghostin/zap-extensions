@@ -1,6 +1,10 @@
 package org.zaproxy.zap.extension.policyloader;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -18,6 +22,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class ReportTest {
 
     Report report;
+
+    class TestRule implements Rule {
+
+        @Override
+        public String getName() {
+            return "Test Rule Name";
+        }
+
+        @Override
+        public String getDescription() {
+            return "Test Rule Description";
+        }
+
+        @Override
+        public boolean isViolated(HttpMessage msg) {
+            return false;
+        }
+    }
 
     private List<String> getPolicyName() {
         return new ArrayList<>(
@@ -37,20 +59,29 @@ class ReportTest {
                         "Test Use"));
     }
 
+    private List<TestRule> getTestRules() {
+        TestRule testRule = new TestRule();
+        return new ArrayList<TestRule>(
+                Arrays.asList(testRule));
+    }
+
+    private HttpMessage createHttpMsg() throws URIException, HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
+        return msg;
+    }
+
     @Test
     void addViolation() throws IOException {
-        Iterator<String> policyI = getPolicyName().iterator();
-        Iterator<String> ruleI = getRuleName().iterator();
-        Iterator<String> descriptionI = getDescription().iterator();
+        HttpMessage testHTTPMessage = createHttpMsg();
+        String policyName = "Test Policy Name";
+        List<TestRule> testRuleList = getTestRules();
         report = new Report();
-        while(policyI.hasNext() && ruleI.hasNext() && descriptionI.hasNext()){
-            String policyName = policyI.next();
-            String ruleName = ruleI.next();
-            String description = descriptionI.next();
-            report.addViolation(policyName,ruleName,description);
+        for (TestRule testRule : testRuleList ) {
+            Violation violation = new Violation(policyName,testRule,testHTTPMessage);
+            report.addViolation(violation);
             assertTrue(report.toString().contains(String.format(
-                    "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
-                    , policyName, ruleName, description
+                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                    , policyName, testRule.getName(), violation.getUri(), testRule.getDescription()
             )));
         }
     }
@@ -68,25 +99,21 @@ class ReportTest {
     @Test
     void writeToFileContent() throws IOException {
         String filename = System.getProperty("java.io.tmpdir") + File.separator + "testreport.html" ;
-        Iterator<String> policyI = getPolicyName().iterator();
-        Iterator<String> ruleI = getRuleName().iterator();
-        Iterator<String> descriptionI = getDescription().iterator();
+        HttpMessage testHTTPMessage = createHttpMsg();
+        String policyName = "Test Policy Name";
+        List<TestRule> testRuleList = getTestRules();
         report = new Report();
-        while(policyI.hasNext() && ruleI.hasNext() && descriptionI.hasNext()){
-            String policyName = policyI.next();
-            String ruleName = ruleI.next();
-            String description = descriptionI.next();
-            report.addViolation(policyName,ruleName,description);
+        for (TestRule testRule : testRuleList ) {
+            Violation violation = new Violation(policyName,testRule,testHTTPMessage);
+            report.addViolation(violation);
         }
         Path path = Paths.get(filename);
         report.writeToFile(filename);
-        while(policyI.hasNext() && ruleI.hasNext() && descriptionI.hasNext()){
-            String policyName = policyI.next();
-            String ruleName = ruleI.next();
-            String description = descriptionI.next();
-            assertTrue(report.toString().contains(String.format(
-                    "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
-                    , policyName, ruleName, description
+        String fileString = Files.readAllLines(path).toString();
+        for (TestRule testRule : testRuleList) {
+            assertTrue(fileString.contains(String.format(
+                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                    , policyName, testRule.getName(), testHTTPMessage.getRequestHeader().getURI().toString(), testRule.getDescription()
             )));
         }
         Files.delete(path);
