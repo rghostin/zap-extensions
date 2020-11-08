@@ -19,13 +19,14 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
-/** This is a rule for matching bad keywords */
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+/** This is a rule for flagging bad keywords */
 public class KeywordMatchingRule implements Rule {
 
     @Override

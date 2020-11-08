@@ -19,24 +19,22 @@
  */
 package org.zaproxy.zap.extension.policyloader;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.commons.io.FilenameUtils;
 
 /** Responsible of loading a JAR file containing policies */
 public class PolicyJarLoader {
-    private String policyName;
-    private Set<Rule> rules = new HashSet<>();
+    private Policy policy;
 
     /**
-     * Load the jar file's rules
+     * Load the jar file's rules as a policy
      *
      * @param pathToJar : path to jar file on the filesystem
      * @throws ClassNotFoundException
@@ -47,7 +45,8 @@ public class PolicyJarLoader {
     public PolicyJarLoader(String pathToJar)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
                     IOException {
-        policyName = extractPolicyName(pathToJar);
+        String policyName = extractPolicyName(pathToJar);
+        policy = new Policy(policyName);
         loadPolicyJar(pathToJar);
     }
 
@@ -65,12 +64,8 @@ public class PolicyJarLoader {
         return policyNameClean;
     }
 
-    public String getPolicyName() {
-        return policyName;
-    }
-
-    public Set<Rule> getRules() {
-        return rules;
+    public Policy getPolicy() {
+        return policy;
     }
 
     /**
@@ -102,7 +97,7 @@ public class PolicyJarLoader {
             Class<?> pluginRuleClass_ = cl.loadClass(className);
             Class<? extends Rule> pluginRuleClass = pluginRuleClass_.asSubclass(Rule.class);
             Rule pluginRule = pluginRuleClass.newInstance();
-            rules.add(pluginRule);
+            policy.addRule(pluginRule);
         }
     }
 }

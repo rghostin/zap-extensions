@@ -19,22 +19,27 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.PolicyContainer;
-import org.zaproxy.zap.extension.policyloader.Rule;
+import org.zaproxy.zap.extension.policyloader.Policy;
+import org.zaproxy.zap.extension.policyloader.Violation;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class PolicyScanner extends PluginPassiveScanner {
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-    private PolicyContainer policies = new PolicyContainer();
+
+/**
+ * Responsible of checking passively whether any loaded policy is violated
+ */
+public class PolicyScanner extends PluginPassiveScanner {
+    private Set<Policy> policies = new HashSet<>();
+    private List<Violation> violationHistory = new ArrayList<>();
 
     @Override
     public int getPluginId() {
@@ -51,21 +56,24 @@ public class PolicyScanner extends PluginPassiveScanner {
         return "Policy scanner";
     }
 
-    private void raiseAlert(
-            String policyName, String ruleName, String description, HttpMessage msg) {
-        String title = String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
+    /**
+     * Log an alert in the Zap gui
+     * @param violation : the violation to logged
+     */
+    private void raiseAlert(Violation violation) {
         newAlert()
-                .setName(title)
-                .setDescription(description)
-                .setMessage(msg)
-                .setUri(msg.getRequestHeader().getURI().toString())
+                .setName(violation.getTitle())
+                .setDescription(violation.getDescription())
+                .setMessage(violation.getMsg())
+                .setUri(violation.getUri())
                 .raise();
     }
 
-    private void enforceOrRaise(Rule rule, String policyName, HttpMessage msg) {
-        if (rule.isViolated(msg)) {
-            raiseAlert(policyName, rule.getName(), rule.getDescription(), msg);
-        }
+    /**
+     * @return the history of all violations encountered
+     */
+    public List<Violation> getViolationHistory() {
+        return violationHistory;
     }
 
     @Override
@@ -73,27 +81,61 @@ public class PolicyScanner extends PluginPassiveScanner {
         // the work is done when the message is received
     }
 
+    /**
+     * Scan HTTP messages upon reception
+     * If any policy is violated raise an alert and store the violation in history
+     * @param msg
+     * @param id
+     * @param source
+     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        for (String policyName : policies.getPolicies()) {
-            Set<Rule> rules = null;
-            try {
-                rules = policies.getPolicyRules(policyName);
-            } catch (PolicyNotFoundException e) {
-                // wont happen
-            }
+        for (Policy policy : policies) {
+            List<Violation> violations = policy.checkViolations(msg);
 
-            for (Rule rule : rules) {
-                enforceOrRaise(rule, policyName, msg);
-            }
+            violationHistory.addAll(violations);
+
+           for (Violation violation : violations) {
+               raiseAlert(violation);
+           }
         }
     }
 
-    public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
-        policies.addPolicy(policyName, rules);
+    /**
+     * Checks whether a policy zith a given name is loaded
+     * @param policyName : the policy name
+     * @return : boolean
+     */
+    public boolean hasPolicy(String policyName) {
+        for (Policy policy : policies) {
+            if (policy.getName().equals(policyName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    /**
+     * Add a new policy
+     * @param policy: the policy to be added
+     * @throws DuplicatePolicyException : a policy with same name already exists
+     */
+    public void addPolicy(Policy policy) throws DuplicatePolicyException {
+        if (hasPolicy(policy.getName())) {
+            throw new DuplicatePolicyException();
+        }
+        policies.add(policy);
+    }
+
+    /**
+     * Remove a policy
+     * @param policyName the policy name
+     * @throws PolicyNotFoundException : a policy with this name is not registered
+     */
     public void removePolicy(String policyName) throws PolicyNotFoundException {
-        policies.removePolicy(policyName);
+        if (! hasPolicy(policyName)) {
+            throw new PolicyNotFoundException();
+        }
+        policies.removeIf(policy -> policy.getName().equals(policyName));
     }
 }

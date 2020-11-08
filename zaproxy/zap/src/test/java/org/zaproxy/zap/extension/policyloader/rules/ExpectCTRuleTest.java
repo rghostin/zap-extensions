@@ -19,14 +19,14 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ExpectCTRuleTest {
 

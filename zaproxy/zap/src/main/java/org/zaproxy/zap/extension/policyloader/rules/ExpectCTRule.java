@@ -19,10 +19,11 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This is a rule for checking whether the ExpectCT rule exist in the response HTTPMessage of our
@@ -52,7 +53,7 @@ public class ExpectCTRule implements Rule {
     }
 
     /**
-     * Checks whether the hostname in message whether matches
+     * Checks whether the message is going to our app
      *
      * @param msg the HttpMessage that will be checked
      * @return true if the hostname matches, false if not

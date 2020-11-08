@@ -19,18 +19,20 @@
  */
 package org.zaproxy.zap.extension.policyloader.rules;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Rule;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * A rule for checking whether cookies have security flags enabled
+ */
 public class CookieAttrRule implements Rule {
 
-    private final String NAME = "COOKIE REQUIRED ATTRIBUTES";
-
-    private Pattern httpOnly = Pattern.compile("(;?)(\\s*)HttpOnly(;?)");
-    private Pattern secure = Pattern.compile("(;?)(\\s*)Secure(;?)");
-    private Pattern sameSite = Pattern.compile("(;?)(\\s*)SameSite=(None|Strict|Lax)(;?)");
+    private final Pattern httpOnly = Pattern.compile("(;?)(\\s*)HttpOnly(;?)");
+    private final Pattern secure = Pattern.compile("(;?)(\\s*)Secure(;?)");
+    private final Pattern sameSite = Pattern.compile("(;?)(\\s*)SameSite=(None|Strict|Lax)(;?)");
 
     @Override
     public String getName() {
@@ -42,6 +44,11 @@ public class CookieAttrRule implements Rule {
         return "Msg has certain attributes in Cookie";
     }
 
+    /**
+     * Checks whether the cookies in message (request or response) have all security flags on
+     * @param msg the HttpMessage that will be checked
+     * @return
+     */
     @Override
     public boolean isViolated(HttpMessage msg) {
 

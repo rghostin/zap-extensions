@@ -26,11 +26,16 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Responsible for reporting policy rule violations
+ * Builds an HTML report
+ */
 public class Report {
 
     private List<String> rows = new ArrayList<>();
 
-    private String html_template_content;
+    private final String html_template_content;
     private final static String TEMPLATE_REP_VAR = "III_TABLE_CONTENT_III";
 
     public Report() throws IOException {
@@ -43,18 +48,31 @@ public class Report {
         html_template_content = new String(Files.readAllBytes(html_template_file.toPath()));
     }
 
+    /**
+     * Get a string of the html template
+     * @return html template content
+     */
     private String getTemplateContent() {
         return html_template_content;
     }
 
-    public void addViolation(String policyName, String ruleName, String description) {
+    /**
+     * Add a violation to the report
+     * @param violation
+     */
+    public void addViolation(Violation violation) {
         rows.add(
                 String.format(
-                        "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
-                        , policyName, ruleName, description
+                        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                        , violation.getPolicyName(), violation.getRuleName(), violation.getUri(),
+                        violation.getDescription()
                 ));
     }
 
+    /**
+     * Get the HTML table of violations
+     * @return
+     */
     private String getTableContent() {
         StringBuilder tableContent = new StringBuilder();
         for (String row : rows) {
@@ -63,12 +81,20 @@ public class Report {
         return tableContent.toString();
     }
 
+    /**
+     * Write HTML report to file
+     * @param fileName : file name and path on the filesystem
+     * @throws IOException
+     */
     public void writeToFile(String fileName) throws IOException {
             FileWriter fileWriter = new FileWriter(fileName);
             fileWriter.write(toString());
             fileWriter.close();
     }
 
+    /**
+     * @return : the HTML report in string format
+     */
     @Override
     public String toString() {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
