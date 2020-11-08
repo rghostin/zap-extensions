@@ -67,7 +67,6 @@ public class Report {
             FileWriter fileWriter = new FileWriter(fileName);
             fileWriter.write(toString());
             fileWriter.close();
-
     }
 
     @Override
