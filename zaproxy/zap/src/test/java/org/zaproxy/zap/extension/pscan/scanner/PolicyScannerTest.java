@@ -25,11 +25,11 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.policyloader.Policy;
 import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 
-// todo fix
 class PolicyScannerTest {
     PolicyScanner policyScanner;
 
@@ -50,43 +50,46 @@ class PolicyScannerTest {
 
     @Test
     void addPolicy() {
-//        String policyName = "testPolicy";
-//        Set<Rule> rules = new HashSet<>();
-//
-//        try {
-//            policyScanner.addPolicy("testPolicy", rules);
-//        } catch (DuplicatePolicyException e) {
-//            fail("Should not have thrown exception");
-//        }
-//        assertThrows(
-//                DuplicatePolicyException.class,
-//                () -> {
-//                    policyScanner.addPolicy("testPolicy", rules);
-//                });
+        String policyName = "testPolicy";
+        Set<Rule> rules = new HashSet<>();
+        Policy policy = new Policy(policyName);
+
+
+        try {
+            policyScanner.addPolicy(policy);
+        } catch (DuplicatePolicyException e) {
+            fail("Should not have thrown exception");
+        }
+        assertThrows(
+                DuplicatePolicyException.class,
+                () -> {
+                    policyScanner.addPolicy(policy);
+                });
     }
 
     @Test
     void removePolicy() {
-//        String policyName = "testPolicy";
-//        Set<Rule> rules = new HashSet<>();
-//
-//        try {
-//            policyScanner.addPolicy("testPolicy", rules);
-//        } catch (DuplicatePolicyException e) {
-//            fail("Should not have thrown exception");
-//        }
-//
-//        try {
-//            policyScanner.removePolicy(policyName);
-//        } catch (PolicyNotFoundException e) {
-//            fail("Should not have thrown exception");
-//        }
-//
-//        assertThrows(
-//                PolicyNotFoundException.class,
-//                () -> {
-//                    policyScanner.removePolicy("testPolicy");
-//                });
+        String policyName = "testPolicy";
+        Set<Rule> rules = new HashSet<>();
+        Policy policy = new Policy(policyName);
+
+        try {
+            policyScanner.addPolicy(policy);
+        } catch (DuplicatePolicyException e) {
+            fail("Should not have thrown exception");
+        }
+
+        try {
+            policyScanner.removePolicy(policyName);
+        } catch (PolicyNotFoundException e) {
+            fail("Should not have thrown exception");
+        }
+
+        assertThrows(
+                PolicyNotFoundException.class,
+                () -> {
+                    policyScanner.removePolicy("testPolicy");
+                });
     }
 
     @Test

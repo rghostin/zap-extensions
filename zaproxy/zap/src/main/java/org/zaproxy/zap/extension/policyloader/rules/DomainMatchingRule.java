@@ -47,7 +47,7 @@ public class DomainMatchingRule implements Rule {
      * @return Returns for domains' string from a given list
      */
     private List<String> getFlaggedDomains() {
-        return new ArrayList<>(Arrays.asList("zerohedge.com"/*, "cern.ch"*/, "imdb.com"));
+        return new ArrayList<>(Arrays.asList("zerohedge.com", "cern.ch", "imdb.com"));
     }
 
     /**
