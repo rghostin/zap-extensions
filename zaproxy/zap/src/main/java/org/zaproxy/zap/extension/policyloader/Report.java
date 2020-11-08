@@ -39,6 +39,7 @@ public class Report {
                         Report.class
                                 .getResource("/resource/policy_report_template.html")
                                 .getFile());
+        System.out.println(html_template_file.toPath());
         html_template_content = new String(Files.readAllBytes(html_template_file.toPath()));
     }
 
@@ -52,7 +53,6 @@ public class Report {
                         "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
                         , policyName, ruleName, description
                 ));
-
     }
 
     private String getTableContent() {
@@ -74,5 +74,4 @@ public class Report {
     public String toString() {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
     }
-
 }
