@@ -35,6 +35,10 @@ public class Violation {
         return String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
     }
 
+    public String getUri() {
+        return getMsg().getRequestHeader().getURI().toString();
+    }
+
 
 
 }

@@ -19,24 +19,22 @@
  */
 package org.zaproxy.zap.extension.pscan.scanner;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Policy;
-import org.zaproxy.zap.extension.policyloader.PolicyContainer;
-import org.zaproxy.zap.extension.policyloader.Rule;
 import org.zaproxy.zap.extension.policyloader.Violation;
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+
+// todo javadoc
 public class PolicyScanner extends PluginPassiveScanner {
-    private List<Policy> policies = new ArrayList<>();
+    private Set<Policy> policies = new HashSet<>();
     private List<Violation> violationHistory = new ArrayList<>();
 
     @Override
@@ -55,19 +53,16 @@ public class PolicyScanner extends PluginPassiveScanner {
     }
 
     private void raiseAlert(Violation violation) {
-        String title =
         newAlert()
                 .setName(violation.getTitle())
                 .setDescription(violation.getDescription())
                 .setMessage(violation.getMsg())
-                .setUri(violation.getMsg().getRequestHeader().getURI().toString())
+                .setUri(violation.getUri())
                 .raise();
     }
 
-    private void enforceOrRaise(Rule rule, String policyName, HttpMessage msg) {
-        if (rule.isViolated(msg)) {
-            raiseAlert(policyName, rule.getName(), rule.getDescription(), msg);
-        }
+    public List<Violation> getViolationHistory() {
+        return violationHistory;
     }
 
     @Override
@@ -88,11 +83,11 @@ public class PolicyScanner extends PluginPassiveScanner {
         }
     }
 
-    public void addPolicy(String policyName, Set<Rule> rules) throws DuplicatePolicyException {
-        policies.addPolicy(policyName, rules);
+    public void addPolicy(Policy policy)  {
+        policies.add(policy);
     }
 
-    public void removePolicy(String policyName) throws PolicyNotFoundException {
-        policies.removePolicy(policyName);
+    public void removePolicy(String policyName) {
+        policies.removeIf(policy -> policy.getName().equals(policyName));
     }
 }
