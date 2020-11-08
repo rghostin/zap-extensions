@@ -186,7 +186,7 @@ public final class CoreFunctionality {
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner());
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner());
             rules.add(new org.zaproxy.zap.extension.pscan.scanner.StatsPassiveScanner());
-            rules.add(new PolicyScanner()); // todo remove
+            rules.add(new PolicyScanner()); // only in non addon version
             rules.trimToSize();
 
             for (PluginPassiveScanner rule : rules) {
