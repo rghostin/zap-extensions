@@ -118,48 +118,45 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
                             File[] files = getSelectedJARFiles();
-                            StringBuilder loadedPolicyNames = new StringBuilder();
-                            for (File file : files) {
-                                // load policy from jar
-                                PolicyJarLoader policyLoader = null;
-                                try {
-                                    policyLoader = new PolicyJarLoader(file.getAbsolutePath());
-                                } catch (Exception e) {
-                                    View.getSingleton()
-                                            .showMessageDialog(
-                                                    "Error: loading policy in "
-                                                            + file.getName()
-                                                            + ".");
-                                    continue;
-                                }
-
-                                Policy policy = policyLoader.getPolicy();
-
-                                // add policy to scanner
-                                try {
-                                    getPolicyScanner().addPolicy(policy);
-                                } catch (DuplicatePolicyException e) {
-                                    View.getSingleton()
-                                            .showMessageDialog(
-                                                    "Error: Policy "
-                                                            + policy.getName()
-                                                            + " already exists.");
-                                    continue;
-                                }
-
-                                loadedPolicyNames.append(policy.getName()).append("\n");
-                            }
-
-                            if (!loadedPolicyNames.toString().isEmpty()) {
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                "Policies loaded successfully: \n"
-                                                        + loadedPolicyNames.toString());
-                            }
+                            loadPolicyJars(files);
                         }
                     });
         }
         return menuPolicyLoader;
+    }
+
+    /**
+     * load jar files as policies into {@code PolicyScanner}
+     * display status message (failure or success)
+     * @param files: Array of jar file objects
+     */
+    private void loadPolicyJars(File[] files) {
+        StringBuilder loadedPolicyNames = new StringBuilder();
+
+        for (File file : files) {
+            // load policy from jar
+            PolicyJarLoader policyLoader = null;
+            Policy policy = null;
+            try {
+                policyLoader = new PolicyJarLoader(file.getAbsolutePath());
+                policy = policyLoader.getPolicy();
+                getPolicyScanner().addPolicy(policy);
+                loadedPolicyNames.append(policy.getName()).append("\n");
+            } catch (DuplicatePolicyException e) {
+                View.getSingleton().showMessageDialog("Error: Policy "+ policy.getName()
+                        + " already exists.");
+            } catch (Exception e) {
+                View.getSingleton().showMessageDialog("Error: loading policy in "
+                        + file.getName());
+            }
+
+        }
+
+        if (!loadedPolicyNames.toString().isEmpty()) {
+            View.getSingleton().showMessageDialog(
+                            "Policies loaded successfully: \n"
+                                    + loadedPolicyNames.toString());
+        }
     }
 
     /**
@@ -174,8 +171,17 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            // todo ask for path
-                            String path = "/tmp/myrep.html";
+                            String path;
+
+                            JFileChooser fileChooser = new JFileChooser();
+                            int option = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
+                            if(option == JFileChooser.APPROVE_OPTION){
+                                path = fileChooser.getSelectedFile().getAbsolutePath();
+                            } else {
+                                // canceled
+                                return;
+                            }
+
                             try {
                                 buildViolationsReport(path);
                                 View.getSingleton().showMessageDialog("Report built: "+path);
@@ -196,9 +202,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
      */
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
-        for (Violation violation : policyScanner.getViolationHistory()) {
+        for (Violation violation : getPolicyScanner().getViolationHistory()) {
             scanReport.addViolation(violation);
         }
+
         scanReport.writeToFile(path);
     }
 }

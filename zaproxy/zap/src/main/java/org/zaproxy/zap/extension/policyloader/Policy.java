@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Policy of rules
+ */
 public class Policy {
 
     private String name;
@@ -29,6 +32,10 @@ public class Policy {
         return false;
     }
 
+    /**
+     * Add a {@Code Rule} to the policy
+     * @param rule : the rule to be added
+     */
     public void addRule(Rule rule) {
         if (ruleExists(rule.getName())) {
             return;
@@ -36,6 +43,10 @@ public class Policy {
         rules.add(rule);
     }
 
+    /**
+     * Remove the rule from the policy
+     * @param rule : the rule to be removed
+     */
     public void removeRule(Rule rule) {
         if (! ruleExists(rule.getName())) {
             return;
@@ -47,6 +58,12 @@ public class Policy {
         return rules;
     }
 
+    /**
+     * Given an http message, checks whether the policy is violated
+     * by checking if any of the registered rules is violated
+     * @param msg : the http message
+     * @return a list of {@code Violation} encountered
+     */
     public List<Violation> checkViolations(HttpMessage msg) {
         List<Violation> violations = new ArrayList<>();
         for (Rule rule : rules) {

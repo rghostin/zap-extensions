@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/** This is a rule for matching bad keywords */
+/** This is a rule for flagging bad keywords */
 public class KeywordMatchingRule implements Rule {
 
     @Override
