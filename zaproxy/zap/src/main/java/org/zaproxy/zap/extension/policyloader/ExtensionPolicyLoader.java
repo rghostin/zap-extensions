@@ -171,8 +171,17 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            // todo ask for path
-                            String path = "/tmp/myrep.html";
+                            String path;
+
+                            JFileChooser fileChooser = new JFileChooser();
+                            int option = fileChooser.showSaveDialog(View.getSingleton().getMainFrame());
+                            if(option == JFileChooser.APPROVE_OPTION){
+                                path = fileChooser.getSelectedFile().getAbsolutePath();
+                            } else {
+                                // canceled
+                                return;
+                            }
+
                             try {
                                 buildViolationsReport(path);
                                 View.getSingleton().showMessageDialog("Report built: "+path);
