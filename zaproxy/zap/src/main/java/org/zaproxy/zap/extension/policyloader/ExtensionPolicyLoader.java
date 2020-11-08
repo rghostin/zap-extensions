@@ -105,7 +105,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     }
 
     /**
-     * Loads the policies and returns the GUI menu button
+     * Menu button for loading rules from a jar file
      *
      * @return Returns the GUI menu button
      */
@@ -162,6 +162,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return menuPolicyLoader;
     }
 
+    /**
+     * Menu button for building a violations report
+     * @return the menu button
+     */
     private ZapMenuItem getMenuReportPolicyViolations() {
         if (menuPolicyViolationsReport == null) {
             menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
@@ -185,6 +189,11 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
         return menuPolicyViolationsReport;
     }
 
+    /**
+     * Build a violation report with the violations encountered so far
+      * @param path : the file path of the report
+     * @throws IOException
+     */
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
         for (Violation violation : policyScanner.getViolationHistory()) {

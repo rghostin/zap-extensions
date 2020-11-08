@@ -26,6 +26,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// todo javadoc
 public class Report {
 
     private List<String> rows = new ArrayList<>();
@@ -49,8 +51,9 @@ public class Report {
     public void addViolation(Violation violation) {
         rows.add(
                 String.format(
-                        "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
-                        , violation.getPolicyName(), violation.getRuleName(), violation.getDescription()
+                        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+                        , violation.getPolicyName(), violation.getRuleName(), violation.getUri(),
+                        violation.getDescription()
                 ));
     }
 
