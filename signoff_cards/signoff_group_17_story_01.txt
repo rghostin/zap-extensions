@@ -9,8 +9,8 @@ Number of scenario tests:                  1
 Total test coverage:                       60% of lines of code
 GIT commit identifier at start of story:   2de23eefef35a76f0e823019dae73ae59d4c0288
 GIT commit identifier at end of story      ??
-Time spent on user story:                  Deniz Alp Savaskan: ??h
-                                           Rawad Ghostin: ??h
-                                           Tianjian Song: ??h
-                                           Xinhai Zou: ??h
+Time spent on user story:                  Deniz Alp Savaskan: 25h
+                                           Rawad Ghostin: 25h
+                                           Tianjian Song: 25h
+                                           Xinhai Zou: 25h
 Optional remarks:
