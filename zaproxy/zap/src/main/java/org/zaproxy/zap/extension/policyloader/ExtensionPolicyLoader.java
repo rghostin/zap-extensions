@@ -202,9 +202,10 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
      */
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
-        for (Violation violation : policyScanner.getViolationHistory()) {
+        for (Violation violation : getPolicyScanner().getViolationHistory()) {
             scanReport.addViolation(violation);
         }
+
         scanReport.writeToFile(path);
     }
 }
