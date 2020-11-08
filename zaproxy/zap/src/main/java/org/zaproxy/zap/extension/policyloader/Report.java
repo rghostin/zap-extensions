@@ -52,7 +52,6 @@ public class Report {
                         "<tr><td>%s</td><td>%s</td><td>%s</td></tr>"
                         , policyName, ruleName, description
                 ));
-
     }
 
     private String getTableContent() {
