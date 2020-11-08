@@ -23,6 +23,8 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.policyloader.Policy;
 import org.zaproxy.zap.extension.policyloader.Violation;
+import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -83,11 +85,26 @@ public class PolicyScanner extends PluginPassiveScanner {
         }
     }
 
-    public void addPolicy(Policy policy)  {
+    public boolean hasPolicy(String policyName) {
+        for (Policy policy : policies) {
+            if (policy.getName().equals(policyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void addPolicy(Policy policy) throws DuplicatePolicyException {
+        if (hasPolicy(policy.getName())) {
+            throw new DuplicatePolicyException();
+        }
         policies.add(policy);
     }
 
-    public void removePolicy(String policyName) {
+    public void removePolicy(String policyName) throws PolicyNotFoundException {
+        if (! hasPolicy(policyName)) {
+            throw new PolicyNotFoundException();
+        }
         policies.removeIf(policy -> policy.getName().equals(policyName));
     }
 }

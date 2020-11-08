@@ -74,4 +74,10 @@ public class Report {
         return getTemplateContent().replaceFirst(TEMPLATE_REP_VAR, getTableContent());
     }
 
+    public static void main(String[] args) throws IOException {
+        Report r= new Report();
+        r.addViolation("aa", "bbb", "ccc");
+        System.out.println(r.toString());
+    }
+
 }

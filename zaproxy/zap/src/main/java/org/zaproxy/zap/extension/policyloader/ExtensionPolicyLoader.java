@@ -136,22 +136,21 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
                                     continue;
                                 }
 
+                                Policy policy = policyLoader.getPolicy();
+
                                 // add policy to scanner
                                 try {
-                                    getPolicyScanner()
-                                            .addPolicy(
-                                                    policyLoader.getPolicyName(),
-                                                    policyLoader.getRules());
+                                    getPolicyScanner().addPolicy(policy);
                                 } catch (DuplicatePolicyException e) {
                                     View.getSingleton()
                                             .showMessageDialog(
                                                     "Error: Policy "
-                                                            + policyLoader.getPolicyName()
+                                                            + policy.getName()
                                                             + " already exists.");
                                     continue;
                                 }
 
-                                loadedPolicyNames.append(policyLoader.getPolicyName()).append("\n");
+                                loadedPolicyNames.append(policy.getName()).append("\n");
                             }
 
                             if (!loadedPolicyNames.toString().isEmpty()) {
