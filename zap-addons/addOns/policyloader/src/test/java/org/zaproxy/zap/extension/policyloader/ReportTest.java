@@ -31,7 +31,10 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -79,6 +82,11 @@ class ReportTest {
         return msg;
     }
 
+    @BeforeAll
+    static void setup(){
+        Constant.setZapHome("src/main/zapHomeFiles/");
+    }
+
     @Test
     void addViolation() throws IOException {
         HttpMessage testHTTPMessage = createHttpMsg();
@@ -92,7 +100,7 @@ class ReportTest {
                     report.toString()
                             .contains(
                                     String.format(
-                                            "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
+                                            "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
                                             policyName,
                                             testRule.getName(),
                                             violation.getUri(),
@@ -128,7 +136,7 @@ class ReportTest {
             assertTrue(
                     fileString.contains(
                             String.format(
-                                    "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
+                                    "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
                                     policyName,
                                     testRule.getName(),
                                     testHTTPMessage.getRequestHeader().getURI().toString(),
