@@ -6,7 +6,7 @@ Level of completeness:                     Completed.
 Date completed:                            10/11/2020
 Number of unit tests:                      57
 Number of scenario tests:                  4
-Total test coverage:                       60% of lines of code
+Total test coverage:                       58% of lines of code
 GIT commit identifier at start of story:   2de23eefef35a76f0e823019dae73ae59d4c0288
 GIT commit identifier at end of story      9e08b93eef0259ee7b0495e6fa45067dea17f7e6
 Time spent on user story:                  Deniz Alp Savaskan: 25h
