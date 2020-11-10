@@ -32,7 +32,6 @@ import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -83,7 +82,7 @@ class ReportTest {
     }
 
     @BeforeAll
-    static void setup(){
+    static void setup() {
         Constant.setZapHome("src/main/zapHomeFiles/");
     }
 
