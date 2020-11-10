@@ -58,7 +58,7 @@ public class Report {
     public void addViolation(Violation violation) {
         rows.add(
                 String.format(
-                        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>",
+                        "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
                         violation.getPolicyName(),
                         violation.getRuleName(),
                         violation.getUri(),
