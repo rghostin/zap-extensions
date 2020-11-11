@@ -32,7 +32,7 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** This is a policy loader for policies of jar file */
-public class ExtensionPolicyLoader extends ExtensionAdaptor {
+public class ExtensionPolicyController extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
     private ZapMenuItem menuPolicyViolationsReport;
@@ -42,7 +42,7 @@ public class ExtensionPolicyLoader extends ExtensionAdaptor {
     protected static final String PREFIX = "policyloader";
     private PolicyScanner policyScanner = null;
 
-    public ExtensionPolicyLoader() {
+    public ExtensionPolicyController() {
         super(NAME);
         setI18nPrefix(PREFIX);
     }
