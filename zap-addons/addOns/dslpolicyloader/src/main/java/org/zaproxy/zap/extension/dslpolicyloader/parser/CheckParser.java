@@ -4,12 +4,11 @@ import org.zaproxy.zap.extension.dslpolicyloader.checks.*;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Tokenizer {
+public class CheckParser {
     private static final String RE_INSTRUCTION =
             "\\s*(request|response)\\.(header|body)\\.((?:re=\\\".*?\\\")|(?:value=\\\".*?\\\")|(?:values=\\[.*?\\]))\\s*";
     private static final Pattern PATTERN_INSTRUCTION = Pattern.compile(RE_INSTRUCTION);
@@ -24,7 +23,7 @@ public class Tokenizer {
     private String composedStatement;
     private int lastPos;
 
-    public Tokenizer(String composedStatement) {
+    public CheckParser(String composedStatement) {
         this.composedStatement = composedStatement;
         this.lastPos = 0;
         this.matcher = PATTERN_TOKEN.matcher(composedStatement);
@@ -91,9 +90,13 @@ public class Tokenizer {
             Matcher matcherInstruction = PATTERN_INSTRUCTION.matcher(token);
 
             if (matcherLiaison.matches()) {
-                // construct OpCheck
-                Operator operator = parseOperator(token);
-                tokens.add(operator);
+                if (token.equals("(") || token.equals(")")) {
+                    tokens.add(token);
+                } else {
+                    // construct OpCheck
+                    Operator operator = parseOperator(token);
+                    tokens.add(operator);
+                }
             } else if (matcherInstruction.matches()) {
                 // construct AtomicCheck
                 Check check = parseCheck(matcherInstruction);
@@ -110,25 +113,25 @@ public class Tokenizer {
 
 
     public static void main(String[] args) { // todo remove
-        String composedStatement = "request.header.re=\"test\" and response.body.value=\"test2\" or request.header.values=[\"ada\",\"wfww\"]";
+        String composedStatement = "(request.header.re=\"test\" and response.body.value=\"test2\") or request.header.values=[\"ada\",\"wfww\"]";
 
 //        String token;
-        Tokenizer tokenizer = new Tokenizer(composedStatement);
+        CheckParser checkParser = new CheckParser(composedStatement);
 //        while ( (token = tokenizer.getNextToken()) != null) {
 //            System.out.println(token);
 //        }
 
-//        for (String token : new Tokenizer(composedStatement)) {
+//        for (String token : new CheckParser(composedStatement)) {
 //            System.out.println(token);
 //        }
 
-//        Tokenizer tokenizer = new Tokenizer(composedStatement);
+//        CheckParser tokenizer = new CheckParser(composedStatement);
 //        Iterator<String> tokenIterator = tokenizer.iterator();
 //        while (tokenIterator.hasNext()) {
 //            System.out.println(tokenIterator.next());
 //        }
 
-        List<Object> objects = tokenizer.getTokens();
+        List<Object> objects = checkParser.getTokens();
         System.out.println(objects);
     }
 }
