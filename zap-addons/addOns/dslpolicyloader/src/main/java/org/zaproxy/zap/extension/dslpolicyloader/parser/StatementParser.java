@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // todo test gen
-//@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class StatementParser {
     private static final String RE_INSTRUCTION =
             "\\s*(request|response)\\.(header|body)\\.((?:re=\\\".*?\\\")|(?:value=\\\".*?\\\")|(?:values=\\[.*?\\]))\\s*";
@@ -68,7 +68,7 @@ public class StatementParser {
         // TODO convert matchingModeStr to pattern
         Pattern pattern = Pattern.compile("");
         TransmissionType transmissionType;
-        FieldOfOperation fieldOfOperation;
+        FieldType fieldType;
 
         if (transmissionTypeStr.equals("request")) {
             transmissionType = TransmissionType.REQUEST;
@@ -79,13 +79,13 @@ public class StatementParser {
         }
 
         if (fieldOfOperationStr.equals("header")) {
-            fieldOfOperation = FieldOfOperation.HEADER;
+            fieldType = FieldType.HEADER;
         } else if (fieldOfOperationStr.equals("body")) {
-            fieldOfOperation = FieldOfOperation.BODY;
+            fieldType = FieldType.BODY;
         } else {
             throw new IllegalStateException("Logic error");
         }
-        return new HttpPredicateBuilder().build(transmissionType, fieldOfOperation, pattern);
+        return new HttpPredicateBuilder().build(transmissionType, fieldType, pattern);
     }
 
     private enum TokenType{

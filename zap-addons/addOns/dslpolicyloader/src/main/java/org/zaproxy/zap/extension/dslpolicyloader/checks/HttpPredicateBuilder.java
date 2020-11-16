@@ -2,23 +2,22 @@ package org.zaproxy.zap.extension.dslpolicyloader.checks;
 
 import org.parosproxy.paros.network.HttpMessage;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HttpPredicateBuilder {
 
-//    private Function<HttpMessage, String> getFieldFct() {
+//    private Function<HttpMessage, String> getFieldFct() { // todo try functional
 //        Function<HttpMessage, String> f;
-//        if (transmissionType == TransmissionType.REQUEST && fieldOfOperation == FieldOfOperation.HEADER) {
+//        if (transmissionType == TransmissionType.REQUEST && fieldOfOperation == FieldType.HEADER) {
 //            ;
 //        f =  (msg) -> msg.getRequestHeader().toString();
-//        } else if (transmissionType == TransmissionType.REQUEST && fieldOfOperation == FieldOfOperation.BODY) {
+//        } else if (transmissionType == TransmissionType.REQUEST && fieldOfOperation == FieldType.BODY) {
 //            f = (msg) -> msg.getRequestBody().toString();
-//        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation == FieldOfOperation.HEADER) {
+//        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation == FieldType.HEADER) {
 //            f = (msg) -> msg.getResponseHeader().toString();
-//        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation == FieldOfOperation.BODY) {
+//        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation == FieldType.BODY) {
 //            f = (msg) -> msg.getResponseBody().toString();
 //        } else {
 //            throw new IllegalStateException("Logic error");
@@ -27,21 +26,21 @@ public class HttpPredicateBuilder {
 //    }
 
 
-    public Predicate<HttpMessage> build(TransmissionType transmissionType, FieldOfOperation fieldOfOperation, Pattern pattern) {
+    public Predicate<HttpMessage> build(TransmissionType transmissionType, FieldType fieldType, Pattern pattern) {
         return new Predicate<HttpMessage>() {
             private final TransmissionType transmissionType_ = transmissionType;
-            private final FieldOfOperation fieldOfOperation_ = fieldOfOperation;
+            private final FieldType fieldType_ = fieldType;
             private final Pattern pattern_ = pattern;
 
-            private String getField(HttpMessage msg) { // todo try functional
+            private String getField(HttpMessage msg) {
                 String field;
-                if (transmissionType_ == TransmissionType.REQUEST && fieldOfOperation_ == FieldOfOperation.HEADER) {
+                if (transmissionType_ == TransmissionType.REQUEST && fieldType_ == FieldType.HEADER) {
                     field = msg.getRequestHeader().toString();
-                } else if (transmissionType_ == TransmissionType.REQUEST && fieldOfOperation_ == FieldOfOperation.BODY) {
+                } else if (transmissionType_ == TransmissionType.REQUEST && fieldType_ == FieldType.BODY) {
                     field = msg.getRequestBody().toString();
-                } else if (transmissionType_ == TransmissionType.RESPONSE && fieldOfOperation_ == FieldOfOperation.HEADER) {
+                } else if (transmissionType_ == TransmissionType.RESPONSE && fieldType_ == FieldType.HEADER) {
                     field = msg.getResponseHeader().toString();
-                } else if (transmissionType_ == TransmissionType.RESPONSE && fieldOfOperation_ == FieldOfOperation.BODY) {
+                } else if (transmissionType_ == TransmissionType.RESPONSE && fieldType_ == FieldType.BODY) {
                     field =  msg.getResponseBody().toString();
                 } else {
                     throw new IllegalStateException("Logic error");

@@ -1,6 +1,6 @@
 package org.zaproxy.zap.extension.dslpolicyloader.checks;
 
-public enum FieldOfOperation {
+public enum FieldType {
     HEADER,
     BODY
 }

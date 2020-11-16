@@ -17,13 +17,13 @@ public class NotOperator implements HttpPredicateOperator {
     }
 
     @Override
-    public Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates) {
-        assert httpPredicates.size() == getArity();
-        return httpPredicates.get(0).negate();
+    public boolean isLeftAssociative() {
+        return false;
     }
 
     @Override
-    public boolean isLeftAssociative() {
-        return false;
+    public Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates) {
+        assert httpPredicates.size() == getArity();
+        return httpPredicates.get(0).negate();
     }
 }

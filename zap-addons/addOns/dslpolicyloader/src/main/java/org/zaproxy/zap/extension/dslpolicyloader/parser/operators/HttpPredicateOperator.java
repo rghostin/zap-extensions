@@ -11,10 +11,6 @@ public interface HttpPredicateOperator {
 
     int getArity();
 
-    default boolean isUnary() {return getArity()==1;}
-
-    default boolean isBinary() {return getArity()==2;}
-
     default boolean hasHigherPrecedenceOver(HttpPredicateOperator otherOp) {
         if (getPrecedence() > otherOp.getPrecedence()) {
             return true;
