@@ -11,7 +11,7 @@ public class RequestHeaderCheck extends Check {
     }
 
     @Override
-    String getFieldOfOperation(HttpMessage msg) {
+    protected final String getFieldOfOperation(HttpMessage msg) {
         return msg.getRequestHeader().toString();
     }
 }
