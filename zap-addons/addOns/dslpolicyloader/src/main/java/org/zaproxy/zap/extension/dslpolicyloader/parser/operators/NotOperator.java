@@ -5,4 +5,9 @@ public class NotOperator implements Operator {
     public int getPrecedence() {
         return 3;
     }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return false;
+    }
 }

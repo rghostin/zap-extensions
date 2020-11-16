@@ -5,4 +5,9 @@ public class AndOperator implements Operator {
     public int getPrecedence() {
         return 2;
     }
+
+    @Override
+    public boolean isLeftAssociative() {
+        return true;
+    }
 }
