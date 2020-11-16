@@ -1,9 +1,11 @@
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.*;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +40,9 @@ public class CheckParser {
         }
     }
 
-    private Operator parseOperator(String operator) {
+    private HttpPredicateOperator parseOperator(String operator) {
         operator = operator.trim();
-        Operator op = null;
+        HttpPredicateOperator op = null;
         switch (operator) {
             case "and":
                 op = new AndOperator();
@@ -57,28 +59,32 @@ public class CheckParser {
         return op;
     }
 
-    private Check parseCheck(Matcher matcherCheck) {
-        String transmissionType = matcherCheck.group(1);
-        String fieldOfOperation = matcherCheck.group(2);
+    private Predicate<HttpMessage> parseCheck(Matcher matcherCheck) {
+        String transmissionTypeStr = matcherCheck.group(1);
+        String fieldOfOperationStr = matcherCheck.group(2);
         String matchingModeStr = matcherCheck.group(3);
 
         // TODO convert matchingModeStr to pattern
         Pattern pattern = Pattern.compile("");
+        TransmissionType transmissionType;
+        FieldOfOperation fieldOfOperation;
 
-        System.out.println(transmissionType + " " + fieldOfOperation + " " + matchingModeStr);
-        Check check;
-        if (transmissionType.equals("request") && fieldOfOperation.equals("header")) {
-            check = new RequestHeaderCheck(pattern);
-        } else if (transmissionType.equals("request") && fieldOfOperation.equals("body")) {
-            check = new RequestBodyCheck(pattern);
-        } else if (transmissionType.equals("response") && fieldOfOperation.equals("header")) {
-            check = new ResponseHeaderCheck(pattern);
-        } else if (transmissionType.equals("response") && fieldOfOperation.equals("body")) {
-            check = new ResponseBodyCheck(pattern);
+        if (transmissionTypeStr.equals("request")) {
+            transmissionType = TransmissionType.REQUEST;
+        } else if (transmissionTypeStr.equals("response")) {
+            transmissionType = TransmissionType.RESPONSE;
+        }  else {
+            throw new IllegalStateException("Logic error");
+        }
+
+        if (fieldOfOperationStr.equals("header")) {
+            fieldOfOperation = FieldOfOperation.HEADER;
+        } else if (fieldOfOperationStr.equals("body")) {
+            fieldOfOperation = FieldOfOperation.BODY;
         } else {
             throw new IllegalStateException("Logic error");
         }
-        return check;
+        return new HttpPredicateBuilder(transmissionType, fieldOfOperation, pattern).build();
     }
 
     public List<Object> getTokens() {
@@ -94,13 +100,13 @@ public class CheckParser {
                     tokens.add(token);
                 } else {
                     // construct OpCheck
-                    Operator operator = parseOperator(token);
+                    HttpPredicateOperator operator = parseOperator(token);
                     tokens.add(operator);
                 }
             } else if (matcherInstruction.matches()) {
                 // construct AtomicCheck
-                Check check = parseCheck(matcherInstruction);
-                tokens.add(check);
+                Predicate<HttpMessage> httpPredicate = parseCheck(matcherInstruction);
+                tokens.add(httpPredicate);
             } else {
                 throw new IllegalStateException("Logic error");
             }
@@ -132,19 +138,19 @@ public class CheckParser {
                     }
                 } else {
                     // construct OpCheck
-                    Operator operator = parseOperator(token);
+                    HttpPredicateOperator operator = parseOperator(token);
 
                     while (! operatorStack.empty()
                         && ! operatorStack.peek().equals("(")
-                        && ((Operator) operatorStack.peek()).hasHigherPrecedenceOver(operator)) {
+                        && ((HttpPredicateOperator) operatorStack.peek()).hasHigherPrecedenceOver(operator)) {
                         outputQueue.add(operatorStack.pop());
                     }
                     operatorStack.push(operator);
                 }
             } else if (matcherInstruction.matches()) {
                 // construct AtomicCheck
-                Check check = parseCheck(matcherInstruction);
-                outputQueue.add(check);
+                Predicate<HttpMessage> httpPredicate = parseCheck(matcherInstruction);
+                outputQueue.add(httpPredicate);
             } else {
                 throw new IllegalStateException("Logic error");
             }
@@ -155,6 +161,30 @@ public class CheckParser {
         }
         return outputQueue;
     }
+
+    private Predicate<HttpMessage> postfixEvaluator(Queue<Object> outputQueue) {
+        Stack<Predicate<HttpMessage>> operandsStack = new Stack<>();
+
+        for (Object o : outputQueue.toArray()) {
+            if (o instanceof Predicate<HttpMessage>) {
+                operandsStack.push((Predicate<HttpMessage>) o);
+            } else if (o instanceof HttpPredicateOperator) {
+                HttpPredicateOperator operator = (HttpPredicateOperator) o;
+                List<HttpPredicate> operands = new ArrayList<>();
+                for (int i = 0; i < operator.getArity(); i++) {
+                    operands.add(operandsStack.pop());
+                }
+                HttpPredicate predicate = operator.operate(operands);
+                operandsStack.push(predicate);
+
+            } else {
+                throw new IllegalStateException("Maximum supported operator arity is 2");
+            }
+        }
+        return operandsStack.pop();
+
+    }
+
 
 
 
@@ -181,6 +211,8 @@ public class CheckParser {
 //        System.out.println(objects);
 
         Queue<Object> outputQ = checkParser.shuntingYard();
+        HttpPredicate pred = checkParser.postfixEvaluator(outputQ);
+        System.out.println(pred);
         System.out.println(outputQ);
     }
 }
