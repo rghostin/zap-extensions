@@ -1,8 +1,9 @@
 package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
 
-import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicate;
+import org.parosproxy.paros.network.HttpMessage;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public interface HttpPredicateOperator {
     int getPrecedence();
@@ -24,5 +25,5 @@ public interface HttpPredicateOperator {
         }
     }
 
-    HttpPredicate operate(List<HttpPredicate> httpPredicates);
+    Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates);
 }

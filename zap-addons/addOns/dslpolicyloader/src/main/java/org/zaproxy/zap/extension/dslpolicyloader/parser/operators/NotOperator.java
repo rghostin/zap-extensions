@@ -1,8 +1,9 @@
 package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
 
-import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicate;
+import org.parosproxy.paros.network.HttpMessage;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class NotOperator implements HttpPredicateOperator {
     @Override
@@ -16,9 +17,9 @@ public class NotOperator implements HttpPredicateOperator {
     }
 
     @Override
-    public HttpPredicate operate(List<HttpPredicate> httpPredicates) {
+    public Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates) {
         assert httpPredicates.size() == getArity();
-        return (HttpPredicate) httpPredicates.get(0).negate();
+        return httpPredicates.get(0).negate();
     }
 
     @Override

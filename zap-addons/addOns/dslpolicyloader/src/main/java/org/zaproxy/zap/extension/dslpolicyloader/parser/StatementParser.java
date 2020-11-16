@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // todo test gen
-public class CheckParser {
+//@SuppressWarnings("unchecked")
+public class StatementParser {
     private static final String RE_INSTRUCTION =
             "\\s*(request|response)\\.(header|body)\\.((?:re=\\\".*?\\\")|(?:value=\\\".*?\\\")|(?:values=\\[.*?\\]))\\s*";
     private static final Pattern PATTERN_INSTRUCTION = Pattern.compile(RE_INSTRUCTION);
@@ -25,7 +26,7 @@ public class CheckParser {
     private String composedStatement;
     private int lastPos;
 
-    public CheckParser(String composedStatement) {
+    public StatementParser(String composedStatement) {
         this.composedStatement = composedStatement;
         this.lastPos = 0;
         this.matcher = PATTERN_TOKEN.matcher(composedStatement);
@@ -59,7 +60,7 @@ public class CheckParser {
         return op;
     }
 
-    private Predicate<HttpMessage> parseCheck(Matcher matcherCheck) {
+    private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherCheck) {
         String transmissionTypeStr = matcherCheck.group(1);
         String fieldOfOperationStr = matcherCheck.group(2);
         String matchingModeStr = matcherCheck.group(3);
@@ -84,97 +85,100 @@ public class CheckParser {
         } else {
             throw new IllegalStateException("Logic error");
         }
-        return new HttpPredicateBuilder(transmissionType, fieldOfOperation, pattern).build();
+        return new HttpPredicateBuilder().build(transmissionType, fieldOfOperation, pattern);
     }
 
-    public List<Object> getTokens() {
-        List<Object> tokens = new ArrayList<>();
+    private enum TokenType{
+        SIMPLE_PREDICATE,
+        OPERATOR,
+        PARENTHESIS
+    }
 
-        String token;
-        while ( (token = getNextTokenString()) != null ) {
-            Matcher matcherLiaison = PATTERN_LIAISON.matcher(token);
-            Matcher matcherInstruction = PATTERN_INSTRUCTION.matcher(token);
-
-            if (matcherLiaison.matches()) {
-                if (token.equals("(") || token.equals(")")) {
-                    tokens.add(token);
-                } else {
-                    // construct OpCheck
-                    HttpPredicateOperator operator = parseOperator(token);
-                    tokens.add(operator);
-                }
-            } else if (matcherInstruction.matches()) {
-                // construct AtomicCheck
-                Predicate<HttpMessage> httpPredicate = parseCheck(matcherInstruction);
-                tokens.add(httpPredicate);
-            } else {
-                throw new IllegalStateException("Logic error");
-            }
+    private class Token {
+        TokenType tokenType;
+        Object tokenObj;
+        public Token(HttpPredicateOperator operator) {
+            tokenType = TokenType.OPERATOR;
+            tokenObj = operator;
         }
-        return tokens;
-    }
 
+        public Token(Predicate<HttpMessage> msg) {
+            tokenType = TokenType.SIMPLE_PREDICATE;
+            tokenObj = msg;
+        }
+
+        public Object getTokenObj() {
+            return tokenObj;
+        }
+
+        public boolean isSimplePredicate() {return tokenType == TokenType.SIMPLE_PREDICATE;}
+
+        public boolean isOperator() {return tokenType == TokenType.OPERATOR;}
+    }
 
     /**
      * Adapted Dijkstra's Shunting yard algorithm
      * Tranforms infix to postfix queue of tokens
      * @return postfix queue of tokens
      */
-    private Queue<Object> shuntingYard() {
+    private Queue<Token> shuntingYard() {
         Stack<Object> operatorStack = new Stack<>();
-        Queue<Object> outputQueue = new ArrayDeque<>();
+        Queue<Token> outputQueue = new LinkedList<>();
 
-        String token;
-        while ( (token = getNextTokenString()) != null ) {
-            Matcher matcherLiaison = PATTERN_LIAISON.matcher(token);
-            Matcher matcherInstruction = PATTERN_INSTRUCTION.matcher(token);
+        String tokenStr;
+        while ( (tokenStr = getNextTokenString()) != null ) {
+            Matcher matcherLiaison = PATTERN_LIAISON.matcher(tokenStr);
+            Matcher matcherInstruction = PATTERN_INSTRUCTION.matcher(tokenStr);
 
             if (matcherLiaison.matches()) {
-                if (token.equals("(")) {
+                if (tokenStr.equals("(")) {
                     operatorStack.push("(");
-                } else if ( token.equals(")")) {
+                } else if ( tokenStr.equals(")")) {
                     while (! operatorStack.peek().equals("(")) {
-                        outputQueue.add(operatorStack.pop());
+                        HttpPredicateOperator op = (HttpPredicateOperator) operatorStack.pop();
+                        outputQueue.add(new Token(op));
                     }
                 } else {
                     // construct OpCheck
-                    HttpPredicateOperator operator = parseOperator(token);
+                    HttpPredicateOperator operator = parseOperator(tokenStr);
 
                     while (! operatorStack.empty()
                         && ! operatorStack.peek().equals("(")
                         && ((HttpPredicateOperator) operatorStack.peek()).hasHigherPrecedenceOver(operator)) {
-                        outputQueue.add(operatorStack.pop());
+                            HttpPredicateOperator op = (HttpPredicateOperator) operatorStack.pop();
+                            outputQueue.add(new Token(op));
                     }
                     operatorStack.push(operator);
                 }
             } else if (matcherInstruction.matches()) {
                 // construct AtomicCheck
-                Predicate<HttpMessage> httpPredicate = parseCheck(matcherInstruction);
-                outputQueue.add(httpPredicate);
+                Predicate<HttpMessage> httpPredicate = parseSimplePredicate(matcherInstruction);
+                outputQueue.add(new Token(httpPredicate));
             } else {
                 throw new IllegalStateException("Logic error");
             }
         }
 
         while (! operatorStack.empty()){
-            outputQueue.add(operatorStack.pop());
+            HttpPredicateOperator op = (HttpPredicateOperator) operatorStack.pop();
+            outputQueue.add(new Token(op));
         }
         return outputQueue;
     }
 
-    private Predicate<HttpMessage> postfixEvaluator(Queue<Object> outputQueue) {
+    private Predicate<HttpMessage> postfixEvaluator(Queue<Token> outputQueue) {
         Stack<Predicate<HttpMessage>> operandsStack = new Stack<>();
 
-        for (Object o : outputQueue.toArray()) {
-            if (o instanceof Predicate<HttpMessage>) {
-                operandsStack.push((Predicate<HttpMessage>) o);
-            } else if (o instanceof HttpPredicateOperator) {
-                HttpPredicateOperator operator = (HttpPredicateOperator) o;
-                List<HttpPredicate> operands = new ArrayList<>();
+        for (Token t : outputQueue) {
+            if (t.isSimplePredicate()) {
+                operandsStack.push((Predicate<HttpMessage>) t.getTokenObj());
+            } else if (t.isOperator()) {
+                HttpPredicateOperator operator = (HttpPredicateOperator) t.getTokenObj();
+                List<Predicate<HttpMessage>> operands = new ArrayList<>();
                 for (int i = 0; i < operator.getArity(); i++) {
                     operands.add(operandsStack.pop());
                 }
-                HttpPredicate predicate = operator.operate(operands);
+                Predicate<HttpMessage> predicate = operator.operate(operands);
                 operandsStack.push(predicate);
 
             } else {
@@ -192,16 +196,16 @@ public class CheckParser {
         String composedStatement = "request.header.re=\"test\" or response.body.value=\"test2\" and request.header.values=[\"ada\",\"wfww\"] or response.body.value=\"test4\"";
 
 //        String token;
-        CheckParser checkParser = new CheckParser(composedStatement);
+        StatementParser checkParser = new StatementParser(composedStatement);
 //        while ( (token = tokenizer.getNextToken()) != null) {
 //            System.out.println(token);
 //        }
 
-//        for (String token : new CheckParser(composedStatement)) {
+//        for (String token : new StatementParser(composedStatement)) {
 //            System.out.println(token);
 //        }
 
-//        CheckParser tokenizer = new CheckParser(composedStatement);
+//        StatementParser tokenizer = new StatementParser(composedStatement);
 //        Iterator<String> tokenIterator = tokenizer.iterator();
 //        while (tokenIterator.hasNext()) {
 //            System.out.println(tokenIterator.next());
@@ -210,8 +214,8 @@ public class CheckParser {
 //        List<Object> objects = checkParser.getTokens();
 //        System.out.println(objects);
 
-        Queue<Object> outputQ = checkParser.shuntingYard();
-        HttpPredicate pred = checkParser.postfixEvaluator(outputQ);
+        Queue<Token> outputQ = checkParser.shuntingYard();
+        Predicate<HttpMessage> pred = checkParser.postfixEvaluator(outputQ);
         System.out.println(pred);
         System.out.println(outputQ);
     }
