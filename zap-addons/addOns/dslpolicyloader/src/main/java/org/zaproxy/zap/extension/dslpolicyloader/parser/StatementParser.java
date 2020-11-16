@@ -31,6 +31,7 @@ public class StatementParser {
                 while (!operatorStack.peek().isOpenParenthesis()) {
                     outputQueue.add(operatorStack.pop());
                 }
+                operatorStack.pop(); // discard open parenthesis
             } else if (token.isOperator()) {
                 HttpPredicateOperator operator = (HttpPredicateOperator) token.getTokenObj();
 
@@ -84,7 +85,7 @@ public class StatementParser {
 
 
     public static void main(String[] args) { // todo remove
-        String composedStatement = "request.header.re=\"test\" or response.body.value=\"test2\" and request.header.values=[\"ada\",\"wfww\"] or response.body.value=\"test4\"";
+        String composedStatement = "not ( request.header.re=\"test\" and response.body.value=\"test2\" ) or request.header.values=[\"ada\",\"wfww\"] ";
         StatementParser sttmtParser = new StatementParser(composedStatement);
         Predicate<HttpMessage> predicate = sttmtParser.parse();
         System.out.println(predicate);
