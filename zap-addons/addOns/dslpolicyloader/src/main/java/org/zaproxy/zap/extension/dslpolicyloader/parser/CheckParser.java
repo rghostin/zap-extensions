@@ -3,8 +3,7 @@ package org.zaproxy.zap.extension.dslpolicyloader.parser;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.*;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,15 +105,61 @@ public class CheckParser {
                 throw new IllegalStateException("Logic error");
             }
         }
-
         return tokens;
     }
 
 
+    /**
+     * Adapted Dijkstra's Shunting yard algorithm
+     * Tranforms infix to postfix queue of tokens
+     * @return postfix queue of tokens
+     */
+    private Queue<Object> shuntingYard() {
+        Stack<Object> operatorStack = new Stack<>();
+        Queue<Object> outputQueue = new ArrayDeque<>();
+
+        String token;
+        while ( (token = getNextTokenString()) != null ) {
+            Matcher matcherLiaison = PATTERN_LIAISON.matcher(token);
+            Matcher matcherInstruction = PATTERN_INSTRUCTION.matcher(token);
+
+            if (matcherLiaison.matches()) {
+                if (token.equals("(")) {
+                    operatorStack.push("(");
+                } else if ( token.equals(")")) {
+                    while (! operatorStack.peek().equals("(")) {
+                        outputQueue.add(operatorStack.pop());
+                    }
+                } else {
+                    // construct OpCheck
+                    Operator operator = parseOperator(token);
+
+                    while (! operatorStack.empty()
+                        && ! operatorStack.peek().equals("(")
+                        && ((Operator) operatorStack.peek()).hasHigherPrecedenceOver(operator)) {
+                        outputQueue.add(operatorStack.pop());
+                    }
+                    operatorStack.push(operator);
+                }
+            } else if (matcherInstruction.matches()) {
+                // construct AtomicCheck
+                Check check = parseCheck(matcherInstruction);
+                outputQueue.add(check);
+            } else {
+                throw new IllegalStateException("Logic error");
+            }
+        }
+
+        while (! operatorStack.empty()){
+            outputQueue.add(operatorStack.pop());
+        }
+        return outputQueue;
+    }
+
 
 
     public static void main(String[] args) { // todo remove
-        String composedStatement = "(request.header.re=\"test\" and response.body.value=\"test2\") or request.header.values=[\"ada\",\"wfww\"]";
+        String composedStatement = "request.header.re=\"test\" or response.body.value=\"test2\" and request.header.values=[\"ada\",\"wfww\"] or response.body.value=\"test4\"";
 
 //        String token;
         CheckParser checkParser = new CheckParser(composedStatement);
@@ -132,7 +177,10 @@ public class CheckParser {
 //            System.out.println(tokenIterator.next());
 //        }
 
-        List<Object> objects = checkParser.getTokens();
-        System.out.println(objects);
+//        List<Object> objects = checkParser.getTokens();
+//        System.out.println(objects);
+
+        Queue<Object> outputQ = checkParser.shuntingYard();
+        System.out.println(outputQ);
     }
 }
