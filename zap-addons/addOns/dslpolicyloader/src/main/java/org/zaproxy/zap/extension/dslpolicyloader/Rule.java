@@ -19,11 +19,8 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
-import org.parosproxy.paros.network.HttpMessage;
-
-import javax.print.DocFlavor;
 import java.util.function.Predicate;
-
+import org.parosproxy.paros.network.HttpMessage;
 
 public class Rule {
     private final String name;
@@ -36,19 +33,20 @@ public class Rule {
         this.predicate = predicate;
     }
 
-    /**
-     * @return Returns this rule's name
-     */
-    public String getName() { return name; }
+    /** @return Returns this rule's name */
+    public String getName() {
+        return name;
+    }
+
+    /** @return Returns this rule's description */
+    public String getDescription() {
+        return description;
+    }
 
     /**
-     * @return Returns this rule's description
-     */
-    public String getDescription() { return description; }
-
-    /**
-     * Checks whether the HttpMessage violates the rule
-     * The violation check is done by invoking predicate.test
+     * Checks whether the HttpMessage violates the rule The violation check is done by invoking
+     * predicate.test
+     *
      * @param msg the HttpMessage that will be tested
      * @return true if the HttpMessage violates the rule, false if not
      */

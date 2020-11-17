@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.dslpolicyloader;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FileUtils;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -41,8 +41,9 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private static final int SCANNER_PLUGIN_ID = 500001;
     private static final String NAME = "Policy Loader";
-    protected static final String PREFIX = "policyloader";
+    protected static final String PREFIX = "dslpolicyloader";
     private PolicyScanner policyScanner = null;
+    PolicyParser policyParser = new PolicyParser();
 
     public ExtensionDSLPolicyController() {
         super(NAME);
@@ -121,7 +122,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                             try {
                                 loadPolicyTexts(files);
                             } catch (IOException e) {
-                                e.printStackTrace();
+                                View.getSingleton()
+                                        .showMessageDialog("Error : Unable to load files");
                             }
                         }
                     });
@@ -136,23 +138,15 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      * @param files: Array of text file objects
      */
     private void loadPolicyTexts(File[] files) throws IOException {
-        // StringBuilder loadedPolicyNames = new StringBuilder();
-
+        StringBuilder loadedPolicyNames = new StringBuilder();
         for (File file : files) {
-            // TODO MUST CHANGE TO TEXT LOADER
-            // String file_name = file.getName();
-            // BufferedReader r = new BufferedReader(new FileReader(file_name));
-            Path path = Paths.get(String.valueOf(file));
-            List<String> lines = Files.readAllLines(path);
-            System.out.println("trial");
-            System.out.println(lines);
-        }
-            /*
-            PolicyJarLoader policyLoader = null;
+            String policyName = file.getName(); // todo strip .txt
+            String policyDeclaration = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+
             Policy policy = null;
             try {
-                policyLoader = new PolicyJarLoader(file.getAbsolutePath());
-                policy = policyLoader.getPolicy();
+                // todo handle excpetion syntax errors
+                policy = policyParser.parsePolicy(policyDeclaration, policyName);
                 getPolicyScanner().addPolicy(policy);
                 loadedPolicyNames.append(policy.getName()).append("\n");
             } catch (DuplicatePolicyException e) {
@@ -169,8 +163,6 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     .showMessageDialog(
                             "Policies loaded successfully: \n" + loadedPolicyNames.toString());
         }
-
-    */
     }
 
     /**
@@ -178,7 +170,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      *
      * @return the menu button
      */
-    /*
+
     private ZapMenuItem getMenuReportPolicyViolations() {
         if (menuPolicyViolationsReport == null) {
             menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
@@ -210,7 +202,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         }
         return menuPolicyViolationsReport;
     }
-    */
+
 
     /**
      * Build a violation report with the violations encountered so far
@@ -218,8 +210,6 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      * @param path : the file path of the report
      * @throws IOException
      */
-
-    /*
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
         for (Violation violation : getPolicyScanner().getViolationHistory()) {
@@ -228,5 +218,5 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
         scanReport.writeToFile(path);
     }
-    */
+
 }
