@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +82,12 @@ class StatementParserTest {
 
         while(it_test.hasNext() && it_httpmsgT.hasNext() && it_httpmsgF.hasNext()){
             StatementParser sp_test = new StatementParser(it_test.next());
-            Predicate<HttpMessage> predicate = sp_test.parse();
+            Predicate<HttpMessage> predicate = null;
+            try {
+                predicate = sp_test.parse();
+            } catch (SyntaxErrorException e) {
+                fail("Unexpected syntax error");
+            }
 
             HttpMessage temp_httpT = it_httpmsgT.next();
             HttpMessage temp_httpF = it_httpmsgF.next();
@@ -100,7 +106,12 @@ class StatementParserTest {
 
         StatementParser sp = new StatementParser("request.header.values=[\"ada\",\"wfww\"]");
 
-        Predicate<HttpMessage> predicate = sp.parse();
+        Predicate<HttpMessage> predicate = null;
+        try {
+            predicate = sp.parse();
+        } catch (SyntaxErrorException e) {
+            fail("unexpected syntax error");
+        }
 
         assertTrue(predicate.test(msg1));
     }
