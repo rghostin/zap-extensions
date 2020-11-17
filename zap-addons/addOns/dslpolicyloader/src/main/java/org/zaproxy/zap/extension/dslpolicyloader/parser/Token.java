@@ -12,19 +12,36 @@ enum TokenType{
     CLOSE_PARENTHESIS
 }
 
+/**
+ * Represents a token in the Domain Specific language
+ * Token objects are used for parsing purposes
+ */
 public class Token {
     TokenType tokenType;
     Object tokenObj;
+
+    /**
+     * Construct token representing a DSL operator
+     * @param operator : the DSL operator
+     */
     public Token(HttpPredicateOperator operator) {
         tokenType = TokenType.OPERATOR;
         tokenObj = operator;
     }
 
-    public Token(Predicate<HttpMessage> msg) {
+    /**
+     * Construct token representing a simple predicate
+     * @param predicate : the Predicate
+     */
+    public Token(Predicate<HttpMessage> predicate) {
         tokenType = TokenType.SIMPLE_PREDICATE;
-        tokenObj = msg;
+        tokenObj = predicate;
     }
 
+    /**
+     * Construct a token representing a parenthesis in the DSL
+     * @param s: the parenthesis
+     */
     public Token(String s) {
         if (s.equals("(")) {
             tokenType = TokenType.OPEN_PARENTHESIS;
@@ -37,6 +54,9 @@ public class Token {
         }
     }
 
+    /**
+     * @return the object represented by this token
+     */
     public Object getTokenObj() {
         return tokenObj;
     }
