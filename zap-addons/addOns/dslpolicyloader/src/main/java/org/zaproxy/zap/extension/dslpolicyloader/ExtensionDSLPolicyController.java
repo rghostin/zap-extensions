@@ -29,6 +29,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -145,7 +146,6 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
             Policy policy = null;
             try {
-                // todo handle excpetion syntax errors
                 policy = policyParser.parsePolicy(policyDeclaration, policyName);
                 getPolicyScanner().addPolicy(policy);
                 loadedPolicyNames.append(policy.getName()).append("\n");
@@ -153,6 +153,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                 View.getSingleton()
                         .showMessageDialog(
                                 "Error: Policy " + policy.getName() + " already exists.");
+            } catch (SyntaxErrorException e) {
+                View.getSingleton().showMessageDialog("Syntax error : " + e.getMessage());
             } catch (Exception e) {
                 View.getSingleton().showMessageDialog("Error: loading policy in " + file.getName());
             }
@@ -170,7 +172,6 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      *
      * @return the menu button
      */
-
     private ZapMenuItem getMenuReportPolicyViolations() {
         if (menuPolicyViolationsReport == null) {
             menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
@@ -203,7 +204,6 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         return menuPolicyViolationsReport;
     }
 
-
     /**
      * Build a violation report with the violations encountered so far
      *
@@ -218,5 +218,4 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
         scanReport.writeToFile(path);
     }
-
 }

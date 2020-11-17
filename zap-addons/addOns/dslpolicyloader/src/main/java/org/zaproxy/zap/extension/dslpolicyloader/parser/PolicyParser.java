@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.Policy;
 import org.zaproxy.zap.extension.dslpolicyloader.Rule;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
 // todo test
 
@@ -42,7 +43,7 @@ public class PolicyParser {
      * @param ruleDsl : the rule declaration
      * @return : A rule object representing the rule declaration
      */
-    private Rule parseRule(String ruleDsl) {
+    private Rule parseRule(String ruleDsl) throws SyntaxErrorException {
         Matcher ruleMatcher = PATTERN_RULE_DECLARATION.matcher(ruleDsl);
         boolean matches = ruleMatcher.matches();
         assert matches;
@@ -61,7 +62,7 @@ public class PolicyParser {
      * @param name : the policy name
      * @return : A policy object representing the policy declaration
      */
-    public Policy parsePolicy(String policyContent, String name) {
+    public Policy parsePolicy(String policyContent, String name) throws SyntaxErrorException {
         Policy policy = new Policy(name);
         String[] splitted_policy = policyContent.trim().split(";");
         for (String str_rule : splitted_policy) {

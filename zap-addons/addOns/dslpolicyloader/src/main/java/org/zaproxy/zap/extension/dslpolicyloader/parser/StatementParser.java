@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.dslpolicyloader.parser;
 import java.util.*;
 import java.util.function.Predicate;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 /**
@@ -46,13 +47,14 @@ public class StatementParser {
      * Adapted Dijkstra's Shunting yard algorithm Tranforms infix to postfix (Polish Reverse
      * Notation - PRN) queue of tokens
      *
+     * @param tokens : A list of tokens in infix order
      * @return postfix queue of tokens
      */
-    private Queue<Token> infixToPostfix() {
+    private Queue<Token> infixToPostfix(List<Token> tokens) {
         Stack<Token> operatorStack = new Stack<>();
         Queue<Token> outputQueue = new LinkedList<>();
 
-        for (Token token : tokenizer.getAllTokens()) {
+        for (Token token : tokens) {
             if (token.isOpenParenthesis()) {
                 operatorStack.push(token);
             } else if (token.isClosedParenthesis()) {
@@ -119,16 +121,9 @@ public class StatementParser {
      *
      * @return the predicate representing the statement
      */
-    public Predicate<HttpMessage> parse() {
-        Queue<Token> postfixTokens = infixToPostfix();
+    public Predicate<HttpMessage> parse() throws SyntaxErrorException {
+        List<Token> tokens = tokenizer.getAllTokens();
+        Queue<Token> postfixTokens = infixToPostfix(tokens);
         return postfixEvaluate(postfixTokens);
-    }
-
-    public static void main(String[] args) { // todo remove
-        String composedStatement =
-                "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
-        StatementParser sttmtParser = new StatementParser(composedStatement);
-        Predicate<HttpMessage> predicate = sttmtParser.parse();
-        System.out.println(predicate);
     }
 }
