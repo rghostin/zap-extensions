@@ -147,7 +147,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
             System.out.println("trial");
             System.out.println(lines);
         }
-        /*
+            /*
             PolicyJarLoader policyLoader = null;
             Policy policy = null;
             try {
@@ -169,8 +169,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     .showMessageDialog(
                             "Policies loaded successfully: \n" + loadedPolicyNames.toString());
         }
-        */
 
+    */
     }
 
     /**
