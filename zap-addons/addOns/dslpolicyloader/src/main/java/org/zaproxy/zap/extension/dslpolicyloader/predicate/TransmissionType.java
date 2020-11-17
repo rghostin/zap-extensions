@@ -17,14 +17,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.checks;
+package org.zaproxy.zap.extension.dslpolicyloader.predicate;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.junit.jupiter.api.Test;
-
-class HttpPredicateBuilderTest {
-
-    @Test
-    void build() {}
+/** Represents the transmission type to be checked by an HttpMessage Predicate */
+public enum TransmissionType {
+    REQUEST,
+    RESPONSE
 }

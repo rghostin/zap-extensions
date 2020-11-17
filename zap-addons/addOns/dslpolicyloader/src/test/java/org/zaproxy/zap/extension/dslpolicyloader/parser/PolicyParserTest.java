@@ -17,10 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.checks;
+package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
-/** Represents the field to be checked by an HttpMessage Predicate */
-public enum FieldType {
-    HEADER,
-    BODY
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
+// todo test
+class PolicyParserTest {
+
+    @Test
+    void parsePolicy() {}
 }

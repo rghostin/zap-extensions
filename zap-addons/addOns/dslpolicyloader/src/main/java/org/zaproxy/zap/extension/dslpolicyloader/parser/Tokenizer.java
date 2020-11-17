@@ -26,20 +26,14 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.FieldType;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.TransmissionType;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
 
 public class Tokenizer {
     private static final String RE_SIMPLE_PREDICATE =
@@ -77,15 +71,15 @@ public class Tokenizer {
 
         Matcher m;
         String tokenStr;
-        while ( (tokenStr = getNextTokenString()) != null ) {
+        while ((tokenStr = getNextTokenString()) != null) {
             if (tokenStr.equals("(")) {
                 tokens.add(new Token("("));
-            } else if ( tokenStr.equals(")")) {
+            } else if (tokenStr.equals(")")) {
                 tokens.add(new Token(")"));
             } else if (PATTERN_OPERATOR.matcher(tokenStr).matches()) {
                 HttpPredicateOperator operator = parseOperator(tokenStr);
                 tokens.add(new Token(operator));
-            } else if ( (m= PATTERN_SIMPLE_PREDICATE.matcher(tokenStr)).matches()) {
+            } else if ((m = PATTERN_SIMPLE_PREDICATE.matcher(tokenStr)).matches()) {
                 Predicate<HttpMessage> httpPredicate = parseSimplePredicate(m);
                 tokens.add(new Token(httpPredicate));
             } else {

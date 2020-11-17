@@ -1,19 +1,37 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2020 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
 class StatementParserTest {
 
@@ -24,11 +42,11 @@ class StatementParserTest {
                         "request.header.re=\"test\" or response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")",
                         "request.header.re=\"test\" or response.body.value=\"test2\"",
                         "request.header.values=[\"ada\",\"wfww\"]",
-                        "not not request.header.values=[\"ada\",\"wfww\"]"
-                ));
+                        "not not request.header.values=[\"ada\",\"wfww\"]"));
     }
 
-    private List<HttpMessage> hardCodingTestTrue() throws URIException, HttpMalformedHeaderException {
+    private List<HttpMessage> hardCodingTestTrue()
+            throws URIException, HttpMalformedHeaderException {
         List<HttpMessage> msgs = new ArrayList<>();
         HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
         msg1.setCookieParamsAsString("[\"ada\",\"wfww\"]");
@@ -49,7 +67,8 @@ class StatementParserTest {
         return msgs;
     }
 
-    private List<HttpMessage> hardCodingTestFalse() throws URIException, HttpMalformedHeaderException {
+    private List<HttpMessage> hardCodingTestFalse()
+            throws URIException, HttpMalformedHeaderException {
         List<HttpMessage> msgs = new ArrayList<>();
         HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
 
@@ -80,7 +99,7 @@ class StatementParserTest {
         Iterator<HttpMessage> it_httpmsgT = true_msgs.iterator();
         Iterator<HttpMessage> it_httpmsgF = false_msgs.iterator();
 
-        while(it_test.hasNext() && it_httpmsgT.hasNext() && it_httpmsgF.hasNext()){
+        while (it_test.hasNext() && it_httpmsgT.hasNext() && it_httpmsgF.hasNext()) {
             StatementParser sp_test = new StatementParser(it_test.next());
             Predicate<HttpMessage> predicate = null;
             try {
@@ -92,7 +111,7 @@ class StatementParserTest {
             HttpMessage temp_httpT = it_httpmsgT.next();
             HttpMessage temp_httpF = it_httpmsgF.next();
 
-            //System.out.println(predicate.toString());
+            // System.out.println(predicate.toString());
 
             assertTrue(predicate.test(temp_httpT));
             assertFalse(predicate.test(temp_httpF));

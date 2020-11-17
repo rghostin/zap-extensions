@@ -34,8 +34,8 @@ enum TokenType {
  * Represents a token in the Domain Specific language Token objects are used for parsing purposes
  */
 public class Token {
-    TokenType tokenType;
-    Object tokenObj;
+    private TokenType tokenType;
+    private Object tokenObj;
 
     /**
      * Construct token representing a DSL operator
