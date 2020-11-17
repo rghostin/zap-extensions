@@ -23,10 +23,8 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
 
@@ -112,15 +110,13 @@ class TokenizerTest {
             HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
             if ("Request".equals(transmission)) {
                 if (!"".equals(head.trim())) {
-                    // TODO:
-                    msg.getRequestHeader().setHeader("abc", "abc");
+                    msg.getRequestHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
                     msg.setRequestBody(String.format("<html><head></head><body>%s</body><html>", body));
                 }
             } else if ("Response".equals(transmission)) {
                 if (!"".equals(head.trim())) {
-                    // TODO:
-                    msg.getResponseHeader().setHeader("abc", "abc");
+                    msg.getResponseHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
                     msg.setResponseBody(String.format("<html><head></head><body>%s</body><html>", body));
                 }
