@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -140,7 +141,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     private void loadPolicyTexts(File[] files) throws IOException {
         StringBuilder loadedPolicyNames = new StringBuilder();
         for (File file : files) {
-            String policyName = file.getName(); // todo strip .txt
+            String policyName = FilenameUtils.getBaseName(file.getName());
             String policyDeclaration = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 
             Policy policy = null;
