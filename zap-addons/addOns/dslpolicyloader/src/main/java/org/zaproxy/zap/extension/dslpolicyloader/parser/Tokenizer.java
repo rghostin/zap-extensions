@@ -92,8 +92,7 @@ public class Tokenizer {
         String fieldOfOperationStr = matcherSimplePred.group(2);
         String matchingModeStr = matcherSimplePred.group(3);
 
-        // TODO convert matchingModeStr to pattern
-        Pattern pattern = Pattern.compile("");
+        Pattern pattern = Pattern.compile(matchingModeStr);
         TransmissionType transmissionType;
         FieldType fieldType;
 

@@ -113,15 +113,10 @@ class StatementParserTest {
     @Test
     void unitTest() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
-        StatementParser sp = new StatementParser("request.header.re=\"test\"");
+        StatementParser sp = new StatementParser("request.body.re=\"test\"");
 
         Predicate<HttpMessage> predicate = sp.parse();
 
-        System.out.println(predicate.toString());
-        System.out.println("RB: " + msg1.getRequestBody());
-        System.out.println("RH: " + msg1.getRequestHeader());
-        System.out.println("RSH: " + msg1.getResponseHeader());
-
-        assertTrue(predicate.test(msg1));
+        assertFalse(predicate.test(msg1));
     }
 }
