@@ -19,15 +19,14 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.predicate;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
-
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class HttpPredicateBuilderTest {
 
@@ -52,7 +51,8 @@ class HttpPredicateBuilderTest {
         predicate = httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.HEADER, pattern);
         assertTrue(predicate.test(createHttpMsg("Request", "abc", "")));
 
-        predicate = httpPredicateBuilder.build(TransmissionType.RESPONSE, FieldType.HEADER, pattern);
+        predicate =
+                httpPredicateBuilder.build(TransmissionType.RESPONSE, FieldType.HEADER, pattern);
         assertTrue(predicate.test(createHttpMsg("Response", "abc", "")));
     }
 
@@ -63,13 +63,15 @@ class HttpPredicateBuilderTest {
                 if (!"".equals(head.trim())) {
                     msg.getRequestHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
-                    msg.setRequestBody(String.format("<html><head></head><body>%s</body><html>", body));
+                    msg.setRequestBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
                 }
             } else if ("Response".equals(transmission)) {
                 if (!"".equals(head.trim())) {
                     msg.getResponseHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
-                    msg.setResponseBody(String.format("<html><head></head><body>%s</body><html>", body));
+                    msg.setResponseBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
                 }
             }
             return msg;

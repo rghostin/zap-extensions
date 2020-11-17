@@ -27,7 +27,6 @@ import org.zaproxy.zap.extension.dslpolicyloader.Policy;
 import org.zaproxy.zap.extension.dslpolicyloader.Rule;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
-
 /** Parses a policy declaration as defined in the DSL */
 public class PolicyParser {
     private static final String RE_RULE_DECLARATION =

@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
@@ -26,13 +32,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AndOperatorTest {
 
@@ -45,13 +44,16 @@ class AndOperatorTest {
     void setup() {
         andOperator = new AndOperator();
         notOperator = new NotOperator();
-        orOperator  = new OrOperator();
+        orOperator = new OrOperator();
         HttpPredicateBuilder httpPredicateBuilder = new HttpPredicateBuilder();
         httpPredicates = new ArrayList<>();
         Pattern firstPattern = Pattern.compile("hacker", Pattern.CASE_INSENSITIVE);
         Pattern secondPattern = Pattern.compile("123", Pattern.CASE_INSENSITIVE);
-        httpPredicates.add(httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.BODY, firstPattern));
-        httpPredicates.add(httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.BODY, secondPattern));
+        httpPredicates.add(
+                httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.BODY, firstPattern));
+        httpPredicates.add(
+                httpPredicateBuilder.build(
+                        TransmissionType.REQUEST, FieldType.BODY, secondPattern));
     }
 
     @Test
@@ -76,7 +78,6 @@ class AndOperatorTest {
         assertTrue(predicate.test(createHttpMsg("hacker123")));
         assertFalse(predicate.test(createHttpMsg("hacker")));
         assertFalse(predicate.test(createHttpMsg("123")));
-
     }
 
     private HttpMessage createHttpMsg(String keyword) {

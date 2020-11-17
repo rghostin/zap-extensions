@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +32,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class NotOperatorTest {
 
@@ -46,11 +45,12 @@ class NotOperatorTest {
     void setup() {
         andOperator = new AndOperator();
         notOperator = new NotOperator();
-        orOperator  = new OrOperator();
+        orOperator = new OrOperator();
         HttpPredicateBuilder httpPredicateBuilder = new HttpPredicateBuilder();
         httpPredicates = new ArrayList<>();
         Pattern firstPattern = Pattern.compile("hacker", Pattern.CASE_INSENSITIVE);
-        httpPredicate = httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.BODY, firstPattern);
+        httpPredicate =
+                httpPredicateBuilder.build(TransmissionType.REQUEST, FieldType.BODY, firstPattern);
         httpPredicates.add(httpPredicate);
     }
 

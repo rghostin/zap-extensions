@@ -19,19 +19,18 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
-
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class TokenTest {
 
@@ -46,7 +45,12 @@ class TokenTest {
     void setup() {
         operator = new AndOperator();
         operatorToken = new Token(operator);
-        predicate = new HttpPredicateBuilder().build(TransmissionType.REQUEST, FieldType.BODY, Pattern.compile("hacker", Pattern.CASE_INSENSITIVE));
+        predicate =
+                new HttpPredicateBuilder()
+                        .build(
+                                TransmissionType.REQUEST,
+                                FieldType.BODY,
+                                Pattern.compile("hacker", Pattern.CASE_INSENSITIVE));
         predicateToken = new Token(predicate);
         openPartenthesisToken = new Token("(");
         closedPartenthesisToken = new Token(")");

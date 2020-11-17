@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,13 +33,6 @@ import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("unchecked")
 class TokenizerTest {
@@ -52,9 +51,7 @@ class TokenizerTest {
     private List<String> getComposedStatements() {
         return new ArrayList<>(
                 Arrays.asList(
-                        "request.header.re=\"abc\" and not ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) "
-                )
-        );
+                        "request.header.re=\"abc\" and not ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) "));
     }
 
     @Test
@@ -75,7 +72,7 @@ class TokenizerTest {
 
         assertTrue(tokens.get(1).isOperator());
         if (tokens.get(1).isOperator()) {
-            assertEquals(AndOperator.class,tokens.get(1).getTokenObj().getClass());
+            assertEquals(AndOperator.class, tokens.get(1).getTokenObj().getClass());
         }
 
         assertTrue(tokens.get(2).isOperator());
@@ -112,13 +109,15 @@ class TokenizerTest {
                 if (!"".equals(head.trim())) {
                     msg.getRequestHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
-                    msg.setRequestBody(String.format("<html><head></head><body>%s</body><html>", body));
+                    msg.setRequestBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
                 }
             } else if ("Response".equals(transmission)) {
                 if (!"".equals(head.trim())) {
                     msg.getResponseHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
-                    msg.setResponseBody(String.format("<html><head></head><body>%s</body><html>", body));
+                    msg.setResponseBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
                 }
             }
             return msg;
