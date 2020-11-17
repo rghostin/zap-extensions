@@ -19,30 +19,38 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import java.util.function.Predicate;
 import org.parosproxy.paros.network.HttpMessage;
 
-/** This is public interface for runtime rule inspection */
-public interface Rule {
+public class Rule {
+    private final String name;
+    private final String description;
+    private final Predicate<HttpMessage> predicate;
+
+    public Rule(String name, String description, Predicate<HttpMessage> predicate) {
+        this.name = name;
+        this.description = description;
+        this.predicate = predicate;
+    }
+
+    /** @return Returns this rule's name */
+    public String getName() {
+        return name;
+    }
+
+    /** @return Returns this rule's description */
+    public String getDescription() {
+        return description;
+    }
 
     /**
-     * Returns this rule's name
+     * Checks whether the HttpMessage violates the rule The violation check is done by invoking
+     * predicate.test
      *
-     * @return Returns this rule's name
-     */
-    String getName();
-
-    /**
-     * Returns this rule's description
-     *
-     * @return Returns this rule's description
-     */
-    String getDescription();
-
-    /**
-     * Checks whether the HttpMessage violates a specific rule
-     *
-     * @param msg the HttpMessage that will be checked
+     * @param msg the HttpMessage that will be tested
      * @return true if the HttpMessage violates the rule, false if not
      */
-    boolean isViolated(HttpMessage msg);
+    public boolean isViolated(HttpMessage msg) {
+        return predicate.test(msg);
+    }
 }

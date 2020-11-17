@@ -17,28 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
+package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
-import java.util.List;
-import java.util.function.Predicate;
-import org.parosproxy.paros.network.HttpMessage;
+import static org.junit.jupiter.api.Assertions.*;
 
-public interface HttpPredicateOperator {
-    int getPrecedence();
+import org.junit.jupiter.api.Test;
 
-    boolean isLeftAssociative();
+class ValueToPatternAdapterTest {
 
-    int getArity();
+    @Test
+    void getPatternFromValue() {}
 
-    default boolean hasHigherPrecedenceOver(HttpPredicateOperator otherOp) {
-        if (getPrecedence() > otherOp.getPrecedence()) {
-            return true;
-        } else if (getPrecedence() == otherOp.getPrecedence()) {
-            return isLeftAssociative();
-        } else {
-            return false;
-        }
-    }
-
-    Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates);
+    @Test
+    void getPatternsFromValues() {}
 }

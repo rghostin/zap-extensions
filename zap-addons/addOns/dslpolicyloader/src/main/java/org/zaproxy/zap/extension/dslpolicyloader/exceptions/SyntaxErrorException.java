@@ -17,28 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
+package org.zaproxy.zap.extension.dslpolicyloader.exceptions;
 
-import java.util.List;
-import java.util.function.Predicate;
-import org.parosproxy.paros.network.HttpMessage;
+/** Exception for syntax errors concerning the DSL */
+public class SyntaxErrorException extends Exception {
+    static final long serialVersionUID = 42L;
 
-public interface HttpPredicateOperator {
-    int getPrecedence();
-
-    boolean isLeftAssociative();
-
-    int getArity();
-
-    default boolean hasHigherPrecedenceOver(HttpPredicateOperator otherOp) {
-        if (getPrecedence() > otherOp.getPrecedence()) {
-            return true;
-        } else if (getPrecedence() == otherOp.getPrecedence()) {
-            return isLeftAssociative();
-        } else {
-            return false;
-        }
+    public SyntaxErrorException() {
+        super("Syntax error in policy declaration");
     }
 
-    Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates);
+    public SyntaxErrorException(String msg) {
+        super(msg);
+    }
 }

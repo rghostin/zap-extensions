@@ -1,30 +1,59 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2020 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
-
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
-// todo test gen
+/**
+ * Parses a composed statement into a Predicate\\<HttpMessage\\> A composed statement is defined by
+ * one or multiple simple statements joined by operators A simple statement is defined by
+ * {request|response}.{body|header}|{re="" | value="" | values=["","",..]}
+ */
 @SuppressWarnings("unchecked")
 public class StatementParser {
     private Tokenizer tokenizer;
 
+    /**
+     * Load a composed statement into the parser A composed statement
+     *
+     * @param statement : The composed statement
+     */
     public StatementParser(String statement) {
         tokenizer = new Tokenizer(statement);
     }
 
     /**
-     * Adapted Dijkstra's Shunting yard algorithm
-     * Tranforms infix to postfix queue of tokens
+     * Adapted Dijkstra's Shunting yard algorithm Tranforms infix to postfix (Polish Reverse
+     * Notation - PRN) queue of tokens
+     *
      * @return postfix queue of tokens
      */
-    private Queue<Token> infixToPostfix() {
+    private Queue<Token> infixToPostfix(List<Token> tokens) {
         Stack<Token> operatorStack = new Stack<>();
         Queue<Token> outputQueue = new LinkedList<>();
 
-        for (Token token : tokenizer.getAllTokens()) {
+        for (Token token : tokens) {
             if (token.isOpenParenthesis()) {
                 operatorStack.push(token);
             } else if (token.isClosedParenthesis()) {
@@ -36,7 +65,8 @@ public class StatementParser {
                 HttpPredicateOperator operator = (HttpPredicateOperator) token.getTokenObj();
 
                 while (!operatorStack.empty() && !operatorStack.peek().isOpenParenthesis()) {
-                    HttpPredicateOperator prevOperator = (HttpPredicateOperator) operatorStack.peek().getTokenObj();
+                    HttpPredicateOperator prevOperator =
+                            (HttpPredicateOperator) operatorStack.peek().getTokenObj();
                     if (!prevOperator.hasHigherPrecedenceOver(operator)) {
                         break;
                     }
@@ -56,6 +86,13 @@ public class StatementParser {
         return outputQueue;
     }
 
+    /**
+     * Evaluates postfix notation to a single Predicate object
+     *
+     * @param outputQueue : Queue containing tokens ordered in a postfix order (Polish Reverse
+     *     Notation)
+     * @return Predicate representing the expression
+     */
     private Predicate<HttpMessage> postfixEvaluate(Queue<Token> outputQueue) {
         Stack<Predicate<HttpMessage>> operandsStack = new Stack<>();
 
@@ -78,16 +115,14 @@ public class StatementParser {
         return operandsStack.pop();
     }
 
-    public Predicate<HttpMessage> parse() {
-        Queue<Token> postfixTokens= infixToPostfix();
+    /**
+     * Parse the loaded composed statement to a predicate
+     *
+     * @return the predicate representing the statement
+     */
+    public Predicate<HttpMessage> parse() throws SyntaxErrorException {
+        List<Token> tokens = tokenizer.getAllTokens();
+        Queue<Token> postfixTokens = infixToPostfix(tokens);
         return postfixEvaluate(postfixTokens);
-    }
-
-
-    public static void main(String[] args) { // todo remove
-        String composedStatement = "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
-        StatementParser sttmtParser = new StatementParser(composedStatement);
-        Predicate<HttpMessage> predicate = sttmtParser.parse();
-        System.out.println(predicate);
     }
 }
