@@ -58,8 +58,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
-            // TODO Uncomment this
-            // extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
+            extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
 
