@@ -36,9 +36,8 @@ public class DSLParser {
         return new Rule(name, description, predicate);
     }
 
-    Policy parsePolicy(String policyContent) {
-        String dummy_name = "Dummy Policy Name";
-        Policy policy = new Policy(dummy_name);
+    Policy parsePolicy(String policyContent, String name) {
+        Policy policy = new Policy(name);
         String[] splitted_policy = policyContent.split(";");
         for (String str_rule: splitted_policy) {
             Rule rule = parseRule(str_rule);
@@ -47,4 +46,15 @@ public class DSLParser {
         return policy;
     }
 
+    public static void main(String[] args) { // todo remove
+        String composedStatement =
+                "Rule \"<name>\" \"<description>\":\n" +
+                "request.header.re=\"abc\" and not ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) ;\n" +
+                "\n" +
+                "Rule \"<name>\" \"<description>\":\n" +
+                "request.header.re=\"abc\" and ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) ;\n";
+        DSLParser dslparser = new DSLParser();
+        Policy policy= dslparser.parsePolicy(composedStatement,"Policy Name");
+        System.out.println(policy);
+    }
 }
