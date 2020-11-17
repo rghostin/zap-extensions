@@ -57,7 +57,6 @@ public class ValueToPatternAdapter {
         List<String> re_values_list = new ArrayList<>();
         for (String value : values) {
             re_values_list.add(getReFromValue(value));
-            ;
         }
         String re_all_values = String.join(RE_LIAISON, re_values_list);
         return Pattern.compile(re_all_values);
