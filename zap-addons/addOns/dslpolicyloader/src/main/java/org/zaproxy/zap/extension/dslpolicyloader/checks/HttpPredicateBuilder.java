@@ -6,6 +6,9 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Responsible for building a HttpMessage predicate
+ */
 public class HttpPredicateBuilder {
 
 //    private Function<HttpMessage, String> getFieldFct() { // todo try functional
@@ -25,7 +28,14 @@ public class HttpPredicateBuilder {
 //        return f;
 //    }
 
-
+    /**
+     * Builds a HttpMessage Predicate given matching constraints
+     * @param transmissionType : TransmissionType {REQUEST|RESPONSE}
+     * @param fieldType : FieldType {HEADER|BODY}
+     * @param pattern: pattern to match
+     * @return : An HttpMessage Predicate that tests true if a given HttpMessage
+     * matches the pattern in the concerned field
+     */
     public Predicate<HttpMessage> build(TransmissionType transmissionType, FieldType fieldType, Pattern pattern) {
         return new Predicate<HttpMessage>() {
             private final TransmissionType transmissionType_ = transmissionType;

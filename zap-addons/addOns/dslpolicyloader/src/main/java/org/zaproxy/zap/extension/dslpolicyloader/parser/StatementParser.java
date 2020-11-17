@@ -6,17 +6,27 @@ import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 import java.util.*;
 import java.util.function.Predicate;
 
+/**
+ * Parses a composed statement into a Predicate\\<HttpMessage\\>
+ *  A composed statement is defined by one or multiple simple statements joined by operators
+ *  A simple statement is defined by {request|response}.{body|header}|{re="" | value="" | values=["","",..]}
+ */
 @SuppressWarnings("unchecked")
 public class StatementParser {
     private Tokenizer tokenizer;
 
+    /**
+     * Load a composed statement into the parser
+     * A composed statement
+     * @param statement : The composed statement
+     */
     public StatementParser(String statement) {
         tokenizer = new Tokenizer(statement);
     }
 
     /**
      * Adapted Dijkstra's Shunting yard algorithm
-     * Tranforms infix to postfix queue of tokens
+     * Tranforms infix to postfix (Polish Reverse Notation - PRN) queue of tokens
      * @return postfix queue of tokens
      */
     private Queue<Token> infixToPostfix() {
@@ -55,6 +65,11 @@ public class StatementParser {
         return outputQueue;
     }
 
+    /**
+     * Evaluates postfix notation to a single Predicate object
+     * @param outputQueue : Queue containing tokens ordered in a postfix order (Polish Reverse Notation)
+     * @return Predicate representing the expression
+     */
     private Predicate<HttpMessage> postfixEvaluate(Queue<Token> outputQueue) {
         Stack<Predicate<HttpMessage>> operandsStack = new Stack<>();
 
@@ -77,6 +92,10 @@ public class StatementParser {
         return operandsStack.pop();
     }
 
+    /**
+     * Parse the loaded composed statement to a predicate
+     * @return the predicate representing the statement
+     */
     public Predicate<HttpMessage> parse() {
         Queue<Token> postfixTokens= infixToPostfix();
         return postfixEvaluate(postfixTokens);
