@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Convert literal values to their RE matching pattern
  */
-public class ValueToPatternAdaptor {
+public class ValueToPatternAdapter {
 
     /**
      * Return a literal (escaped) re expression from the string
