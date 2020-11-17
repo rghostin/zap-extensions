@@ -19,11 +19,6 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
@@ -33,6 +28,14 @@ import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateO
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+// todo javadoc
 public class Tokenizer {
     private static final String RE_SIMPLE_PREDICATE =
             "\\s*(request|response)\\.(header|body)\\.((?:re=\\\".*?\\\")|(?:value=\\\".*?\\\")|(?:values=\\[.*?\\]))\\s*";
@@ -43,8 +46,7 @@ public class Tokenizer {
 
     private static final String RE_PARENTHESIS = "\\s*\\(|\\)\\s*";
 
-    private static final String RE_TOKEN =
-            "(" + RE_SIMPLE_PREDICATE + ")|(" + RE_OPERATOR + ")|(" + RE_PARENTHESIS + ")";
+    private static final String RE_TOKEN = "("+ RE_SIMPLE_PREDICATE +")|("+RE_OPERATOR+")|("+RE_PARENTHESIS+")";
     private static final Pattern PATTERN_TOKEN = Pattern.compile(RE_TOKEN);
 
     private final Matcher matcher;
@@ -69,15 +71,15 @@ public class Tokenizer {
 
         Matcher m;
         String tokenStr;
-        while ((tokenStr = getNextTokenString()) != null) {
+        while ( (tokenStr = getNextTokenString()) != null ) {
             if (tokenStr.equals("(")) {
                 tokens.add(new Token("("));
-            } else if (tokenStr.equals(")")) {
+            } else if ( tokenStr.equals(")")) {
                 tokens.add(new Token(")"));
             } else if (PATTERN_OPERATOR.matcher(tokenStr).matches()) {
                 HttpPredicateOperator operator = parseOperator(tokenStr);
                 tokens.add(new Token(operator));
-            } else if ((m = PATTERN_SIMPLE_PREDICATE.matcher(tokenStr)).matches()) {
+            } else if ( (m= PATTERN_SIMPLE_PREDICATE.matcher(tokenStr)).matches()) {
                 Predicate<HttpMessage> httpPredicate = parseSimplePredicate(m);
                 tokens.add(new Token(httpPredicate));
             } else {
@@ -101,9 +103,41 @@ public class Tokenizer {
                 op = new NotOperator();
                 break;
             default:
-                throw new IllegalArgumentException("Unknown operator " + operator);
+                throw new IllegalArgumentException("Unknown operator "+operator);
         }
         return op;
+    }
+
+    // todo test
+    private Pattern parseMatchingModeString(String matchingModeStr) {
+        String matchingMode = matchingModeStr.substring(0, matchingModeStr.indexOf("="));
+        String arg = matchingModeStr.substring(
+                matchingModeStr.indexOf("=")+2, // skip ="
+                matchingModeStr.length()-1  // skip last "
+        );
+
+        Pattern pattern;
+        switch (matchingMode) {
+            case "re":
+                pattern = Pattern.compile(arg);
+                break;
+            case "value":
+                pattern = ValueToPatternAdapter.getPatternFromValue(arg);
+                break;
+            case "values":
+                List<String> values = new ArrayList<>();
+                for (String value : Arrays.asList(arg.split(","))) {
+                    values.add(
+                            value.substring(1, value.length()-1) // remove the " "
+                    );
+                }
+                pattern = ValueToPatternAdapter.getPatternsFromValues(values);
+                break;
+            default:
+                throw new IllegalStateException("Logic error");
+        }
+        return pattern;
+
     }
 
     private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherSimplePred) {
@@ -111,8 +145,7 @@ public class Tokenizer {
         String fieldOfOperationStr = matcherSimplePred.group(2);
         String matchingModeStr = matcherSimplePred.group(3);
 
-        // TODO convert matchingModeStr to pattern
-        Pattern pattern = Pattern.compile("");
+        Pattern pattern = parseMatchingModeString(matchingModeStr);
         TransmissionType transmissionType;
         FieldType fieldType;
 
@@ -120,7 +153,7 @@ public class Tokenizer {
             transmissionType = TransmissionType.REQUEST;
         } else if (transmissionTypeStr.equals("response")) {
             transmissionType = TransmissionType.RESPONSE;
-        } else {
+        }  else {
             throw new IllegalStateException("Logic error");
         }
 
