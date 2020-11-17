@@ -40,44 +40,44 @@ class TokenizerTest {
 
     @Test
     void getAllTokens() {
-        Predicate predicate;
+        Predicate<HttpMessage> predicate;
         List<Token> tokens = tokenizers.get(0).getAllTokens();
         assertEquals(8, tokens.size());
 
-        assertEquals(TokenType.SIMPLE_PREDICATE, tokens.get(0).tokenType);
-        predicate = (Predicate) tokens.get(0).tokenObj;
-        // TODO: test for pattern
-        // assertTrue(predicate.test(createHttpMsg("abc", "")));
-        // assertFalse(predicate.test(createHttpMsg("", "")));
+        assertTrue(tokens.get(0).isSimplePredicate());
+        predicate = (Predicate<HttpMessage>) tokens.get(0).getTokenObj();
+        assertTrue(predicate.test(createHttpMsg("abc", "")));
+        assertFalse(predicate.test(createHttpMsg("", "")));
 
-        assertEquals(TokenType.OPERATOR, tokens.get(1).tokenType);
-        assertEquals(AndOperator.class,tokens.get(1).getTokenObj().getClass());
+        assertTrue(tokens.get(1).isOperator());
+        if (tokens.get(1).isOperator()) {
+            assertEquals(AndOperator.class,tokens.get(1).getTokenObj().getClass());
+        }
 
-        assertEquals(TokenType.OPERATOR, tokens.get(2).tokenType);
-        assertEquals(NotOperator.class, tokens.get(2).tokenObj.getClass());
+        assertTrue(tokens.get(2).isOperator());
+        if (tokens.get(2).isOperator()) {
+            assertEquals(NotOperator.class, tokens.get(2).getTokenObj().getClass());
+        }
 
-        assertEquals(TokenType.OPEN_PARENTHESIS, tokens.get(3).tokenType);
-        assertEquals("(", tokens.get(3).getTokenObj());
+        assertTrue(tokens.get(3).isOpenParenthesis());
 
-        assertEquals(TokenType.SIMPLE_PREDICATE, tokens.get(4).tokenType);
-        predicate = (Predicate) tokens.get(4).tokenObj;
-        // TODO: test for pattern
-        // assertTrue(predicate.test(createHttpMsg("def", "")));
-        // assertFalse(predicate.test(createHttpMsg("", "")));
+        assertTrue(tokens.get(4).isSimplePredicate());
+        predicate = (Predicate<HttpMessage>) tokens.get(4).getTokenObj();
+        assertTrue(predicate.test(createHttpMsg("def", "")));
+        assertFalse(predicate.test(createHttpMsg("", "")));
 
-        assertEquals(TokenType.OPERATOR, tokens.get(5).tokenType);
-        assertEquals(OrOperator.class, tokens.get(5).getTokenObj().getClass());
+        assertTrue(tokens.get(5).isOperator());
+        if (tokens.get(5).isOperator()) {
+            assertEquals(OrOperator.class, tokens.get(5).getTokenObj().getClass());
+        }
 
-        assertEquals(TokenType.SIMPLE_PREDICATE, tokens.get(6).tokenType);
-        predicate = (Predicate) tokens.get(6).tokenObj;
-        // TODO: test for pattern
-        // assertTrue(predicate.test(createHttpMsg("", "x")));
-        // assertTrue(predicate.test(createHttpMsg("", "yz")));
-        // assertFalse(predicate.test(createHttpMsg("", "")));
+        assertTrue(tokens.get(6).isSimplePredicate());
+        predicate = (Predicate<HttpMessage>) tokens.get(6).getTokenObj();
+        assertTrue(predicate.test(createHttpMsg("", "x")));
+        assertTrue(predicate.test(createHttpMsg("", "yz")));
+        assertFalse(predicate.test(createHttpMsg("", "")));
 
-        assertEquals(TokenType.CLOSE_PARENTHESIS, tokens.get(7).tokenType);
-        assertEquals(")", tokens.get(7).getTokenObj());
-
+        assertTrue(tokens.get(7).isClosedParenthesis());
     }
 
     private HttpMessage createHttpMsg(String head, String body) {
