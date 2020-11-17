@@ -92,3 +92,9 @@ class TokenizerTest {
         return null;
     }
 }
+
+
+
+//if (token.isOperator()) {
+//        Operator op = (Operator) token.getTokenObj()
+//        }

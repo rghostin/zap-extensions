@@ -13,8 +13,8 @@ enum TokenType{
 }
 
 public class Token {
-    TokenType tokenType;
-    Object tokenObj;
+    private TokenType tokenType;
+    private Object tokenObj;
     public Token(HttpPredicateOperator operator) {
         tokenType = TokenType.OPERATOR;
         tokenObj = operator;
