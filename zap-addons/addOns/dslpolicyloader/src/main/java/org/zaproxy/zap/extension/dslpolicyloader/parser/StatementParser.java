@@ -1,10 +1,28 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2020 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
-
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 import java.util.*;
 import java.util.function.Predicate;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 
 // todo test gen
 @SuppressWarnings("unchecked")
@@ -16,8 +34,8 @@ public class StatementParser {
     }
 
     /**
-     * Adapted Dijkstra's Shunting yard algorithm
-     * Tranforms infix to postfix queue of tokens
+     * Adapted Dijkstra's Shunting yard algorithm Tranforms infix to postfix queue of tokens
+     *
      * @return postfix queue of tokens
      */
     private Queue<Token> infixToPostfix() {
@@ -36,7 +54,8 @@ public class StatementParser {
                 HttpPredicateOperator operator = (HttpPredicateOperator) token.getTokenObj();
 
                 while (!operatorStack.empty() && !operatorStack.peek().isOpenParenthesis()) {
-                    HttpPredicateOperator prevOperator = (HttpPredicateOperator) operatorStack.peek().getTokenObj();
+                    HttpPredicateOperator prevOperator =
+                            (HttpPredicateOperator) operatorStack.peek().getTokenObj();
                     if (!prevOperator.hasHigherPrecedenceOver(operator)) {
                         break;
                     }
@@ -79,13 +98,13 @@ public class StatementParser {
     }
 
     public Predicate<HttpMessage> parse() {
-        Queue<Token> postfixTokens= infixToPostfix();
+        Queue<Token> postfixTokens = infixToPostfix();
         return postfixEvaluate(postfixTokens);
     }
 
-
     public static void main(String[] args) { // todo remove
-        String composedStatement = "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
+        String composedStatement =
+                "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
         StatementParser sttmtParser = new StatementParser(composedStatement);
         Predicate<HttpMessage> predicate = sttmtParser.parse();
         System.out.println(predicate);
