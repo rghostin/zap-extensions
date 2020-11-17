@@ -29,6 +29,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.TransmissionType;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
@@ -71,7 +72,7 @@ public class Tokenizer {
         }
     }
 
-    public List<Token> getAllTokens() {
+    public List<Token> getAllTokens() throws SyntaxErrorException {
         List<Token> tokens = new ArrayList<>();
 
         Matcher m;
@@ -88,13 +89,13 @@ public class Tokenizer {
                 Predicate<HttpMessage> httpPredicate = parseSimplePredicate(m);
                 tokens.add(new Token(httpPredicate));
             } else {
-                throw new IllegalStateException("Logic error");
+                throw new SyntaxErrorException("Unexpected token string: " + tokenStr);
             }
         }
         return tokens;
     }
 
-    private HttpPredicateOperator parseOperator(String operator) {
+    private HttpPredicateOperator parseOperator(String operator) throws SyntaxErrorException {
         operator = operator.trim();
         HttpPredicateOperator op = null;
         switch (operator) {
@@ -108,13 +109,13 @@ public class Tokenizer {
                 op = new NotOperator();
                 break;
             default:
-                throw new IllegalArgumentException("Unknown operator " + operator);
+                throw new SyntaxErrorException("Unknown operator: " + operator);
         }
         return op;
     }
 
     // todo test
-    private Pattern parseMatchingModeString(String matchingModeStr) {
+    private Pattern parseMatchingModeString(String matchingModeStr) throws SyntaxErrorException {
         String matchingMode = matchingModeStr.substring(0, matchingModeStr.indexOf("="));
         String arg =
                 matchingModeStr.substring(
@@ -140,14 +141,15 @@ public class Tokenizer {
                 pattern = ValueToPatternAdapter.getPatternsFromValues(values);
                 break;
             default:
-                throw new IllegalStateException("Logic error");
+                throw new SyntaxErrorException("Unknown matching mode: " + matchingMode);
         }
         return pattern;
     }
 
-    private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherSimplePred) {
+    private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherSimplePred)
+            throws SyntaxErrorException {
         String transmissionTypeStr = matcherSimplePred.group(1);
-        String fieldOfOperationStr = matcherSimplePred.group(2);
+        String fieldTypeStr = matcherSimplePred.group(2);
         String matchingModeStr = matcherSimplePred.group(3);
 
         Pattern pattern = parseMatchingModeString(matchingModeStr);
@@ -159,15 +161,15 @@ public class Tokenizer {
         } else if (transmissionTypeStr.equals("response")) {
             transmissionType = TransmissionType.RESPONSE;
         } else {
-            throw new IllegalStateException("Logic error");
+            throw new SyntaxErrorException("Unknown transmission type: " + transmissionTypeStr);
         }
 
-        if (fieldOfOperationStr.equals("header")) {
+        if (fieldTypeStr.equals("header")) {
             fieldType = FieldType.HEADER;
-        } else if (fieldOfOperationStr.equals("body")) {
+        } else if (fieldTypeStr.equals("body")) {
             fieldType = FieldType.BODY;
         } else {
-            throw new IllegalStateException("Logic error");
+            throw new SyntaxErrorException("Unknown field type: " + fieldTypeStr);
         }
         return new HttpPredicateBuilder().build(transmissionType, fieldType, pattern);
     }
