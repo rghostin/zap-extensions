@@ -9,6 +9,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 // todo test
+
+/**
+ * Parses a policy declaration as defined in the DSL
+ */
 public class DSLParser {
     private static final String RE_RULE_DECLARATION = "^rule\\s+\"(.+?)\"\\s+\"(.+?)\"\\s*:\\s*(.+)$";
     private static final Pattern PATTERN_RULE_DECLARATION = Pattern.compile(RE_RULE_DECLARATION);
@@ -20,7 +24,7 @@ public class DSLParser {
      * @param ruleDsl : the rule declaration
      * @return : A rule object representing the rule declaration
      */
-    Rule parseRule(String ruleDsl){
+    private Rule parseRule(String ruleDsl){
         Matcher ruleMatcher = PATTERN_RULE_DECLARATION.matcher(ruleDsl);
         boolean matches = ruleMatcher.matches();
         assert matches;
