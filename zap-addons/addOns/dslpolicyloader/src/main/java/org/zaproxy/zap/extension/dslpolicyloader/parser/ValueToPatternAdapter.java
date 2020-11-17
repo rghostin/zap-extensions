@@ -14,7 +14,7 @@ public class ValueToPatternAdapter {
      * @param value : the value string
      * @return : escaped string to use as a regex literal
      */
-    private String getReFromValue(String value) {
+    static private String getReFromValue(String value) {
         return Pattern.quote(value);
     }
 
@@ -23,7 +23,7 @@ public class ValueToPatternAdapter {
      * @param value : the value to match
      * @return : pattern matching the value
      */
-    public Pattern getPatternFromValue(String value) {
+    static public Pattern getPatternFromValue(String value) {
         return Pattern.compile(getReFromValue(value));
     }
 
@@ -32,7 +32,7 @@ public class ValueToPatternAdapter {
      * @param values : the list of values
      * @return : pattern that matches any of the given values
      */
-    public Pattern getPatternsFromValues(List<String> values) {
+    static public Pattern getPatternsFromValues(List<String> values) {
         String RE_LIAISON = "|";
         List<String> re_values_list = new ArrayList<>();
         for (String value : values) {

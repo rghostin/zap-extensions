@@ -10,6 +10,7 @@ import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -87,13 +88,44 @@ public class Tokenizer {
         return op;
     }
 
+    // todo test
+    private Pattern parseMatchingModeString(String matchingModeStr) {
+        String matchingMode = matchingModeStr.substring(0, matchingModeStr.indexOf("="));
+        String arg = matchingModeStr.substring(
+                matchingModeStr.indexOf("=")+2, // skip ="
+                matchingModeStr.length()-1  // skip last "
+        );
+
+        Pattern pattern;
+        switch (matchingMode) {
+            case "re":
+                pattern = Pattern.compile(arg);
+                break;
+            case "value":
+                pattern = ValueToPatternAdapter.getPatternFromValue(arg);
+                break;
+            case "values":
+                List<String> values = new ArrayList<>();
+                for (String value : Arrays.asList(arg.split(","))) {
+                    values.add(
+                            value.substring(1, value.length()-1) // remove the " "
+                    );
+                }
+                pattern = ValueToPatternAdapter.getPatternsFromValues(values);
+                break;
+            default:
+                throw new IllegalStateException("Logic error");
+        }
+        return pattern;
+
+    }
+
     private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherSimplePred) {
         String transmissionTypeStr = matcherSimplePred.group(1);
         String fieldOfOperationStr = matcherSimplePred.group(2);
         String matchingModeStr = matcherSimplePred.group(3);
 
-        // TODO convert matchingModeStr to pattern
-        Pattern pattern = Pattern.compile("");
+        Pattern pattern = parseMatchingModeString(matchingModeStr);
         TransmissionType transmissionType;
         FieldType fieldType;
 

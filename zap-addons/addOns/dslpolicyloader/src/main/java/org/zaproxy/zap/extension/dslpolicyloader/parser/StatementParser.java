@@ -6,7 +6,6 @@ import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 import java.util.*;
 import java.util.function.Predicate;
 
-// todo test gen
 @SuppressWarnings("unchecked")
 public class StatementParser {
     private Tokenizer tokenizer;
