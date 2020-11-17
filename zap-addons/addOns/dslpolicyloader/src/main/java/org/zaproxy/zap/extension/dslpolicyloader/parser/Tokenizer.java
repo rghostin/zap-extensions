@@ -26,20 +26,14 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.FieldType;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
-import org.zaproxy.zap.extension.dslpolicyloader.checks.TransmissionType;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.OrOperator;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Tokenizer {
     private static final String RE_SIMPLE_PREDICATE =

@@ -27,15 +27,12 @@ import org.zaproxy.zap.extension.dslpolicyloader.Policy;
 import org.zaproxy.zap.extension.dslpolicyloader.Rule;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
-// todo test
 
 /** Parses a policy declaration as defined in the DSL */
 public class PolicyParser {
     private static final String RE_RULE_DECLARATION =
             "^Rule\\s+\"(.+?)\"\\s+\"(.+?)\"\\s*:\\s*(.+)$";
     private static final Pattern PATTERN_RULE_DECLARATION = Pattern.compile(RE_RULE_DECLARATION);
-
-    // todo test
 
     /**
      * Parses a rule declaration as defined in the DSL

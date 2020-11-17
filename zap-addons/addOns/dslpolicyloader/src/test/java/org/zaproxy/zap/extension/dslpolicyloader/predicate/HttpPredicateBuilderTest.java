@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.checks;
+package org.zaproxy.zap.extension.dslpolicyloader.predicate;
 
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,15 +61,13 @@ class HttpPredicateBuilderTest {
             HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
             if ("Request".equals(transmission)) {
                 if (!"".equals(head.trim())) {
-                    // TODO:
-                    msg.getRequestHeader().setHeader("abc", "abc");
+                    msg.getRequestHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
                     msg.setRequestBody(String.format("<html><head></head><body>%s</body><html>", body));
                 }
             } else if ("Response".equals(transmission)) {
                 if (!"".equals(head.trim())) {
-                    // TODO:
-                    msg.getResponseHeader().setHeader("abc", "abc");
+                    msg.getResponseHeader().setHeader(head, head);
                 } else if (!"".equals(body.trim())) {
                     msg.setResponseBody(String.format("<html><head></head><body>%s</body><html>", body));
                 }

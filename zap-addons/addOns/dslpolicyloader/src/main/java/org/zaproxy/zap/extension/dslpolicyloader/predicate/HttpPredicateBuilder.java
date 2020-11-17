@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.dslpolicyloader.checks;
+package org.zaproxy.zap.extension.dslpolicyloader.predicate;
 
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
