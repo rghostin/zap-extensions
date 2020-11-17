@@ -27,18 +27,6 @@ class StatementParserTest {
                 ));
     }
 
-
-    // Expected Parse Result
-    private List<String> getTestResults() {
-        return new ArrayList<>(
-                Arrays.asList(
-                        "java.util.function.Predicate$$Lambda$31",
-                        "java.util.function.Predicate$$Lambda$31",
-                        "org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder",
-                        "java.util.function.Predicate$$Lambda"
-                ));
-    }
-
     private List<HttpMessage> hardCodingTestTrue() throws URIException, HttpMalformedHeaderException {
         List<HttpMessage> msgs = new ArrayList<>();
         HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
@@ -82,22 +70,18 @@ class StatementParserTest {
     @Test
     void parse() throws HttpMalformedHeaderException, URIException {
         List<String> tests = getTestStatements();
-        List<String> results = getTestResults();
 
         List<HttpMessage> true_msgs = hardCodingTestTrue();
         List<HttpMessage> false_msgs = hardCodingTestFalse();
 
         Iterator<String> it_test = tests.iterator();
-        Iterator<String> it_results = results.iterator();
 
         Iterator<HttpMessage> it_httpmsgT = true_msgs.iterator();
         Iterator<HttpMessage> it_httpmsgF = false_msgs.iterator();
 
-        while(it_test.hasNext() && it_results.hasNext() && it_httpmsgT.hasNext() && it_httpmsgF.hasNext()){
+        while(it_test.hasNext() && it_httpmsgT.hasNext() && it_httpmsgF.hasNext()){
             StatementParser sp_test = new StatementParser(it_test.next());
             Predicate<HttpMessage> predicate = sp_test.parse();
-
-            assertTrue(predicate.toString().contains(it_results.next()));
 
             HttpMessage temp_httpT = it_httpmsgT.next();
             HttpMessage temp_httpF = it_httpmsgF.next();
