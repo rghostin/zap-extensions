@@ -19,19 +19,21 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.dslpolicyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-/** This is a policy loader for policies of jar file */
+/** This is a policy controller for policies of text file */
 public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
@@ -54,7 +56,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
-            extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
+            // TODO Uncomment this
+            // extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
 
@@ -86,14 +89,14 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * Returns an array of selected policies of jar files
+     * Returns an array of selected policies of text files
      *
-     * @return Returns an array of selected policies of jar files
+     * @return Returns an array of selected policies of text files
      */
-    public File[] getSelectedJARFiles() {
+    public File[] getSelectedTextFiles() {
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.jar", "jar", "jar");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt", "txt");
         chooser.setFileFilter(filter);
         chooser.setMultiSelectionEnabled(true);
         chooser.showOpenDialog(View.getSingleton().getMainFrame());
@@ -102,7 +105,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * Menu button for loading rules from a jar file
+     * Menu button for loading rules from text files
      *
      * @return Returns the GUI menu button
      */
@@ -114,8 +117,12 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            File[] files = getSelectedJARFiles();
-                            loadPolicyJars(files);
+                            File[] files = getSelectedTextFiles();
+                            try {
+                                loadPolicyTexts(files);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
         }
@@ -123,16 +130,24 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * load jar files as policies into {@code PolicyScanner} display status message (failure or
+     * load text files as policies into {@code PolicyScanner} display status message (failure or
      * success)
      *
-     * @param files: Array of jar file objects
+     * @param files: Array of text file objects
      */
-    private void loadPolicyJars(File[] files) {
-        StringBuilder loadedPolicyNames = new StringBuilder();
+    private void loadPolicyTexts(File[] files) throws IOException {
+        // StringBuilder loadedPolicyNames = new StringBuilder();
 
         for (File file : files) {
-            // load policy from jar
+            // TODO MUST CHANGE TO TEXT LOADER
+            // String file_name = file.getName();
+            // BufferedReader r = new BufferedReader(new FileReader(file_name));
+            Path path = Paths.get(String.valueOf(file));
+            List<String> lines = Files.readAllLines(path);
+            System.out.println("trial");
+            System.out.println(lines);
+        }
+            /*
             PolicyJarLoader policyLoader = null;
             Policy policy = null;
             try {
@@ -154,6 +169,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     .showMessageDialog(
                             "Policies loaded successfully: \n" + loadedPolicyNames.toString());
         }
+
+    */
     }
 
     /**
@@ -161,6 +178,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      *
      * @return the menu button
      */
+    /*
     private ZapMenuItem getMenuReportPolicyViolations() {
         if (menuPolicyViolationsReport == null) {
             menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
@@ -192,6 +210,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         }
         return menuPolicyViolationsReport;
     }
+    */
 
     /**
      * Build a violation report with the violations encountered so far
@@ -199,6 +218,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      * @param path : the file path of the report
      * @throws IOException
      */
+
+    /*
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
         for (Violation violation : getPolicyScanner().getViolationHistory()) {
@@ -207,4 +228,5 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
         scanReport.writeToFile(path);
     }
+    */
 }
