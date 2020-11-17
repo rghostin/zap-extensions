@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.AndOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.HttpPredicateOperator;
 import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.NotOperator;
@@ -36,6 +37,7 @@ import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings("unchecked")
 class TokenizerTest {
 
     List<Tokenizer> tokenizers;
@@ -60,7 +62,12 @@ class TokenizerTest {
     @Test
     void getAllTokens() {
         Predicate<HttpMessage> predicate;
-        List<Token> tokens = tokenizers.get(0).getAllTokens();
+        List<Token> tokens = null;
+        try {
+            tokens = tokenizers.get(0).getAllTokens();
+        } catch (SyntaxErrorException e) {
+            fail("unexpected syntax error");
+        }
         assertEquals(8, tokens.size());
 
         assertTrue(tokens.get(0).isSimplePredicate());

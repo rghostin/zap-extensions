@@ -19,7 +19,18 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser.operators;
 
+import org.apache.commons.httpclient.URI;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.checks.FieldType;
+import org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder;
+import org.zaproxy.zap.extension.dslpolicyloader.checks.TransmissionType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
