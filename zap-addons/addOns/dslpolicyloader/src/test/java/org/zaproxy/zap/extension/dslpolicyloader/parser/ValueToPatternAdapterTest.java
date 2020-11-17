@@ -66,4 +66,31 @@ class ValueToPatternAdapterTest {
 
         assertEquals(re_all_values,patterns.toString());
     }
+
+    @Test
+    void getPatternsFromOneValues() {
+        List<String> testStrings = new ArrayList<>(Arrays.asList("a"));
+        List<String> res = new ArrayList<>();
+        Pattern patterns = ValueToPatternAdapter.getPatternsFromValues(testStrings);
+
+        String result = "";
+        for(String test : testStrings) {
+            String res_temp = "\\Q" + test+  "\\E";
+            res.add(res_temp);
+        }
+
+        String re_all_values = String.join("|", res);
+
+        assertEquals(re_all_values,patterns.toString());
+    }
+
+    @Test
+    void getPatternsFromEmptyValues() {
+        List<String> testStrings = new ArrayList<>();
+        Pattern patterns = ValueToPatternAdapter.getPatternsFromValues(testStrings);
+
+        System.out.println(patterns.toString());
+
+        assertEquals("",patterns.toString());
+    }
 }
