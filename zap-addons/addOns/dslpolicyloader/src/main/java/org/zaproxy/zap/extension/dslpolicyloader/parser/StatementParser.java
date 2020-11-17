@@ -6,7 +6,6 @@ import org.zaproxy.zap.extension.dslpolicyloader.parser.operators.*;
 import java.util.*;
 import java.util.function.Predicate;
 
-// todo test gen
 @SuppressWarnings("unchecked")
 public class StatementParser {
     private Tokenizer tokenizer;
@@ -81,13 +80,5 @@ public class StatementParser {
     public Predicate<HttpMessage> parse() {
         Queue<Token> postfixTokens= infixToPostfix();
         return postfixEvaluate(postfixTokens);
-    }
-
-
-    public static void main(String[] args) { // todo remove
-        String composedStatement = "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
-        StatementParser sttmtParser = new StatementParser(composedStatement);
-        Predicate<HttpMessage> predicate = sttmtParser.parse();
-        System.out.println(predicate);
     }
 }
