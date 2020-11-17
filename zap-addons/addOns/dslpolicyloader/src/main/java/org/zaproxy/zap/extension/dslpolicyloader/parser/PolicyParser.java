@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 /**
  * Parses a policy declaration as defined in the DSL
  */
-public class DSLParser {
-    private static final String RE_RULE_DECLARATION = "^rule\\s+\"(.+?)\"\\s+\"(.+?)\"\\s*:\\s*(.+)$";
+public class PolicyParser {
+    private static final String RE_RULE_DECLARATION = "^Rule\\s+\"(.+?)\"\\s+\"(.+?)\"\\s*:\\s*(.+)$";
     private static final Pattern PATTERN_RULE_DECLARATION = Pattern.compile(RE_RULE_DECLARATION);
 
     // todo test
@@ -36,25 +36,20 @@ public class DSLParser {
         return new Rule(name, description, predicate);
     }
 
+    /**
+     * Parses a policy declaration as defined in the DSL
+     * @param policyContent : the policy declaration
+     * @param name : the policy name
+     * @return : A policy object representing the policy declaration
+     */
     Policy parsePolicy(String policyContent, String name) {
         Policy policy = new Policy(name);
-        String[] splitted_policy = policyContent.split(";");
+        String[] splitted_policy = policyContent.trim().split(";");
         for (String str_rule: splitted_policy) {
+            str_rule = str_rule.trim();
             Rule rule = parseRule(str_rule);
             policy.addRule(rule);
         }
         return policy;
-    }
-
-    public static void main(String[] args) { // todo remove
-        String composedStatement =
-                "Rule \"<name>\" \"<description>\":\n" +
-                "request.header.re=\"abc\" and not ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) ;\n" +
-                "\n" +
-                "Rule \"<name>\" \"<description>\":\n" +
-                "request.header.re=\"abc\" and ( response.header.value=\"def\" or response.body.values=[\"x\",\"y\",\"z\"] ) ;\n";
-        DSLParser dslparser = new DSLParser();
-        Policy policy= dslparser.parsePolicy(composedStatement,"Policy Name");
-        System.out.println(policy);
     }
 }
