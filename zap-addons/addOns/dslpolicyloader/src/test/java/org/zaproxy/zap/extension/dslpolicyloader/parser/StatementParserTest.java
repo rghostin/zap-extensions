@@ -21,7 +21,7 @@ class StatementParserTest {
         return new ArrayList<>(
                 Arrays.asList(
                         "request.header.re=\"test\" or response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")",
-                        "request.header.re=\"test\" or   response.body.value=\"test2\"",
+                        "request.header.re=\"test\" or response.body.value=\"test2\"",
                         "request.header.values=[\"ada\",\"wfww\"]",
                         "not not request.header.values=[\"ada\",\"wfww\"]"
                 ));
@@ -35,7 +35,7 @@ class StatementParserTest {
                         "java.util.function.Predicate$$Lambda$31",
                         "java.util.function.Predicate$$Lambda$31",
                         "org.zaproxy.zap.extension.dslpolicyloader.checks.HttpPredicateBuilder",
-                        "java.util.function.Predicate$$Lambda$251"
+                        "java.util.function.Predicate$$Lambda"
                 ));
     }
 
@@ -46,13 +46,11 @@ class StatementParserTest {
         msg1.setResponseBody("test2");
 
         HttpMessage msg3 = new HttpMessage(new URI("http://example.com/", true));
-        msg3.setCookieParamsAsString("\"test2\"");
+        msg3.setResponseBody("test2");
 
-        HttpMessage msg4 = new HttpMessage(new URI("http://example.com/", true));
-        msg4.setCookieParamsAsString("[\"ada\",\"wfww\"]");
+        HttpMessage msg4 = new HttpMessage(new URI("http://adawfww.com/", true));
 
-        HttpMessage msg5 = new HttpMessage(new URI("http://example.com/", true));
-        msg5.setCookieParamsAsString("[\"ada\",\"wfww\"]");
+        HttpMessage msg5 = new HttpMessage(new URI("http://adawfww.com/", true));
 
         msgs.add(msg1);
         msgs.add(msg3);
@@ -67,12 +65,11 @@ class StatementParserTest {
         HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
 
         HttpMessage msg3 = new HttpMessage(new URI("http://example.com/", true));
+        msg3.setResponseBody("test3");
 
-        HttpMessage msg4 = new HttpMessage(new URI("http://example.com/", true));
-        msg4.setCookieParamsAsString("[\"aa\",\"wfw\"]");
+        HttpMessage msg4 = new HttpMessage(new URI("http://aawww.com/", true));
 
-        HttpMessage msg5 = new HttpMessage(new URI("http://example.com/", true));
-        msg5.setCookieParamsAsString("[\"aa\",\"wfw\"]");
+        HttpMessage msg5 = new HttpMessage(new URI("http://aafww.com/", true));
 
         msgs.add(msg1);
         msgs.add(msg3);
@@ -105,18 +102,22 @@ class StatementParserTest {
             HttpMessage temp_httpT = it_httpmsgT.next();
             HttpMessage temp_httpF = it_httpmsgF.next();
 
+            //System.out.println(predicate.toString());
+
             assertTrue(predicate.test(temp_httpT));
-            //assertFalse(predicate.test(temp_httpF));
+            assertFalse(predicate.test(temp_httpF));
         }
     }
 
     @Test
     void unitTest() throws HttpMalformedHeaderException, URIException {
-        HttpMessage msg1 = new HttpMessage(new URI("http://example.com/", true));
-        StatementParser sp = new StatementParser("request.body.re=\"test\"");
+        HttpMessage msg1 = new HttpMessage(new URI("http://adawfww.com/", true));
+        msg1.setResponseBody("test2");
+
+        StatementParser sp = new StatementParser("request.header.values=[\"ada\",\"wfww\"]");
 
         Predicate<HttpMessage> predicate = sp.parse();
 
-        assertFalse(predicate.test(msg1));
+        assertTrue(predicate.test(msg1));
     }
 }
