@@ -19,19 +19,21 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.apache.commons.io.FileUtils;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-/** This is a policy loader for policies of jar file */
+/** This is a policy controller for policies of text file */
 public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
@@ -39,8 +41,9 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private static final int SCANNER_PLUGIN_ID = 500001;
     private static final String NAME = "Policy Loader";
-    protected static final String PREFIX = "policyloader";
+    protected static final String PREFIX = "dslpolicyloader";
     private PolicyScanner policyScanner = null;
+    PolicyParser policyParser = new PolicyParser();
 
     public ExtensionDSLPolicyController() {
         super(NAME);
@@ -54,7 +57,8 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
-            extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
+            // TODO Uncomment this
+            // extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
 
@@ -86,14 +90,14 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * Returns an array of selected policies of jar files
+     * Returns an array of selected policies of text files
      *
-     * @return Returns an array of selected policies of jar files
+     * @return Returns an array of selected policies of text files
      */
-    public File[] getSelectedJARFiles() {
+    public File[] getSelectedTextFiles() {
         JFileChooser chooser = new JFileChooser();
         chooser.setAcceptAllFileFilterUsed(false);
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.jar", "jar", "jar");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("*.txt", "txt", "txt");
         chooser.setFileFilter(filter);
         chooser.setMultiSelectionEnabled(true);
         chooser.showOpenDialog(View.getSingleton().getMainFrame());
@@ -102,7 +106,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * Menu button for loading rules from a jar file
+     * Menu button for loading rules from text files
      *
      * @return Returns the GUI menu button
      */
@@ -114,8 +118,13 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            File[] files = getSelectedJARFiles();
-                            loadPolicyJars(files);
+                            File[] files = getSelectedTextFiles();
+                            try {
+                                loadPolicyTexts(files);
+                            } catch (IOException e) {
+                                View.getSingleton()
+                                        .showMessageDialog("Error : Unable to load files");
+                            }
                         }
                     });
         }
@@ -123,21 +132,21 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * load jar files as policies into {@code PolicyScanner} display status message (failure or
+     * load text files as policies into {@code PolicyScanner} display status message (failure or
      * success)
      *
-     * @param files: Array of jar file objects
+     * @param files: Array of text file objects
      */
-    private void loadPolicyJars(File[] files) {
+    private void loadPolicyTexts(File[] files) throws IOException {
         StringBuilder loadedPolicyNames = new StringBuilder();
-
         for (File file : files) {
-            // load policy from jar
-            PolicyJarLoader policyLoader = null;
+            String policyName = file.getName(); // todo strip .txt
+            String policyDeclaration = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+
             Policy policy = null;
             try {
-                policyLoader = new PolicyJarLoader(file.getAbsolutePath());
-                policy = policyLoader.getPolicy();
+                // todo handle excpetion syntax errors
+                policy = policyParser.parsePolicy(policyDeclaration, policyName);
                 getPolicyScanner().addPolicy(policy);
                 loadedPolicyNames.append(policy.getName()).append("\n");
             } catch (DuplicatePolicyException e) {
@@ -161,6 +170,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
      *
      * @return the menu button
      */
+
     private ZapMenuItem getMenuReportPolicyViolations() {
         if (menuPolicyViolationsReport == null) {
             menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
@@ -193,6 +203,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         return menuPolicyViolationsReport;
     }
 
+
     /**
      * Build a violation report with the violations encountered so far
      *
@@ -207,4 +218,5 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
         scanReport.writeToFile(path);
     }
+
 }

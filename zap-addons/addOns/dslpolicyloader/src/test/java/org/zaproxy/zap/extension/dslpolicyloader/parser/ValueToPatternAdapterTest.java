@@ -19,13 +19,15 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class TokenizerTest {
+import org.junit.jupiter.api.Test;
+
+class ValueToPatternAdapterTest {
 
     @Test
-    void getAllTokens() {
-    }
+    void getPatternFromValue() {}
+
+    @Test
+    void getPatternsFromValues() {}
 }
