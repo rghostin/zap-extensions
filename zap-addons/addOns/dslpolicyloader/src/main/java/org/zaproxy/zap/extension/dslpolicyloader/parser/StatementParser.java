@@ -85,7 +85,7 @@ public class StatementParser {
 
 
     public static void main(String[] args) { // todo remove
-        String composedStatement = "not ( request.header.re=\"test\" and response.body.value=\"test2\" ) or request.header.values=[\"ada\",\"wfww\"] ";
+        String composedStatement = "request.header.re=\"test\" or   response.body.value=\"test2\" and ( request.header.values=[\"ada\",\"wfww\"] or not response.body.value=\"test4\")";
         StatementParser sttmtParser = new StatementParser(composedStatement);
         Predicate<HttpMessage> predicate = sttmtParser.parse();
         System.out.println(predicate);

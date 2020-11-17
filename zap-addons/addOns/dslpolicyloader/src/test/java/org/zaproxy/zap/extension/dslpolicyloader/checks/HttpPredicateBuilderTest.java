@@ -4,14 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO test
-class ResponseBodyCheckTest {
+class HttpPredicateBuilderTest {
 
     @Test
-    void test1() {
-    }
-
-    @Test
-    void getFieldOfOperation() {
+    void build() {
     }
 }

@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// TODO test
 class OrOperatorTest {
 
     @Test
@@ -12,10 +11,14 @@ class OrOperatorTest {
     }
 
     @Test
-    void getPrecedence() {
+    void getArity() {
     }
 
     @Test
     void isLeftAssociative() {
+    }
+
+    @Test
+    void operate() {
     }
 }
