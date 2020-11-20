@@ -21,13 +21,11 @@ package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.junit.jupiter.api.Test;
 
 class ValueToPatternAdapterTest {
 
@@ -44,9 +42,9 @@ class ValueToPatternAdapterTest {
     void getPatternFromValue() {
         List<String> testStrings = getTestString();
 
-        for(String test : testStrings) {
+        for (String test : testStrings) {
             Pattern p = ValueToPatternAdapter.getPatternFromValue(test);
-            assertEquals(p.toString(),"\\Q" + test+  "\\E");
+            assertEquals(p.toString(), "\\Q" + test + "\\E");
         }
     }
 
@@ -57,14 +55,14 @@ class ValueToPatternAdapterTest {
         Pattern patterns = ValueToPatternAdapter.getPatternsFromValues(testStrings);
 
         String result = "";
-        for(String test : testStrings) {
-            String res_temp = "\\Q" + test+  "\\E";
+        for (String test : testStrings) {
+            String res_temp = "\\Q" + test + "\\E";
             res.add(res_temp);
         }
 
         String re_all_values = String.join("|", res);
 
-        assertEquals(re_all_values,patterns.toString());
+        assertEquals(re_all_values, patterns.toString());
     }
 
     @Test
@@ -74,14 +72,14 @@ class ValueToPatternAdapterTest {
         Pattern patterns = ValueToPatternAdapter.getPatternsFromValues(testStrings);
 
         String result = "";
-        for(String test : testStrings) {
-            String res_temp = "\\Q" + test+  "\\E";
+        for (String test : testStrings) {
+            String res_temp = "\\Q" + test + "\\E";
             res.add(res_temp);
         }
 
         String re_all_values = String.join("|", res);
 
-        assertEquals(re_all_values,patterns.toString());
+        assertEquals(re_all_values, patterns.toString());
     }
 
     @Test
@@ -91,6 +89,6 @@ class ValueToPatternAdapterTest {
 
         System.out.println(patterns.toString());
 
-        assertEquals("",patterns.toString());
+        assertEquals("", patterns.toString());
     }
 }

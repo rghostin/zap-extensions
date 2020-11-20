@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.dslpolicyloader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FileUtils;
@@ -39,6 +40,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
+    private ZapMenuItem menuViewPolicies;
     private ZapMenuItem menuPolicyViolationsReport;
 
     private static final int SCANNER_PLUGIN_ID = 500001;
@@ -59,6 +61,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuViewPolicies());
             extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
@@ -130,6 +133,21 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     });
         }
         return menuPolicyLoader;
+    }
+
+    private ZapMenuItem getMenuViewPolicies() {
+        if (menuViewPolicies == null) {
+            menuViewPolicies = new ZapMenuItem(PREFIX + ".panel.viewpolicy_title");
+
+            menuViewPolicies.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            displayPolicies();
+                        }
+                    });
+        }
+        return menuViewPolicies;
     }
 
     /**
@@ -217,5 +235,21 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         }
 
         scanReport.writeToFile(path);
+    }
+
+    public void displayPolicies() {
+        Set<Policy> policies = getPolicyScanner().getPolicies();
+
+        JFrame f = new JFrame();
+        DefaultListModel<String> l1 = new DefaultListModel<>();
+        for (Policy policy : policies) {
+            l1.addElement(policy.getName());
+        }
+        JList<String> list = new JList<>(l1);
+        list.setBounds(100, 100, 75, 75);
+        f.add(list);
+        f.setSize(400, 400);
+        f.setLayout(null);
+        f.setVisible(true);
     }
 }
