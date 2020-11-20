@@ -19,22 +19,19 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
-import org.zaproxy.zap.extension.dslpolicyloader.parser.StatementParser;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.httpclient.URI;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.StatementParser;
 
 class PolicyTest {
 
@@ -49,19 +46,19 @@ class PolicyTest {
     void setup() {
         policyParser = new PolicyParser();
         try {
-            testPolicy = policyParser.parsePolicy(getPolicyContents().get(0) ,"testPolicy");
+            testPolicy = policyParser.parsePolicy(getPolicyContents().get(0), "testPolicy");
         } catch (SyntaxErrorException e) {
             e.printStackTrace();
         }
 
         try {
-            testRule = parseRule(
-                    "Rule \"test_add_rule\" \"rule for addRule() and removeRule() test\":\n" +
-                            "response.body.value=\"test\";");
+            testRule =
+                    parseRule(
+                            "Rule \"test_add_rule\" \"rule for addRule() and removeRule() test\":\n"
+                                    + "response.body.value=\"test\";");
         } catch (SyntaxErrorException e) {
             e.printStackTrace();
         }
-
     }
 
     @Test
@@ -123,20 +120,19 @@ class PolicyTest {
         httpMsg = createHttpMsg("Response,Request", "hacker", "hacker");
         assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
         targetActiveRuleNames.clear();
-
     }
 
     private List<String> getPolicyContents() {
         return new ArrayList<>(
-            Arrays.asList(
-                "Rule \"hacker_req_header_rule\" \"hacker exists in the request header\":\n" +
-                    "request.header.re=\"hacker\";\n" +
-                "Rule \"hacker_req_body_rule\" \"hacker exists in the request body\":\n" +
-                    "request.body.value=\"hacker\";\n" +
-                "Rule \"hacker_resp_header_rule\" \"hacker exists in the response header\":\n" +
-                    "response.header.value=\"hacker\";\n" +
-                "Rule \"hacker_resp_body_rule\" \"hacker exists in the response body\":\n" +
-                    "response.body.value=\"hacker\";"));
+                Arrays.asList(
+                        "Rule \"hacker_req_header_rule\" \"hacker exists in the request header\":\n"
+                                + "request.header.re=\"hacker\";\n"
+                                + "Rule \"hacker_req_body_rule\" \"hacker exists in the request body\":\n"
+                                + "request.body.value=\"hacker\";\n"
+                                + "Rule \"hacker_resp_header_rule\" \"hacker exists in the response header\":\n"
+                                + "response.header.value=\"hacker\";\n"
+                                + "Rule \"hacker_resp_body_rule\" \"hacker exists in the response body\":\n"
+                                + "response.body.value=\"hacker\";"));
     }
 
     private HttpMessage createHttpMsg(String transmission, String head, String body) {
@@ -188,8 +184,7 @@ class PolicyTest {
         return false;
     }
 
-    private boolean equals(List<String> targetActiveRuleNames, List<Violation>
-     checkViolations) {
+    private boolean equals(List<String> targetActiveRuleNames, List<Violation> checkViolations) {
         if (checkViolations == null) {
             return false;
         }
@@ -200,8 +195,8 @@ class PolicyTest {
         for (Violation cV : checkViolations) {
             cVRuleName.add(cV.getRuleName());
         }
-        String[] tarArr = targetActiveRuleNames.toArray(new String[]{});
-        String[] cVArr = cVRuleName.toArray(new String[]{});
+        String[] tarArr = targetActiveRuleNames.toArray(new String[] {});
+        String[] cVArr = cVRuleName.toArray(new String[] {});
         Arrays.sort(tarArr);
         Arrays.sort(cVArr);
         return Arrays.equals(tarArr, cVArr);

@@ -1,0 +1,29 @@
+Rule "hacker_rule" "hacker exists in the response body":
+response.body.value="hacker";
+
+Rule "zerohedge_rule" "zerohedge exists in the response body":
+request.body.value="zerohedge";
+
+Rule "keyword_list_rule" "response body contains at least one of the keywords in the list":
+response.body.values=["hacker","zerohedge"];
+
+Rule "keyword_AND_rule" "response body contains both of the keywords":
+response.body.value="hacker" and response.body.value="zerohedge";
+
+Rule "keyword_OR_rule" "response body contains at least one of the keywords":
+response.body.value="hacker" or response.body.value="zerohedge";
+
+Rule "keyword_NOT_rule" "response body does not contain the keyword":
+not (request.body.value="com");
+
+Rule "regex_rule" "response body matches regex":
+request.header.re="abc";
+
+Rule "keyword_AND_frenzy_rule" "response body contains both of the keywords":
+(response.body.value="hacker" and response.body.value="zerohedge") or (response.body.value="cern");
+
+Rule "paranthesis_frenzy_rule" "checking for edges":
+((((((((((response.body.value="zerohedge"))))))))));
+
+Rule "paranthesis_and_frenzy_rule" "checking for edge":
+response.body.value="zerohedge" and ((((((((((response.body.value="hacker"))))))))));

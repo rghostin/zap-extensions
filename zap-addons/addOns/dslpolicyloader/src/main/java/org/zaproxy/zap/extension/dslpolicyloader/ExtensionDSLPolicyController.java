@@ -19,9 +19,12 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FileUtils;
@@ -135,6 +138,10 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         return menuPolicyLoader;
     }
 
+    /**
+     * Menu button for viewing active rules
+     * @return: the GUI menu button
+     */
     private ZapMenuItem getMenuViewPolicies() {
         if (menuViewPolicies == null) {
             menuViewPolicies = new ZapMenuItem(PREFIX + ".panel.viewpolicy_title");
@@ -237,19 +244,47 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         scanReport.writeToFile(path);
     }
 
+    /**
+     * Displays a list of policies that are active in the policyScanner
+     */
     public void displayPolicies() {
-        Set<Policy> policies = getPolicyScanner().getPolicies();
 
+        Policy[] policies = getPolicyScanner().getPolicies().toArray(new Policy[0]);
         JFrame f = new JFrame();
-        DefaultListModel<String> l1 = new DefaultListModel<>();
-        for (Policy policy : policies) {
-            l1.addElement(policy.getName());
-        }
-        JList<String> list = new JList<>(l1);
-        list.setBounds(100, 100, 75, 75);
-        f.add(list);
-        f.setSize(400, 400);
+        final JLabel label = new JLabel();
+        label.setSize(1000, 100);
+        JButton b = new JButton("Show");
+        b.setBounds(200, 150, 80, 30);
+
+        final JList<Policy> list1 = new JList<>(policies);
+        list1.setBounds(300, 100, 75, 75);
+
+        f.add(list1);
+        f.add(b);
+        f.add(label);
+        f.setSize(1000, 450);
         f.setLayout(null);
         f.setVisible(true);
+        b.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        Policy selectedPolicy;
+                        StringBuilder labelValue = new StringBuilder();
+                        labelValue.append("Selected policy: ");
+                        if (list1.getSelectedIndex() != -1) {
+                            selectedPolicy = list1.getSelectedValue();
+                            labelValue.append(selectedPolicy.getName());
+                            List<String> ruleNames = new ArrayList<>();
+                            for (Rule rule : selectedPolicy.getRules()) {
+                                ruleNames.add(rule.getName());
+                            }
+                            labelValue
+                                    .append(" - Rule names: ")
+                                    .append(String.join(",", ruleNames));
+                            System.out.println(labelValue.toString());
+                            label.setText(labelValue.toString());
+                        }
+                    }
+                });
     }
 }

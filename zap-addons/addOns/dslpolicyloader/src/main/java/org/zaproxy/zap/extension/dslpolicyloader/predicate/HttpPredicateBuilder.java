@@ -27,27 +27,6 @@ import org.parosproxy.paros.network.HttpMessage;
 /** Responsible for building a HttpMessage predicate */
 public class HttpPredicateBuilder {
 
-    //    private Function<HttpMessage, String> getFieldFct() { // todo try functional
-    //        Function<HttpMessage, String> f;
-    //        if (transmissionType == TransmissionType.REQUEST && fieldOfOperation ==
-    // FieldType.HEADER) {
-    //            ;
-    //        f =  (msg) -> msg.getRequestHeader().toString();
-    //        } else if (transmissionType == TransmissionType.REQUEST && fieldOfOperation ==
-    // FieldType.BODY) {
-    //            f = (msg) -> msg.getRequestBody().toString();
-    //        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation ==
-    // FieldType.HEADER) {
-    //            f = (msg) -> msg.getResponseHeader().toString();
-    //        } else if (transmissionType == TransmissionType.RESPONSE && fieldOfOperation ==
-    // FieldType.BODY) {
-    //            f = (msg) -> msg.getResponseBody().toString();
-    //        } else {
-    //            throw new IllegalStateException("Logic error");
-    //        }
-    //        return f;
-    //    }
-
     /**
      * Builds a HttpMessage Predicate given matching constraints
      *

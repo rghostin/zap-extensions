@@ -108,7 +108,6 @@ public class Tokenizer {
         return op;
     }
 
-    // todo test
     private Pattern parseMatchingModeString(String matchingModeStr) throws SyntaxErrorException {
         String matchingMode = matchingModeStr.substring(0, matchingModeStr.indexOf("="));
         String arg =
