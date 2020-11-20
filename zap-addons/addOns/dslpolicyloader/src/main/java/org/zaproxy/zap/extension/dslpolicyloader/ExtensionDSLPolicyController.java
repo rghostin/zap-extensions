@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import javax.swing.*;
@@ -39,6 +41,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     private ZapMenuItem menuPolicyLoader;
+    private ZapMenuItem menuViewPolicies;
     private ZapMenuItem menuPolicyViolationsReport;
 
     private static final int SCANNER_PLUGIN_ID = 500001;
@@ -59,6 +62,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         // if we're not running as a daemon
         if (getView() != null) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuViewPolicies());
             extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
         }
     }
@@ -130,6 +134,21 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
                     });
         }
         return menuPolicyLoader;
+    }
+
+    private ZapMenuItem getMenuViewPolicies() {
+        if (menuViewPolicies == null) {
+            menuViewPolicies = new ZapMenuItem(PREFIX + ".panel.viewpolicy_title");
+
+            menuViewPolicies.addActionListener(
+                    new java.awt.event.ActionListener() {
+                        @Override
+                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                            displayPolicies();
+                        }
+                    });
+        }
+        return menuViewPolicies;
     }
 
     /**
@@ -217,5 +236,36 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         }
 
         scanReport.writeToFile(path);
+    }
+
+    public void displayPolicies() {
+        JFrame f = new JFrame();
+        final JLabel label = new JLabel();
+        label.setSize(500, 100);
+        JButton b = new JButton("Show");
+        b.setBounds(200, 150, 80, 30);
+        final DefaultListModel<String> l1 = new DefaultListModel<>();
+        for (Policy policy : getPolicyScanner().getPolicies()) {
+            l1.addElement(policy.getName());
+        }
+        final JList<String> list1 = new JList<>(l1);
+        list1.setBounds(100, 100, 75, 75);
+
+        f.add(list1);
+        f.add(b);
+        f.add(label);
+        f.setSize(450, 450);
+        f.setLayout(null);
+        f.setVisible(true);
+        b.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String data = "";
+                        if (list1.getSelectedIndex() != -1) {
+                            data = "Selected policy: " + list1.getSelectedValue();
+                            label.setText(data);
+                        }
+                    }
+                });
     }
 }
