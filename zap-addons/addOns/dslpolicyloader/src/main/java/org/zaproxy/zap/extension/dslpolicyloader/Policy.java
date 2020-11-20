@@ -92,4 +92,9 @@ public class Policy {
         }
         return violations;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

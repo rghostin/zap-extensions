@@ -19,6 +19,12 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -26,22 +32,14 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 class ViolationTest {
 
     private List<Rule> getTestRules() {
         String testName = "Test Rule Name";
         String testDescription = "Test Rule Description";
         HttpPredicateBuilder predicateBuilder = new HttpPredicateBuilder();
-        Predicate<HttpMessage> testPredicate = predicateBuilder.build(
-                null,null, null);
-        Rule testRule = new Rule(testName,testDescription,testPredicate);
+        Predicate<HttpMessage> testPredicate = predicateBuilder.build(null, null, null);
+        Rule testRule = new Rule(testName, testDescription, testPredicate);
         return new ArrayList<Rule>(Arrays.asList(testRule));
     }
 
@@ -95,10 +93,10 @@ class ViolationTest {
         String policyName = "Test Policy";
         HttpMessage msg = createHttpMsg();
         for (Rule testRule : getTestRules()) {
-            String testTitle = String.format("Policy_%s.Rule_%s violated", policyName, testRule.getName());
+            String testTitle =
+                    String.format("Policy_%s.Rule_%s violated", policyName, testRule.getName());
             Violation violation = new Violation(policyName, testRule, msg);
             assertEquals(testTitle, violation.getTitle());
-
         }
     }
 

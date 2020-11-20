@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FileUtils;
@@ -239,31 +241,41 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     public void displayPolicies() {
+
+        Policy[] policies = getPolicyScanner().getPolicies().toArray(new Policy[0]);
         JFrame f = new JFrame();
         final JLabel label = new JLabel();
-        label.setSize(500, 100);
+        label.setSize(1000, 100);
         JButton b = new JButton("Show");
         b.setBounds(200, 150, 80, 30);
-        final DefaultListModel<String> l1 = new DefaultListModel<>();
-        for (Policy policy : getPolicyScanner().getPolicies()) {
-            l1.addElement(policy.getName());
-        }
-        final JList<String> list1 = new JList<>(l1);
-        list1.setBounds(100, 100, 75, 75);
+
+        final JList<Policy> list1 = new JList<>(policies);
+        list1.setBounds(300, 100, 75, 75);
 
         f.add(list1);
         f.add(b);
         f.add(label);
-        f.setSize(450, 450);
+        f.setSize(1000, 450);
         f.setLayout(null);
         f.setVisible(true);
         b.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        String data = "";
+                        Policy selectedPolicy;
+                        StringBuilder labelValue = new StringBuilder();
+                        labelValue.append("Selected policy: ");
                         if (list1.getSelectedIndex() != -1) {
-                            data = "Selected policy: " + list1.getSelectedValue();
-                            label.setText(data);
+                            selectedPolicy = list1.getSelectedValue();
+                            labelValue.append(selectedPolicy.getName());
+                            List<String> ruleNames = new ArrayList<>();
+                            for (Rule rule : selectedPolicy.getRules()) {
+                                ruleNames.add(rule.getName());
+                            }
+                            labelValue
+                                    .append(" - Rule names: ")
+                                    .append(String.join(",", ruleNames));
+                            System.out.println(labelValue.toString());
+                            label.setText(labelValue.toString());
                         }
                     }
                 });
