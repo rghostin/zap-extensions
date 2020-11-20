@@ -19,185 +19,191 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.PolicyParser;
+import org.zaproxy.zap.extension.dslpolicyloader.parser.StatementParser;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-// todo retest
 class PolicyTest {
 
-    //    Policy testPolicy = new Policy("testPolicy");
-    //    Set<Rule> rulesContainer = new HashSet<>();
-    //    Map<String, String> violationsTitlesContainer = new HashMap<>();
-    //    String COOKIE_NAME = "Cookie_Attribute_Rule";
-    //    String DOMAIN_NAME = "Domain_matching_rule";
-    //    String EMAIL_NAME = "Email_matching_rule";
-    //    String EXCEPT_NAME = "ExpectCT_Rule";
-    //    String HSTS_NAME = "HSTS_Rule";
-    //    String HTTPS_NAME = "HTTPS";
-    //    String KEYWORD_NAME = "Keyword_matching_rule";
-    //    String COOKIE_TITLE = "Policy_testPolicy.Rule_Cookie_Attribute_Rule violated";
-    //    String DOMAIN_TITLE = "Policy_testPolicy.Rule_Domain_matching_rule violated";
-    //    String EMAIL_TITLE = "Policy_testPolicy.Rule_Email_matching_rule violated";
-    //    String EXCEPT_TITLE = "Policy_testPolicy.Rule_ExpectCT_Rule violated";
-    //    String HSTS_TITLE = "Policy_testPolicy.Rule_HSTS_Rule violated";
-    //    String HTTPS_TITLE = "Policy_testPolicy.Rule_HTTPS violated";
-    //    String KEYWORD_TITLE = "Policy_testPolicy.Rule_Keyword_matching_rule violated";
-    //
-    //    Integer POLICY_SIZE = 1;
-    //
-    //    @BeforeEach
-    //    void setPolicy() {
-    ////        rulesContainer.clear();
-    ////        rulesContainer.add(new KeywordMatchingRule());
-    ////        rulesContainer.add(new HSTSRule());
-    ////        rulesContainer.add(new EmailMatchingRule());
-    ////        rulesContainer.add(new HTTPSRule());
-    ////        rulesContainer.add(new DomainMatchingRule());
-    ////        rulesContainer.add(new ExpectCTRule());
-    ////        rulesContainer.add(new CookieAttrRule());
-    //
-    //        violationsTitlesContainer.clear();
-    //        violationsTitlesContainer.put(COOKIE_NAME, COOKIE_TITLE);
-    //        violationsTitlesContainer.put(DOMAIN_NAME, DOMAIN_TITLE);
-    //        violationsTitlesContainer.put(EMAIL_NAME, EMAIL_TITLE);
-    //        violationsTitlesContainer.put(EXCEPT_NAME, EXCEPT_TITLE);
-    //        violationsTitlesContainer.put(HSTS_NAME, HSTS_TITLE);
-    //        violationsTitlesContainer.put(HTTPS_NAME, HTTPS_TITLE);
-    //        violationsTitlesContainer.put(KEYWORD_NAME, KEYWORD_TITLE);
-    //
-    //        for (int i = 0; i < POLICY_SIZE; i++) {
-    //            Rule rule = getRandomRule(rulesContainer);
-    //            testPolicy.addRule(rule);
-    //        }
-    //    }
-    //
-    //    @Test
-    //    void getName() {
-    //        assertEquals("testPolicy", testPolicy.getName());
-    //    }
-    //
-    //    @Test
-    //    void addRule() {
-    //        Rule rule = getRandomRule(rulesContainer);
-    //        testPolicy.addRule(rule);
-    //        Set<Rule> rules = testPolicy.getRules();
-    //        assertTrue(contains(rules, rule));
-    //    }
-    //
-    //    @Test
-    //    void removeRule() {
-    //        Set<Rule> rules = testPolicy.getRules();
-    //        Rule rule = getRandomRule(rules);
-    //        testPolicy.removeRule(rule);
-    //        System.out.println(rules);
-    //        assertFalse(contains(rules, rule));
-    //    }
-    //
-    //    @Test
-    //    void checkViolations() throws HttpMalformedHeaderException, URIException {
-    //        List<String> targetViolationsTitles = new ArrayList<>();
-    //        List<String> activatedRuleName = new ArrayList<>();
-    //        Set<Rule> activatedRules = new HashSet<>();
-    //        for (int i = 0; i < POLICY_SIZE; i++) {
-    //            Rule rule = getRandomRule(testPolicy.getRules());
-    //            if (!contains(activatedRules, rule)) {
-    //                activatedRules.add(rule);
-    //                targetViolationsTitles.add(violationsTitlesContainer.get(rule.getName()));
-    //                activatedRuleName.add(rule.getName());
-    //            }
-    //        }
-    //
-    //        HttpMessage httpMessage = createHttpMsg(activatedRuleName);
-    //        List<Violation> checkViolations = testPolicy.checkViolations(httpMessage);
-    //        assertTrue(equals(targetViolationsTitles, checkViolations));
-    //    }
-    //
-    //    private boolean contains(Set<Rule> rules, Rule newRule) {
-    //        for (Rule rule : rules) {
-    //            if (rule.getName().equals(newRule.getName())) {
-    //                return true;
-    //            }
-    //        }
-    //        return false;
-    //    }
-    //
-    //    private Rule getRandomRule(Set<Rule> rules) {
-    //        int randomNum = new Random().nextInt(rules.size());
-    //        int i = 0;
-    //        for (Rule rule : rules) {
-    //            if (i == randomNum) {
-    //                return rule;
-    //            }
-    //            i++;
-    //        }
-    //        return null;
-    //    }
-    //
-    //    private boolean equals(List<String> targetViolationsTitles, List<Violation>
-    // checkViolations) {
-    //        if (checkViolations == null) {
-    //            return false;
-    //        }
-    //        if (checkViolations.size() == 0) {
-    //            return false;
-    //        }
-    //        List<String> cVTitles = new ArrayList<>();
-    //        for (Violation cV : checkViolations) {
-    //            cVTitles.add(cV.getTitle());
-    //        }
-    //        return targetViolationsTitles.equals(cVTitles);
-    //    }
-    //
-    //    private HttpMessage createHttpMsg(List<String> ruleNames)
-    //            throws URIException, HttpMalformedHeaderException {
-    //        String url = "http://www.example.com/";
-    //        String keyWord = "";
-    //        String cookieAttribute = "HttpOnly; Secure; SameSite=None";
-    //        String hSTSValue = "max-age=1";
-    //        String expValue = "Expect-CT: max-age=%d\r\n\r\n";
-    //        boolean https = true;
-    //
-    //        // CookieAttrRule
-    //        if (ruleNames.contains(COOKIE_NAME)) {
-    //            cookieAttribute = "";
-    //        }
-    //        // DomainMatchingRule
-    //        if (ruleNames.contains(DOMAIN_NAME)) {
-    //            url = "www.zerohedge.com";
-    //        }
-    //        // HTTPSRule
-    //        if (ruleNames.contains(HTTPS_NAME)) {
-    //            url = "http://cern.ch/";
-    //            https = false;
-    //        }
-    //        // ExceptCTRule
-    //        if (ruleNames.contains(EXCEPT_NAME)) {
-    //            url = "http://cern.ch/";
-    //            expValue = "Expect-CT: \r\n\r\n";
-    //        }
-    //        HttpMessage msg = new HttpMessage(new URI(url, true));
-    //        // EmailMatchingRule
-    //        if (ruleNames.contains(EMAIL_NAME)) {
-    //            msg.setRequestBody("lucas");
-    //            msg.setResponseBody("@gmail.com");
-    //        }
-    //        // HSTSRule
-    //        if (ruleNames.contains(HSTS_NAME)) {
-    //            hSTSValue = "";
-    //        }
-    //        // KeywordMatchingRule
-    //        if (ruleNames.contains(KEYWORD_NAME)) {
-    //            keyWord = "hacker";
-    //        }
-    //
-    //        msg.getRequestHeader().setSecure(https);
-    //        msg.setResponseHeader(
-    //                String.format("HTTP/1.1 200 Connection established\r\n" + expValue, 1222));
-    //        msg.setRequestBody(String.format("<html><head></head><body>%s</body><html>",
-    // keyWord));
-    //        msg.setCookieParamsAsString(cookieAttribute);
-    //        msg.getResponseHeader().setHeader("Strict-Transport-Security", hSTSValue);
-    //        return msg;
-    //    }
+    Policy testPolicy;
+    PolicyParser policyParser;
+    Rule testRule;
+    private static final String RE_RULE_DECLARATION =
+            "^Rule\\s+\"(.+?)\"\\s+\"(.+?)\"\\s*:\\s*(.+)$";
+    private static final Pattern PATTERN_RULE_DECLARATION = Pattern.compile(RE_RULE_DECLARATION);
+
+    @BeforeEach
+    void setup() {
+        policyParser = new PolicyParser();
+        try {
+            testPolicy = policyParser.parsePolicy(getPolicyContents().get(0) ,"testPolicy");
+        } catch (SyntaxErrorException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            testRule = parseRule(
+                    "Rule \"test_add_rule\" \"rule for addRule() and removeRule() test\":\n" +
+                            "response.body.value=\"test\";");
+        } catch (SyntaxErrorException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    void getName() {
+        assertEquals("testPolicy", testPolicy.getName());
+    }
+
+    @Test
+    void addRule() {
+        testPolicy.addRule(testRule);
+        assertTrue(contains(testPolicy.getRules(), testRule));
+    }
+
+    @Test
+    void removeRule() {
+        testPolicy.addRule(testRule);
+        assertTrue(contains(testPolicy.getRules(), testRule));
+        testPolicy.removeRule(testRule);
+        assertFalse(contains(testPolicy.getRules(), testRule));
+    }
+
+    @Test
+    void checkViolations() {
+        List<String> targetActiveRuleNames = new ArrayList<>();
+        HttpMessage httpMsg;
+
+        targetActiveRuleNames.add("hacker_req_header_rule");
+        httpMsg = createHttpMsg("Request", "hacker", "");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+        targetActiveRuleNames.add("hacker_req_body_rule");
+        httpMsg = createHttpMsg("Request", "", "hacker");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+        targetActiveRuleNames.add("hacker_req_header_rule");
+        targetActiveRuleNames.add("hacker_resp_header_rule");
+        httpMsg = createHttpMsg("Request,Response", "hacker", "");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+        targetActiveRuleNames.add("hacker_req_header_rule");
+        targetActiveRuleNames.add("hacker_req_body_rule");
+        httpMsg = createHttpMsg("Request", "hacker", "hacker");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+        targetActiveRuleNames.add("hacker_resp_header_rule");
+        targetActiveRuleNames.add("hacker_resp_body_rule");
+        httpMsg = createHttpMsg("Response", "hacker", "hacker");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+        targetActiveRuleNames.add("hacker_resp_header_rule");
+        targetActiveRuleNames.add("hacker_resp_body_rule");
+        targetActiveRuleNames.add("hacker_req_header_rule");
+        targetActiveRuleNames.add("hacker_req_body_rule");
+        httpMsg = createHttpMsg("Response,Request", "hacker", "hacker");
+        assertTrue(equals(targetActiveRuleNames, testPolicy.checkViolations(httpMsg)));
+        targetActiveRuleNames.clear();
+
+    }
+
+    private List<String> getPolicyContents() {
+        return new ArrayList<>(
+            Arrays.asList(
+                "Rule \"hacker_req_header_rule\" \"hacker exists in the request header\":\n" +
+                    "request.header.re=\"hacker\";\n" +
+                "Rule \"hacker_req_body_rule\" \"hacker exists in the request body\":\n" +
+                    "request.body.value=\"hacker\";\n" +
+                "Rule \"hacker_resp_header_rule\" \"hacker exists in the response header\":\n" +
+                    "response.header.value=\"hacker\";\n" +
+                "Rule \"hacker_resp_body_rule\" \"hacker exists in the response body\":\n" +
+                    "response.body.value=\"hacker\";"));
+    }
+
+    private HttpMessage createHttpMsg(String transmission, String head, String body) {
+        try {
+            HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
+            if (transmission.contains("Request")) {
+                if (!"".equals(head.trim())) {
+                    msg.getRequestHeader().setHeader(head, head);
+                }
+                if (!"".equals(body.trim())) {
+                    msg.setRequestBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
+                }
+            }
+            if (transmission.contains("Response")) {
+                if (!"".equals(head.trim())) {
+                    msg.getResponseHeader().setHeader(head, head);
+                }
+                if (!"".equals(body.trim())) {
+                    msg.setResponseBody(
+                            String.format("<html><head></head><body>%s</body><html>", body));
+                }
+            }
+            return msg;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Rule parseRule(String ruleDsl) throws SyntaxErrorException {
+        Matcher ruleMatcher = PATTERN_RULE_DECLARATION.matcher(ruleDsl);
+        boolean matches = ruleMatcher.matches();
+        assert matches;
+        String name = ruleMatcher.group(1);
+        String description = ruleMatcher.group(2);
+        String composeodStatement = ruleMatcher.group(3);
+
+        Predicate<HttpMessage> predicate = new StatementParser(composeodStatement).parse();
+        return new Rule(name, description, predicate);
+    }
+
+    private boolean contains(Set<Rule> rules, Rule newRule) {
+        for (Rule rule : rules) {
+            if (rule.getName().equals(newRule.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean equals(List<String> targetActiveRuleNames, List<Violation>
+     checkViolations) {
+        if (checkViolations == null) {
+            return false;
+        }
+        if (checkViolations.size() == 0) {
+            return false;
+        }
+        List<String> cVRuleName = new ArrayList<>();
+        for (Violation cV : checkViolations) {
+            cVRuleName.add(cV.getRuleName());
+        }
+        String[] tarArr = targetActiveRuleNames.toArray(new String[]{});
+        String[] cVArr = cVRuleName.toArray(new String[]{});
+        Arrays.sort(tarArr);
+        Arrays.sort(cVArr);
+        return Arrays.equals(tarArr, cVArr);
+    }
 }
