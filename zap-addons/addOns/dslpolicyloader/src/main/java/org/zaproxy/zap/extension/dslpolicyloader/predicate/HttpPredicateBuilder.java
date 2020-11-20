@@ -57,8 +57,7 @@ public class HttpPredicateBuilder {
      * @return : An HttpMessage Predicate that tests true if a given HttpMessage matches the pattern
      *     in the concerned field
      */
-    public Predicate<HttpMessage> build(
-            TransmissionType transmissionType, FieldType fieldType, Pattern pattern) {
+    public Predicate<HttpMessage> build(TransmissionType transmissionType, FieldType fieldType, Pattern pattern) {
         return new Predicate<HttpMessage>() {
             private final TransmissionType transmissionType_ = transmissionType;
             private final FieldType fieldType_ = fieldType;

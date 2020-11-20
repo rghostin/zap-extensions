@@ -19,74 +19,96 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
-class ViolationTest {
-    // todo fix
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 
-    //    class TestRule implements Rule {
-    //
-    //        @Override
-    //        public String getName() {
-    //            return "Test Rule Name";
-    //        }
-    //
-    //        @Override
-    //        public String getDescription() {
-    //            return "Test Rule Description";
-    //        }
-    //
-    //        @Override
-    //        public boolean isViolated(HttpMessage msg) {
-    //            return false;
-    //        }
-    //    }
-    //
-    //    private List<TestRule> getTestRules() {
-    //        TestRule testRule = new TestRule();
-    //        return new ArrayList<TestRule>(Arrays.asList(testRule));
-    //    }
-    //
-    //    private HttpMessage createHttpMsg() throws URIException, HttpMalformedHeaderException {
-    //        HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
-    //        return msg;
-    //    }
-    //
-    //    @Test
-    //    void getPolicyName() throws HttpMalformedHeaderException, URIException {
-    //        String policyName = "Test";
-    //        HttpMessage msg = createHttpMsg();
-    //        for (TestRule testRule : getTestRules()) {
-    //            Violation violation = new Violation(policyName, testRule, msg);
-    //            assertEquals(policyName, violation.getPolicyName());
-    //        }
-    //    }
-    //
-    //    @Test
-    //    void getRuleName() throws HttpMalformedHeaderException, URIException {
-    //        String policyName = "Test";
-    //        HttpMessage msg = createHttpMsg();
-    //        for (TestRule testRule : getTestRules()) {
-    //            Violation violation = new Violation(policyName, testRule, msg);
-    //            assertEquals(testRule.getName(), violation.getRuleName());
-    //        }
-    //    }
-    //
-    //    @Test
-    //    void getDescription() throws HttpMalformedHeaderException, URIException {
-    //        String policyName = "Test";
-    //        HttpMessage msg = createHttpMsg();
-    //        for (TestRule testRule : getTestRules()) {
-    //            Violation violation = new Violation(policyName, testRule, msg);
-    //            assertEquals(testRule.getDescription(), violation.getDescription());
-    //        }
-    //    }
-    //
-    //    @Test
-    //    void getMsg() throws HttpMalformedHeaderException, URIException {
-    //        String policyName = "Test";
-    //        HttpMessage msg = createHttpMsg();
-    //        for (TestRule testRule : getTestRules()) {
-    //            Violation violation = new Violation(policyName, testRule, msg);
-    //            assertEquals(msg, violation.getMsg());
-    //        }
-    //    }
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class ViolationTest {
+
+    private List<Rule> getTestRules() {
+        String testName = "Test Rule Name";
+        String testDescription = "Test Rule Description";
+        HttpPredicateBuilder predicateBuilder = new HttpPredicateBuilder();
+        Predicate<HttpMessage> testPredicate = predicateBuilder.build(
+                null,null, null);
+        Rule testRule = new Rule(testName,testDescription,testPredicate);
+        return new ArrayList<Rule>(Arrays.asList(testRule));
+    }
+
+    private HttpMessage createHttpMsg() throws URIException, HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage(new URI("http://example.com/", true));
+        return msg;
+    }
+
+    @Test
+    void getPolicyName() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(policyName, violation.getPolicyName());
+        }
+    }
+
+    @Test
+    void getRuleName() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(testRule.getName(), violation.getRuleName());
+        }
+    }
+
+    @Test
+    void getDescription() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(testRule.getDescription(), violation.getDescription());
+        }
+    }
+
+    @Test
+    void getMsg() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(msg, violation.getMsg());
+        }
+    }
+
+    @Test
+    void getTitle() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            String testTitle = String.format("Policy_%s.Rule_%s violated", policyName, testRule.getName());
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(testTitle, violation.getTitle());
+
+        }
+    }
+
+    @Test
+    void getUri() throws HttpMalformedHeaderException, URIException {
+        String policyName = "Test Policy";
+        HttpMessage msg = createHttpMsg();
+        for (Rule testRule : getTestRules()) {
+            Violation violation = new Violation(policyName, testRule, msg);
+            assertEquals(msg.getRequestHeader().getURI().toString(), violation.getUri());
+        }
+    }
 }
