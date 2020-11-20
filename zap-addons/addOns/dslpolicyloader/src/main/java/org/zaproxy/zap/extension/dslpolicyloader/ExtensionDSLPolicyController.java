@@ -19,9 +19,10 @@
  */
 package org.zaproxy.zap.extension.dslpolicyloader;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FileUtils;
@@ -238,18 +239,33 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
     }
 
     public void displayPolicies() {
-        Set<Policy> policies = getPolicyScanner().getPolicies();
-
         JFrame f = new JFrame();
-        DefaultListModel<String> l1 = new DefaultListModel<>();
-        for (Policy policy : policies) {
+        final JLabel label = new JLabel();
+        label.setSize(500, 100);
+        JButton b = new JButton("Show");
+        b.setBounds(200, 150, 80, 30);
+        final DefaultListModel<String> l1 = new DefaultListModel<>();
+        for (Policy policy : getPolicyScanner().getPolicies()) {
             l1.addElement(policy.getName());
         }
-        JList<String> list = new JList<>(l1);
-        list.setBounds(100, 100, 75, 75);
-        f.add(list);
-        f.setSize(400, 400);
+        final JList<String> list1 = new JList<>(l1);
+        list1.setBounds(100, 100, 75, 75);
+
+        f.add(list1);
+        f.add(b);
+        f.add(label);
+        f.setSize(450, 450);
         f.setLayout(null);
         f.setVisible(true);
+        b.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        String data = "";
+                        if (list1.getSelectedIndex() != -1) {
+                            data = "Selected policy: " + list1.getSelectedValue();
+                            label.setText(data);
+                        }
+                    }
+                });
     }
 }
