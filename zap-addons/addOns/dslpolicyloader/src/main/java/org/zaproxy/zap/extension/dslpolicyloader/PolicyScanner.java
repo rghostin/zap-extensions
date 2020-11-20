@@ -135,4 +135,8 @@ public class PolicyScanner extends PluginPassiveScanner {
         }
         policies.removeIf(policy -> policy.getName().equals(policyName));
     }
+
+    public Set<Policy> getPolicies() {
+        return policies;
+    }
 }
