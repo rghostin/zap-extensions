@@ -1,0 +1,11 @@
+Rule "keyword_AND_paranthesis_rule" "response body contains both of the keywords":
+(response.body.value="hacker" and response.body.value="zerohedge") or (response.body.value="cern");
+
+Rule "paranthesis_frenzy_rule" "checking for numerous paranthesis":
+((((((((((response.body.value="zerohedge"))))))))));
+
+Rule "paranthesis_and_frenzy_rule" "checking for numerous paranthesis with and":
+response.body.value="zerohedge" and ((((((((((response.body.value="hacker"))))))))));
+
+Rule "not_not_rule" "checking for nested nots":
+not (not (response.body.value="cern"));

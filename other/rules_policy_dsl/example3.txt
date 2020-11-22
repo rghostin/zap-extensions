@@ -1,0 +1,11 @@
+Rule "hacker_req_header_rule" "hacker exists in the request header":
+request.header.re="hacker";
+
+Rule "hacker_resp_header_rule" "hacker exists in the response header":
+response.header.value="hacker";
+
+Rule "keyword_NOT_req_header_rule" "request header does not contain the keyword":
+not (request.header.re="mango");
+
+Rule "keyword_NOT_resp_header_rule" "response header does not contain the keyword":
+not (response.header.value="mango");
