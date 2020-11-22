@@ -36,8 +36,8 @@ import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
 
 /**
- * Responsible of tokenizing a declaration string.
- * Transforms a declaration string to a list of tokens
+ * Responsible of tokenizing a declaration string. Transforms a declaration string to a list of
+ * tokens
  */
 public class Tokenizer {
     private static final String RE_SIMPLE_PREDICATE =
@@ -63,6 +63,7 @@ public class Tokenizer {
 
     /**
      * Get the next string representing a token
+     *
      * @return : token string
      */
     private String getNextTokenString() {
@@ -103,6 +104,7 @@ public class Tokenizer {
 
     /**
      * Parse a string representing an operator
+     *
      * @param operator : the string representing an operator
      * @return : HttpOperator Object
      * @throws SyntaxErrorException on syntax errors
@@ -128,6 +130,7 @@ public class Tokenizer {
 
     /**
      * Parse a string representing a matching mode
+     *
      * @param matchingModeStr : the string representing the matching mode (re, value or values)
      * @return : a pattern object for matching
      * @throws SyntaxErrorException on syntax errors
@@ -165,6 +168,7 @@ public class Tokenizer {
 
     /**
      * Parse a string representing a simple predicate
+     *
      * @param matcherSimplePred : the matcher that matched the simple predicate
      * @return : predicate object Predicate<\HttpMessage\>
      * @throws SyntaxErrorException on syntax errors
