@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.function.Predicate;
 import org.parosproxy.paros.network.HttpMessage;
 
+/**
+ * Represents an operation on Http predicates
+ * Precedence, associativity and arity have been defined to be compatible with the shunting yard algorithm
+ */
 public interface HttpPredicateOperator {
     int getPrecedence();
 
@@ -40,5 +44,10 @@ public interface HttpPredicateOperator {
         }
     }
 
+    /**
+     * construct the predicate which when tested is equal to the operation performed on all the given predicates
+     * @param httpPredicates : list of predicates to evaluate
+     * @return: the predicate
+     */
     Predicate<HttpMessage> operate(List<Predicate<HttpMessage>> httpPredicates);
 }

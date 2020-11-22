@@ -35,6 +35,10 @@ import org.zaproxy.zap.extension.dslpolicyloader.predicate.FieldType;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.HttpPredicateBuilder;
 import org.zaproxy.zap.extension.dslpolicyloader.predicate.TransmissionType;
 
+/**
+ * Responsible of tokenizing a declaration string.
+ * Transforms a declaration string to a list of tokens
+ */
 public class Tokenizer {
     private static final String RE_SIMPLE_PREDICATE =
             "\\s*(request|response)\\.(header|body)\\.((?:re=\\\".*?\\\")|(?:value=\\\".*?\\\")|(?:values=\\[.*?\\]))\\s*";
@@ -57,6 +61,10 @@ public class Tokenizer {
         this.matcher = PATTERN_TOKEN.matcher(composedStatement);
     }
 
+    /**
+     * Get the next string representing a token
+     * @return : token string
+     */
     private String getNextTokenString() {
         if (matcher.find(lastPos)) {
             lastPos = matcher.end();
@@ -66,6 +74,10 @@ public class Tokenizer {
         }
     }
 
+    /**
+     * @return a list of tokens from the loaded composed statement string
+     * @throws SyntaxErrorException
+     */
     public List<Token> getAllTokens() throws SyntaxErrorException {
         List<Token> tokens = new ArrayList<>();
 
@@ -89,6 +101,12 @@ public class Tokenizer {
         return tokens;
     }
 
+    /**
+     * Parse a string representing an operator
+     * @param operator : the string representing an operator
+     * @return : HttpOperator Object
+     * @throws SyntaxErrorException on syntax errors
+     */
     private HttpPredicateOperator parseOperator(String operator) throws SyntaxErrorException {
         operator = operator.trim();
         HttpPredicateOperator op = null;
@@ -108,6 +126,12 @@ public class Tokenizer {
         return op;
     }
 
+    /**
+     * Parse a string representing a matching mode
+     * @param matchingModeStr : the string representing the matching mode (re, value or values)
+     * @return : a pattern object for matching
+     * @throws SyntaxErrorException on syntax errors
+     */
     private Pattern parseMatchingModeString(String matchingModeStr) throws SyntaxErrorException {
         String matchingMode = matchingModeStr.substring(0, matchingModeStr.indexOf("="));
         String arg =
@@ -139,6 +163,12 @@ public class Tokenizer {
         return pattern;
     }
 
+    /**
+     * Parse a string representing a simple predicate
+     * @param matcherSimplePred : the matcher that matched the simple predicate
+     * @return : predicate object Predicate<\HttpMessage\>
+     * @throws SyntaxErrorException on syntax errors
+     */
     private Predicate<HttpMessage> parseSimplePredicate(Matcher matcherSimplePred)
             throws SyntaxErrorException {
         String transmissionTypeStr = matcherSimplePred.group(1);
