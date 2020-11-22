@@ -1,0 +1,16 @@
+SIGNOFF CARD
+
+Group:                                     17
+User Story:                                02 ("Policy rule verifier ***")
+Level of completeness:                     Completed.
+Date completed:                            22/11/2020
+Number of unit tests:                      54
+Number of scenario tests:                  5
+Total test coverage:                       66% of lines of code
+GIT commit identifier at start of story:   9e08b93eef0259ee7b0495e6fa45067dea17f7e6
+GIT commit identifier at end of story      --
+Time spent on user story:                  Deniz Alp Savaskan: 15h
+                                           Rawad Ghostin: 15h
+                                           Tianjian Song: 15h
+                                           Xinhai Zou: 15h
+Optional remarks:
