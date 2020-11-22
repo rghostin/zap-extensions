@@ -140,6 +140,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
 
     /**
      * Menu button for viewing active rules
+     *
      * @return: the GUI menu button
      */
     private ZapMenuItem getMenuViewPolicies() {
@@ -244,9 +245,7 @@ public class ExtensionDSLPolicyController extends ExtensionAdaptor {
         scanReport.writeToFile(path);
     }
 
-    /**
-     * Displays a list of policies that are active in the policyScanner
-     */
+    /** Displays a list of policies that are active in the policyScanner */
     public void displayPolicies() {
 
         Policy[] policies = getPolicyScanner().getPolicies().toArray(new Policy[0]);

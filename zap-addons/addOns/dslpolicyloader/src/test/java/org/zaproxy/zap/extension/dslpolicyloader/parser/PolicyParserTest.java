@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.dslpolicyloader.parser;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -29,21 +32,14 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.dslpolicyloader.Policy;
 import org.zaproxy.zap.extension.dslpolicyloader.exceptions.SyntaxErrorException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Predicate;
-
 class PolicyParserTest {
 
     // Input for Rules
     private String policy_content =
-            "Rule \"hacker_rule\" \"hacker exists in the response body\" : " +
-                    "response.body.value=\"hacker\"; " +
-            "Rule \"zerohedge_rule\" \"zerohedge exists in the response body\": " +
-                "request.body.value=\"zerohedge\"";
-
+            "Rule \"hacker_rule\" \"hacker exists in the response body\" : "
+                    + "response.body.value=\"hacker\"; "
+                    + "Rule \"zerohedge_rule\" \"zerohedge exists in the response body\": "
+                    + "request.body.value=\"zerohedge\"";
 
     private List<HttpMessage> hardCodingTestTrue()
             throws URIException, HttpMalformedHeaderException {
@@ -95,7 +91,7 @@ class PolicyParserTest {
 
         Iterator<HttpMessage> it_httpmsgT = true_msgs.iterator();
         Iterator<HttpMessage> it_httpmsgF = false_msgs.iterator();
-        Policy policy = policyParser.parsePolicy(policy_content,"test");
+        Policy policy = policyParser.parsePolicy(policy_content, "test");
 
         while (it_httpmsgT.hasNext() && it_httpmsgF.hasNext()) {
 
@@ -105,8 +101,8 @@ class PolicyParserTest {
             System.out.println(it_httpmsgT.toString());
             System.out.println(it_httpmsgF.toString());
 
-            assertEquals(1,policy.checkViolations(temp_httpT).size());
-            assertEquals(0,policy.checkViolations(temp_httpF).size());
+            assertEquals(1, policy.checkViolations(temp_httpT).size());
+            assertEquals(0, policy.checkViolations(temp_httpF).size());
         }
     }
 }
