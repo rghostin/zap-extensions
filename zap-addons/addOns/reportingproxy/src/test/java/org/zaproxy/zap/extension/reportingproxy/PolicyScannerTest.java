@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.reportingproxy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.PolicyNotFoundException;
 
 class PolicyScannerTest {
     PolicyScanner policyScanner;

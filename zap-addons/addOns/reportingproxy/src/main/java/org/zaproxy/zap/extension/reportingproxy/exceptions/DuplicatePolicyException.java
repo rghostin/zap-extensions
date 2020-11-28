@@ -17,15 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.policyloader.exceptions;
+package org.zaproxy.zap.extension.reportingproxy.exceptions;
 
-/** This is an exception that is thrown when a policy is not found */
-public class PolicyNotFoundException extends Exception {
+/** This is an exception that is thrown when a policy is duplicated */
+public class DuplicatePolicyException extends Exception {
 
     static final long serialVersionUID = 42L;
 
     /** Constructs a new exception with null as its detail message */
-    public PolicyNotFoundException() {
-        super("Policy not found");
+    public DuplicatePolicyException() {
+        super("Duplicate policy");
     }
 }

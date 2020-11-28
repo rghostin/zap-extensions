@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.reportingproxy;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicatePolicyException;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** This is a policy loader for policies of jar file */

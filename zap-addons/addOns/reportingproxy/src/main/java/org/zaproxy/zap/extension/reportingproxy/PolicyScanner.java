@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.policyloader;
+package org.zaproxy.zap.extension.reportingproxy;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.policyloader.exceptions.PolicyNotFoundException;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.PolicyNotFoundException;
 
 /** Responsible of checking passively whether any loaded policy is violated */
 public class PolicyScanner extends PluginPassiveScanner {
