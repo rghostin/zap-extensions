@@ -21,22 +21,17 @@ package org.zaproxy.zap.extension.reportingproxy;
 
 import org.parosproxy.paros.network.HttpMessage;
 
+// todo support for evidence
 /** Represents a rule violation */
 public class Violation {
-    private String policyName;
     private String ruleName;
     private String description;
     private HttpMessage msg;
 
-    public Violation(String policyName, Rule rule, HttpMessage msg) {
-        this.policyName = policyName;
-        this.ruleName = rule.getName();
-        this.description = rule.getDescription();
+    public Violation(String ruleName, String description, HttpMessage msg) {
+        this.ruleName = ruleName;
+        this.description = description;
         this.msg = msg;
-    }
-
-    public String getPolicyName() {
-        return policyName;
     }
 
     public String getRuleName() {
@@ -52,7 +47,7 @@ public class Violation {
     }
 
     public String getTitle() {
-        return String.format("Policy_%s.Rule_%s violated", policyName, ruleName);
+        return String.format("Rule_%s violated", ruleName);
     }
 
     public String getUri() {

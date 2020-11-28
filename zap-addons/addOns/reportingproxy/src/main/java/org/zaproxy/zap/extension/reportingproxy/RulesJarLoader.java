@@ -24,13 +24,22 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.apache.commons.io.FilenameUtils;
 
 /** Responsible of loading a JAR file containing policies */
-public class PolicyJarLoader {
-    private Policy policy;
+public class RulesJarLoader {
+    Set<Rule> rules = new HashSet<>();
+
+    /**
+     * @return a set of the loaded rules
+     */
+    public Set<Rule> getRules() {
+        return rules;
+    }
 
     /**
      * Load the jar file's rules as a policy
@@ -41,30 +50,10 @@ public class PolicyJarLoader {
      * @throws IllegalAccessException
      * @throws IOException
      */
-    public PolicyJarLoader(String pathToJar)
+    public RulesJarLoader(String pathToJar)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
                     IOException {
-        String policyName = extractPolicyName(pathToJar);
-        policy = new Policy(policyName);
         loadPolicyJar(pathToJar);
-    }
-
-    /**
-     * Helper method to extract policyname from the path to jar
-     *
-     * @param pathToJar : path to the jar file
-     * @return
-     */
-    private static String extractPolicyName(String pathToJar) {
-        // remove path
-        String policyNameNoPath = pathToJar.substring(pathToJar.lastIndexOf(File.separator) + 1);
-        // remove extension
-        String policyNameClean = FilenameUtils.removeExtension(policyNameNoPath);
-        return policyNameClean;
-    }
-
-    public Policy getPolicy() {
-        return policy;
     }
 
     /**
@@ -96,7 +85,7 @@ public class PolicyJarLoader {
             Class<?> pluginRuleClass_ = cl.loadClass(className);
             Class<? extends Rule> pluginRuleClass = pluginRuleClass_.asSubclass(Rule.class);
             Rule pluginRule = pluginRuleClass.newInstance();
-            policy.addRule(pluginRule);
+            rules.add(pluginRule);
         }
     }
 }

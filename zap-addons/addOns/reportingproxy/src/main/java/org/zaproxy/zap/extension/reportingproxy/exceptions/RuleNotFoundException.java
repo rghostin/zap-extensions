@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.exceptions;
 
-/** This is an exception that is thrown when a policy is not found */
-public class PolicyNotFoundException extends Exception {
+/** This is an exception that is thrown when a rule is not found */
+public class RuleNotFoundException extends Exception {
 
     static final long serialVersionUID = 42L;
 
     /** Constructs a new exception with null as its detail message */
-    public PolicyNotFoundException() {
-        super("Policy not found");
+    public RuleNotFoundException() {
+        super("Rule not found");
     }
 }

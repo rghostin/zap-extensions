@@ -27,12 +27,12 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicatePolicyException;
-import org.zaproxy.zap.extension.reportingproxy.exceptions.PolicyNotFoundException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicateRuleException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.RuleNotFoundException;
 
-/** Responsible of checking passively whether any loaded policy is violated */
-public class PolicyScanner extends PluginPassiveScanner {
-    private Set<Policy> policies = new HashSet<>();
+/** Responsible of checking passively whether any loaded rule is violated */
+public class RuleScanner extends PluginPassiveScanner {
+    private Set<Rule> rules = new HashSet<>();
     private List<Violation> violationHistory = new ArrayList<>();
 
     @Override
@@ -47,7 +47,7 @@ public class PolicyScanner extends PluginPassiveScanner {
 
     @Override
     public String getName() {
-        return "Policy scanner";
+        return "Rule scanner";
     }
 
     /**
@@ -75,7 +75,7 @@ public class PolicyScanner extends PluginPassiveScanner {
     }
 
     /**
-     * Scan HTTP messages upon reception If any policy is violated raise an alert and store the
+     * Scan HTTP messages upon reception If any rule is violated raise an alert and store the
      * violation in history
      *
      * @param msg
@@ -84,26 +84,30 @@ public class PolicyScanner extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        for (Policy policy : policies) {
-            List<Violation> violations = policy.checkViolations(msg);
-
-            violationHistory.addAll(violations);
-
-            for (Violation violation : violations) {
-                raiseAlert(violation);
+        Set<Violation> newViolations = new HashSet<>();
+        for (Rule rule : rules) {
+            Violation violation = rule.checkViolation(msg);
+            if (violation != null) {
+                newViolations.add(violation);
             }
+        }
+
+        violationHistory.addAll(newViolations);
+
+        for (Violation violation : newViolations) {
+            raiseAlert(violation);
         }
     }
 
     /**
-     * Checks whether a policy zith a given name is loaded
+     * Checks whether a rule with a given name is loaded
      *
-     * @param policyName : the policy name
+     * @param ruleName : the rule name
      * @return : boolean
      */
-    public boolean hasPolicy(String policyName) {
-        for (Policy policy : policies) {
-            if (policy.getName().equals(policyName)) {
+    public boolean hasRule(String ruleName) {
+        for (Rule rule : rules) {
+            if (rule.getName().equals(ruleName)) {
                 return true;
             }
         }
@@ -111,28 +115,28 @@ public class PolicyScanner extends PluginPassiveScanner {
     }
 
     /**
-     * Add a new policy
+     * Add a new rule
      *
-     * @param policy: the policy to be added
-     * @throws DuplicatePolicyException : a policy with same name already exists
+     * @param rule: the rule to be added
+     * @throws DuplicateRuleException : a rule with same name already exists
      */
-    public void addPolicy(Policy policy) throws DuplicatePolicyException {
-        if (hasPolicy(policy.getName())) {
-            throw new DuplicatePolicyException();
+    public void addRule(Rule rule) throws DuplicateRuleException {
+        if (hasRule(rule.getName())) {
+            throw new DuplicateRuleException();
         }
-        policies.add(policy);
+        rules.add(rule);
     }
 
     /**
-     * Remove a policy
+     * Remove a rule
      *
-     * @param policyName the policy name
-     * @throws PolicyNotFoundException : a policy with this name is not registered
+     * @param ruleName the rule name
+     * @throws RuleNotFoundException : a rule with this name is not registered
      */
-    public void removePolicy(String policyName) throws PolicyNotFoundException {
-        if (!hasPolicy(policyName)) {
-            throw new PolicyNotFoundException();
+    public void removeRule(String ruleName) throws RuleNotFoundException {
+        if (!hasRule(ruleName)) {
+            throw new RuleNotFoundException();
         }
-        policies.removeIf(policy -> policy.getName().equals(policyName));
+        rules.removeIf(rule -> rule.getName().equals(ruleName));
     }
 }

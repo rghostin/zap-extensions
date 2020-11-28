@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.exceptions;
 
-/** This is an exception that is thrown when a policy is duplicated */
-public class DuplicatePolicyException extends Exception {
+/** This is an exception that is thrown when a rule is duplicated */
+public class DuplicateRuleException extends Exception {
 
     static final long serialVersionUID = 42L;
 
     /** Constructs a new exception with null as its detail message */
-    public DuplicatePolicyException() {
-        super("Duplicate policy");
+    public DuplicateRuleException() {
+        super("Duplicate rule");
     }
 }

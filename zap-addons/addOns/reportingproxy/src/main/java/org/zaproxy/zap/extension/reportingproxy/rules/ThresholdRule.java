@@ -25,7 +25,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
+import org.zaproxy.zap.extension.reportingproxy.Violation;
 
+//todo fix return violation
 public class ThresholdRule implements Rule {
 
     // Timestamp array for keeping records
@@ -107,17 +109,17 @@ public class ThresholdRule implements Rule {
      * @return true if the HttpMessage violates the rule, false if not
      */
     @Override
-    public boolean isViolated(HttpMessage msg) {
+    public Violation checkViolation(HttpMessage msg) {
         String outgoingHostname = msg.getRequestHeader().getHostName();
         Pattern pattern = getRegexDomain();
         Matcher matcher = pattern.matcher(outgoingHostname);
         if (matcher.matches()) {
             timestamps = updateTimestamps();
             if (timestamps.size() > getRequestThreshold()) {
-                return true;
+                return new Violation(getName(), getDescription(), msg);
             }
-            return false;
+            return null;
         }
-        return false;
+        return null;
     }
 }

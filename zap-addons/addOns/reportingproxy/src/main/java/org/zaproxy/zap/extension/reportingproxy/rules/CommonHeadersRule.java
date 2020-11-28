@@ -23,10 +23,12 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
+import org.zaproxy.zap.extension.reportingproxy.Violation;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
+//todo fix return violation
 /** This is a rule for checking whether the HTTP response message contains the
  * common response headers present in previous requests */
 public class CommonHeadersRule implements Rule {
@@ -117,10 +119,10 @@ public class CommonHeadersRule implements Rule {
      * @return true if the HttpMessage violates the rule, false if not
      */
     @Override
-    public boolean isViolated(HttpMessage msg) {
+    public Violation checkViolation(HttpMessage msg) {
         if (httpResponseHeaderContainer.size() != BUFFER_SIZE) {
             httpResponseHeaderContainer.add(msg.getResponseHeader());
-            return false;
+            return null;
         }
 
         boolean isViolatedAttribute = false;
@@ -134,8 +136,10 @@ public class CommonHeadersRule implements Rule {
         // update buffer
         updateBufferWith(msg.getResponseHeader());
 
-        return isViolatedAttribute;
+        if (! isViolatedAttribute) {
+            return null;
+        } else {
+            return new Violation(getName(), getDescription(), msg);
+        }
     }
 }
-
-

@@ -28,19 +28,19 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicatePolicyException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicateRuleException;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-/** This is a policy loader for policies of jar file */
+/** This is a rules loader for policies of jar file */
 public class ExtensionPolicyController extends ExtensionAdaptor {
 
-    private ZapMenuItem menuPolicyLoader;
-    private ZapMenuItem menuPolicyViolationsReport;
+    private ZapMenuItem menuRulesLoader;
+    private ZapMenuItem menuRulesViolationsReport;
 
     private static final int SCANNER_PLUGIN_ID = 500001;
-    private static final String NAME = "Policy Loader";
+    private static final String NAME = "Rule Loader";
     protected static final String PREFIX = "policyloader";
-    private PolicyScanner policyScanner = null;
+    private RuleScanner ruleScanner = null;
 
     public ExtensionPolicyController() {
         super(NAME);
@@ -53,8 +53,8 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
 
         // if we're not running as a daemon
         if (getView() != null) {
-            extensionHook.getHookMenu().addToolsMenuItem(getMenuPolicyLoader());
-            extensionHook.getHookMenu().addReportMenuItem(getMenuReportPolicyViolations());
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuRulesLoader());
+            extensionHook.getHookMenu().addReportMenuItem(getMenuReportRulesViolations());
         }
     }
 
@@ -69,20 +69,20 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
     }
 
     /**
-     * Returns the PolicyScanner
+     * Returns the RulesScanner
      *
-     * @return Returns the PolicyScanner
+     * @return Returns the RulesScanner
      */
-    private PolicyScanner getPolicyScanner() {
-        if (policyScanner == null) {
+    private RuleScanner getRulesScanner() {
+        if (ruleScanner == null) {
             ExtensionPassiveScan extPassiveScan =
                     Control.getSingleton()
                             .getExtensionLoader()
                             .getExtension(ExtensionPassiveScan.class);
-            policyScanner =
-                    (PolicyScanner) extPassiveScan.getPluginPassiveScanner(SCANNER_PLUGIN_ID);
+            ruleScanner =
+                    (RuleScanner) extPassiveScan.getPluginPassiveScanner(SCANNER_PLUGIN_ID);
         }
-        return policyScanner;
+        return ruleScanner;
     }
 
     /**
@@ -106,53 +106,58 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
      *
      * @return Returns the GUI menu button
      */
-    private ZapMenuItem getMenuPolicyLoader() {
-        if (menuPolicyLoader == null) {
-            menuPolicyLoader = new ZapMenuItem(PREFIX + ".panel.loader_title");
+    private ZapMenuItem getMenuRulesLoader() {
+        if (menuRulesLoader == null) {
+            menuRulesLoader = new ZapMenuItem(PREFIX + ".panel.loader_title");
 
-            menuPolicyLoader.addActionListener(
+            menuRulesLoader.addActionListener(
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
                             File[] files = getSelectedJARFiles();
-                            loadPolicyJars(files);
+                            loadRulesJars(files);
                         }
                     });
         }
-        return menuPolicyLoader;
+        return menuRulesLoader;
     }
 
     /**
-     * load jar files as policies into {@code PolicyScanner} display status message (failure or
+     * load jar files as policies into {@code RulesScanner} display status message (failure or
      * success)
      *
      * @param files: Array of jar file objects
      */
-    private void loadPolicyJars(File[] files) {
-        StringBuilder loadedPolicyNames = new StringBuilder();
+    private void loadRulesJars(File[] files) {
+        StringBuilder loadedRulesNames = new StringBuilder();
 
         for (File file : files) {
-            // load policy from jar
-            PolicyJarLoader policyLoader = null;
-            Policy policy = null;
+            // load rules from jar
+            RulesJarLoader rulesJarLoader = null;
             try {
-                policyLoader = new PolicyJarLoader(file.getAbsolutePath());
-                policy = policyLoader.getPolicy();
-                getPolicyScanner().addPolicy(policy);
-                loadedPolicyNames.append(policy.getName()).append("\n");
-            } catch (DuplicatePolicyException e) {
-                View.getSingleton()
-                        .showMessageDialog(
-                                "Error: Policy " + policy.getName() + " already exists.");
+                rulesJarLoader = new RulesJarLoader(file.getAbsolutePath());
             } catch (Exception e) {
-                View.getSingleton().showMessageDialog("Error: loading policy in " + file.getName());
+                View.getSingleton().showMessageDialog("Error: loading rules in " + file.getName());
+                continue;
+            }
+
+            // load the rules in the scanner
+            for (Rule loadedRule : rulesJarLoader.getRules() ) {
+                try {
+                    getRulesScanner().addRule(loadedRule);
+                    loadedRulesNames.append(loadedRule.getName()).append("\n");
+                } catch (DuplicateRuleException e) {
+                    View.getSingleton()
+                            .showMessageDialog(
+                                    "Error: Rule " + loadedRule.getName() + " already exists.");
+                }
             }
         }
 
-        if (!loadedPolicyNames.toString().isEmpty()) {
+        if (!loadedRulesNames.toString().isEmpty()) {
             View.getSingleton()
                     .showMessageDialog(
-                            "Policies loaded successfully: \n" + loadedPolicyNames.toString());
+                            "Policies loaded successfully: \n" + loadedRulesNames.toString());
         }
     }
 
@@ -161,11 +166,11 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
      *
      * @return the menu button
      */
-    private ZapMenuItem getMenuReportPolicyViolations() {
-        if (menuPolicyViolationsReport == null) {
-            menuPolicyViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
+    private ZapMenuItem getMenuReportRulesViolations() {
+        if (menuRulesViolationsReport == null) {
+            menuRulesViolationsReport = new ZapMenuItem(PREFIX + ".panel.report_title");
 
-            menuPolicyViolationsReport.addActionListener(
+            menuRulesViolationsReport.addActionListener(
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
@@ -190,7 +195,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
                         }
                     });
         }
-        return menuPolicyViolationsReport;
+        return menuRulesViolationsReport;
     }
 
     /**
@@ -201,7 +206,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
      */
     public void buildViolationsReport(String path) throws IOException {
         Report scanReport = new Report();
-        for (Violation violation : getPolicyScanner().getViolationHistory()) {
+        for (Violation violation : getRulesScanner().getViolationHistory()) {
             scanReport.addViolation(violation);
         }
 
