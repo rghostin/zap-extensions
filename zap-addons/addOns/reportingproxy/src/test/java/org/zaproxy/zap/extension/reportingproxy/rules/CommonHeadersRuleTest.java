@@ -26,4 +26,20 @@ class CommonHeadersRuleTest {
     @Test
     void isViolated() {
     }
+
+    @Test
+    void testGetName() {
+    }
+
+    @Test
+    void testGetDescription() {
+    }
+
+    @Test
+    void testUpdateBufferWith() {
+    }
+
+    @Test
+    void testIsViolated() {
+    }
 }

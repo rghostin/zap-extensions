@@ -51,7 +51,6 @@ public class CommonHeadersRule implements Rule {
      * @return
      */
     private List<HttpHeaderField> getCommonHeaderFields() {
-        // TODO
         Map<HttpHeaderField, Integer> field_times = new HashMap<>();
         List<HttpHeaderField> commonHeaderFields = new ArrayList<>();
 
@@ -86,29 +85,13 @@ public class CommonHeadersRule implements Rule {
      * @return
      */
     private boolean containsAllHeaders(HttpMessage msg, List<HttpHeaderField> headersToCheck) {
-        // TODO
         List<HttpHeaderField> headers = msg.getResponseHeader().getHeaders();
-        List<HttpHeaderField> missingFields = new ArrayList<>();
-        boolean isContainsAll = false;
-
-        if (headers.size() != headersToCheck.size()) {
-            return isContainsAll;
-        }
-
-        for (HttpHeaderField checkHeader : headersToCheck) {
-            if (headers.contains(checkHeader)) {
-                continue;
-            } else {
-                missingFields.add(checkHeader);
+        for (HttpHeaderField headerToCheck : headersToCheck) {
+            if (! headers.contains(headerToCheck)){
+                return false;
             }
         }
-
-        if (missingFields.size() == 0) {
-            isContainsAll = true;
-        }
-
-        return isContainsAll;
-
+        return true;
     }
 
     /**
