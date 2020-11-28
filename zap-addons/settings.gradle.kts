@@ -7,7 +7,8 @@ include("testutils")
 // Keep the add-ons in alphabetic order.
 var addOns = listOf(
     "policyloader",
-    "dslpolicyloader"
+    "dslpolicyloader",
+    "reportingproxy"
 )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
