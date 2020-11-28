@@ -1,16 +1,34 @@
-package org.zaproxy.zap.extension.policyloader.rules;
-
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.policyloader.Rule;
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2020 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.zaproxy.zap.extension.reportingproxy.rules;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.reportingproxy.Rule;
 
 public class ThresholdRule implements Rule {
 
-    //Timestamp array for keeping records
+    // Timestamp array for keeping records
     ArrayList<Integer> timestamps = new ArrayList<Integer>();
 
     @Override
@@ -48,7 +66,7 @@ public class ThresholdRule implements Rule {
      */
     private int getTimeThreshold() {
         int second = 5;
-        return second*1000;
+        return second * 1000;
     }
 
     /**
@@ -73,7 +91,7 @@ public class ThresholdRule implements Rule {
         int current_time_int = (int) timestamp.getTime();
         ArrayList<Integer> dummy_timestamps = timestamps;
         for (int timestmp : timestamps) {
-            if ((current_time_int-timestmp) < getTimeThreshold()) {
+            if ((current_time_int - timestmp) < getTimeThreshold()) {
                 dummy_timestamps.add(timestmp);
             }
         }
