@@ -33,7 +33,7 @@ public class ThresholdRule implements Rule {
 
     @Override
     public String getName() {
-        return "Threshold_rule";
+        return "Threshold rule";
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ThresholdRule implements Rule {
      * @return Returns the time threshold in millisecond
      */
     private int getTimeThreshold() {
-        int second = 5;
+        int second = 1;
         return second * 1000;
     }
 
@@ -89,7 +89,7 @@ public class ThresholdRule implements Rule {
     private ArrayList<Integer> updateTimestamps() {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         int current_time_int = (int) timestamp.getTime();
-        ArrayList<Integer> dummy_timestamps = timestamps;
+        ArrayList<Integer> dummy_timestamps = new ArrayList<Integer>();
         for (int timestmp : timestamps) {
             if ((current_time_int - timestmp) < getTimeThreshold()) {
                 dummy_timestamps.add(timestmp);
