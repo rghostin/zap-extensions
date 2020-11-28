@@ -27,13 +27,13 @@ import org.zaproxy.zap.extension.reportingproxy.Rule;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/** This is a rule for checking the HSTS header exist in the response HTTPMessage */
+/** This is a rule for checking whether the HTTP response message contains the
+ * common response headers present in previous requests */
 public class CommonHeadersRule implements Rule {
 
     private final int BUFFER_SIZE = 5;
 
     private List<HttpResponseHeader> httpResponseHeaderContainer = new ArrayList<>();
-
 
     @Override
     public String getName() {
@@ -43,12 +43,17 @@ public class CommonHeadersRule implements Rule {
     @Override
     public String getDescription() {
         return "The HTTP response message does not contain common response header " +
-                "present in the 5 previous requests.";
+                "present in previous requests.";
+    }
+
+    public List<HttpResponseHeader> getHttpResponseHeaderContainer() {
+        return httpResponseHeaderContainer;
     }
 
     /**
      * Returns the common headers of the messages stored in the buffer
-     * @return
+     *
+     * @return common headers of previous requests
      */
     private List<HttpHeaderField> getCommonHeaderFields() {
         Map<HttpHeaderField, Integer> field_times = new HashMap<>();
@@ -80,9 +85,10 @@ public class CommonHeadersRule implements Rule {
 
     /**
      * Checks whether a given http response message contains all the specified headers
-     * @param msg
-     * @param headersToCheck
-     * @return
+     *
+     * @param msg the HttpMessage that will be checked
+     * @param headersToCheck the common headers needed to be checked with the HttpMessage
+     * @return true if the HttpMessage contains all the specified the headers, false if not
      */
     private boolean containsAllHeaders(HttpMessage msg, List<HttpHeaderField> headersToCheck) {
         List<HttpHeaderField> headers = msg.getResponseHeader().getHeaders();
@@ -97,9 +103,9 @@ public class CommonHeadersRule implements Rule {
     /**
      * Update the buffer for the httpResponseHeaderContainer
      *
-     * @param newHeader
+     * @param newHeader the HttpResponseHeader that will be updated to the container
      */
-    public void updateBufferWith(HttpResponseHeader newHeader) {
+    private void updateBufferWith(HttpResponseHeader newHeader) {
         httpResponseHeaderContainer.remove(0);
         httpResponseHeaderContainer.add(newHeader);
     }
@@ -112,7 +118,6 @@ public class CommonHeadersRule implements Rule {
      */
     @Override
     public boolean isViolated(HttpMessage msg) {
-
         if (httpResponseHeaderContainer.size() != BUFFER_SIZE) {
             httpResponseHeaderContainer.add(msg.getResponseHeader());
             return false;
@@ -131,7 +136,6 @@ public class CommonHeadersRule implements Rule {
 
         return isViolatedAttribute;
     }
-
 }
 
 
