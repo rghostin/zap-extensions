@@ -19,6 +19,10 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +30,6 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class CommonHeadersRuleTest {
 
@@ -53,7 +52,6 @@ class CommonHeadersRuleTest {
         HttpHeaderField field2_1 = new HttpHeaderField("Accept", "application/xml");
         HttpHeaderField field2_2 = new HttpHeaderField("Accept-Charset", "GBK");
         HttpHeaderField field2_3 = new HttpHeaderField("Accept-Language", "zh;en-US");
-
 
         List<HttpHeaderField> listForMsg1 = new ArrayList<>();
         List<HttpHeaderField> listForMsg2 = new ArrayList<>();
@@ -90,9 +88,9 @@ class CommonHeadersRuleTest {
     @Test
     void getDescription() {
         assertEquals(
-                "The HTTP response message does not contain common response header " +
-                        "present in previous requests."
-                , commonHeadersRule.getDescription());
+                "The HTTP response message does not contain common response header "
+                        + "present in previous requests.",
+                commonHeadersRule.getDescription());
     }
 
     @Test
@@ -102,8 +100,7 @@ class CommonHeadersRuleTest {
         assertNull(commonHeadersRule.checkViolation(httpRespMsg1_2));
         assertNull(commonHeadersRule.checkViolation(httpRespMsg1_3));
         assertNull(commonHeadersRule.checkViolation(httpRespMsg1_4));
-        List<HttpResponseHeader> container =
-                commonHeadersRule.getHttpResponseHeaderContainer();
+        List<HttpResponseHeader> container = commonHeadersRule.getHttpResponseHeaderContainer();
         assertTrue(container.contains(httpRespMsg2.getResponseHeader()));
         commonHeadersRule.checkViolation(httpRespMsg1_5);
         container = commonHeadersRule.getHttpResponseHeaderContainer();
@@ -121,8 +118,10 @@ class CommonHeadersRuleTest {
         Violation v = commonHeadersRule.checkViolation(httpRespMsg3);
 
         assertEquals("Common_Headers_Rule", v.getRuleName());
-        assertEquals("The HTTP response message does not contain common response header "
-                + "present in previous requests.", v.getDescription());
+        assertEquals(
+                "The HTTP response message does not contain common response header "
+                        + "present in previous requests.",
+                v.getDescription());
         assertEquals("http://example.com/", v.getUri());
         assertEquals("Rule_Common_Headers_Rule violated", v.getTitle());
         assertEquals(httpRespMsg3, v.getTriggeringMsg());
@@ -151,5 +150,4 @@ class CommonHeadersRuleTest {
         }
         return null;
     }
-
 }
