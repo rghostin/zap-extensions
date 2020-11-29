@@ -1,5 +1,6 @@
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import javafx.util.Pair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
@@ -13,9 +14,8 @@ import java.util.regex.Pattern;
 
 public class HiddenFieldRule implements Rule {
 
-    // todo
     // Map< (Name, Value), Domain>
-    Map<String,String> hiddenFields = new HashMap<>();
+    Map<Pair<String,String>,String> hiddenFields = new HashMap<>();
     List<HttpMessage> HTTP_MESSAGE_HIDDEN_INPUT = new ArrayList<>();
 
     private final Pattern INPUT_LINE =
@@ -24,8 +24,8 @@ public class HiddenFieldRule implements Rule {
             Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
     private final Pattern NAME_HIDDEN_LINE =
             Pattern.compile("<\\s*input.*?name=\\\"(.*?)\\\".*?>");
-
-    // todo VALUE_HIDDEN_LINE    // value=""
+    private final Pattern NAME_HIDDEN_VALUE =
+            Pattern.compile("<\\s*input.*?value=\\\"(.*?)\\\".*?>");
 
     @Override
     public String getName() {
@@ -59,12 +59,16 @@ public class HiddenFieldRule implements Rule {
                 continue;
             }
 
-            // todo get its value
+            Matcher matcherValue = NAME_HIDDEN_VALUE.matcher(inputStr);
+            String value = "";
+            if(matcherValue.matches()){
+                value = matcherValue.group(1);
+            }
+            Pair<String,String> p = new Pair<>(name,value);
 
             String outgoingHostname = msg.getRequestHeader().getHostName();
-            if(!hiddenFields.containsKey(name)) {
-                // todo put pair name,value
-                hiddenFields.put(name, outgoingHostname);
+            if(!hiddenFields.containsKey(p)) {
+                hiddenFields.put(p, outgoingHostname);
             } else {
                 String domain = hiddenFields.get(name);
                 if(!domain.equals(outgoingHostname)) {
