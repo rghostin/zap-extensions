@@ -19,12 +19,14 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-// todo add test class
 public class RequestPerformanceRule implements Rule {
 
     // Threshold attributes
@@ -33,6 +35,7 @@ public class RequestPerformanceRule implements Rule {
     int COMPARISON_RATE = 2;
     public HashMap<String, Integer> siteElapsedTimeMap = new HashMap<String, Integer>();
     public HashMap<String, Integer> siteCounterMap = new HashMap<String, Integer>();
+    public HashMap<String, List<HttpMessage>> siteHttpMessages = new HashMap<String, List<HttpMessage>>();
 
     /**
      * Returns the name of the rule
@@ -55,7 +58,7 @@ public class RequestPerformanceRule implements Rule {
     }
 
     /**
-     * Adds the performance of the site to the performance map
+     * Adds the performance of the site to the performance map and msg to http messages map
      *
      * @return Returns the updated timestamps array list
      */
@@ -69,8 +72,14 @@ public class RequestPerformanceRule implements Rule {
             int new_avg = (count * old_elapse_avg + new_elapsed_time) / new_count;
             siteElapsedTimeMap.put(outgoingHostname, new_avg);
             siteCounterMap.put(outgoingHostname, new_count);
+            List<HttpMessage> list = siteHttpMessages.get(outgoingHostname);
+            list.add(msg);
+            siteHttpMessages.put(outgoingHostname,list);
         } else {
             siteElapsedTimeMap.put(outgoingHostname, new_elapsed_time);
+            List<HttpMessage> list = new ArrayList<HttpMessage>();
+            list.add(msg);
+            siteHttpMessages.put(outgoingHostname,list);
             siteCounterMap.put(outgoingHostname, 1);
         }
     }
@@ -144,7 +153,8 @@ public class RequestPerformanceRule implements Rule {
                     && domainAvgElapsedTime(outgoingHostname, new_elapsed_time)
                     > totalAvgElapsedTime(outgoingHostname) * COMPARISON_RATE) {
                 performanceUpdate(msg);
-                return new Violation(getName(), getDescription(), msg, null);
+                return new Violation(getName(), getDescription(), msg,
+                        siteHttpMessages.get(outgoingHostname));
             }
         }
         performanceUpdate(msg);

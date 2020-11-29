@@ -60,4 +60,8 @@ public class Violation {
     public String getUri() {
         return getTriggeringMsg().getRequestHeader().getURI().toString();
     }
+
+    public List<HttpMessage>  getEvidenceMessages() {
+        return evidenceMessages;
+    }
 }

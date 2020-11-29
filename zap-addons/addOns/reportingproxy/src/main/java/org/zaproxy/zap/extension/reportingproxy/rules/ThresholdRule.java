@@ -96,12 +96,14 @@ public class ThresholdRule implements Rule {
         ArrayList<Integer> dummy_timestamps = new ArrayList<Integer>();
         List<HttpMessage> dummy_messages = new ArrayList<HttpMessage>();
         int count = 0;
-        for (int timestmp : timestamps) {
-            if ((current_time_int - timestmp) < getTimeThreshold()) {
-                dummy_timestamps.add(timestmp);
-                dummy_messages.add(messages.get(count));
+        if (timestamps.size() > 0) {
+            for (int timestmp : timestamps) {
+                if ((current_time_int - timestmp) < getTimeThreshold()) {
+                    dummy_timestamps.add(timestmp);
+                    dummy_messages.add(messages.get(count));
+                }
+                count++;
             }
-            count++;
         }
         timestamps = dummy_timestamps;
         messages = dummy_messages;
@@ -110,7 +112,6 @@ public class ThresholdRule implements Rule {
         return timestamps;
     }
 
-    // todo fix return violation
     /**
      * Checks whether the HttpMessage violates the threshold rule or not
      *

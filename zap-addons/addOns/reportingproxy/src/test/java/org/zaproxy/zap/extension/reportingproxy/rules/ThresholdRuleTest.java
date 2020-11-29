@@ -25,13 +25,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.reportingproxy.Violation;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// todo fix
 class ThresholdRuleTest {
 
         ThresholdRule thresholdRule;
@@ -79,6 +80,36 @@ class ThresholdRuleTest {
             return timestamps;
         }
 
+    private List<HttpMessage> getHttpMessagesExceed(HttpMessage msg) {
+        List<HttpMessage> messages = new ArrayList<HttpMessage>();
+        int count = 0;
+        while (count < 5) {
+            messages.add(msg);
+            count++;
+        }
+        return messages;
+    }
+
+    private List<HttpMessage> getHttpMessagesNotExceed(HttpMessage msg) {
+        List<HttpMessage> messages = new ArrayList<HttpMessage>();
+        int count = 0;
+        while (count < 1) {
+            messages.add(msg);
+            count++;
+        }
+        return messages;
+    }
+
+    private boolean assertViolation(Violation v1,Violation v2) {
+        if (v1.getRuleName().equals(v2.getRuleName())
+        && v1.getDescription().equals(v2.getDescription())
+        && v1.getEvidenceMessages().equals(v2.getEvidenceMessages())
+        && (v1.getTriggeringMsg() == v2.getTriggeringMsg())){
+            return true;
+        }
+        return false;
+    }
+
         @Test
         void getName() {
             assertEquals("Threshold rule", thresholdRule.getName());
@@ -96,20 +127,26 @@ class ThresholdRuleTest {
         @Test
         void isViolatedMatchTrue() throws HttpMalformedHeaderException, URIException {
             String url = getFlaggedURL();
-            thresholdRule.timestamps = getTimestampArrayExceed();
             HttpMessage msg = ThresholdRuleTest.createHttpMsg(url);
-            assertTrue(thresholdRule.isViolated(msg));
+            thresholdRule.timestamps = getTimestampArrayExceed();
+            thresholdRule.messages = getHttpMessagesExceed(msg);
+            Violation vio = thresholdRule.checkViolation(msg);
+            List<HttpMessage> messages = thresholdRule.messages;
+            messages.add(msg);
+            Violation violation = new Violation(thresholdRule.getName(),thresholdRule.getDescription()
+                    ,msg,messages);
+            assertViolation(vio,violation);
         }
 
-        // checks for the case in which the flagged domain is detected it does not request
+        // checks for the case in which the flagged domain is detected it does not exceed request
         //threshold
         @Test
         void isViolatedMatchFalse() throws HttpMalformedHeaderException, URIException {
             String url = getFlaggedURL();
-            thresholdRule.timestamps = getTimestampArrayNotExceed();
             HttpMessage msg = ThresholdRuleTest.createHttpMsg(url);
-            System.out.println(thresholdRule.timestamps);
-            assertFalse(thresholdRule.isViolated(msg));
+            thresholdRule.timestamps = getTimestampArrayNotExceed();
+            thresholdRule.messages = getHttpMessagesNotExceed(msg);
+            assertNull(thresholdRule.checkViolation(msg));
         }
 
         // checks for the case in which the flagged domain is not detected and it exceeds request
@@ -117,9 +154,10 @@ class ThresholdRuleTest {
         @Test
         void isViolatedNoMatchExceed() throws HttpMalformedHeaderException, URIException {
             String url = getNotFlaggedURL();
-            thresholdRule.timestamps = getTimestampArrayExceed();
             HttpMessage msg = ThresholdRuleTest.createHttpMsg(url);
-            assertFalse(thresholdRule.isViolated(msg));
+            thresholdRule.messages = getHttpMessagesExceed(msg);
+            thresholdRule.timestamps = getTimestampArrayExceed();
+            assertNull(thresholdRule.checkViolation(msg));
         }
 
         // checks for the case in which the flagged domain is not detected and it does not exceed
@@ -127,8 +165,9 @@ class ThresholdRuleTest {
         @Test
         void isViolatedNoMatchNotExceed() throws HttpMalformedHeaderException, URIException {
             String url = getNotFlaggedURL();
-            thresholdRule.timestamps = getTimestampArrayNotExceed();
             HttpMessage msg = ThresholdRuleTest.createHttpMsg(url);
-            assertFalse(thresholdRule.isViolated(msg));
+            thresholdRule.timestamps = getTimestampArrayNotExceed();
+            thresholdRule.messages = getHttpMessagesNotExceed(msg);
+            assertNull(thresholdRule.checkViolation(msg));
         }
 }
