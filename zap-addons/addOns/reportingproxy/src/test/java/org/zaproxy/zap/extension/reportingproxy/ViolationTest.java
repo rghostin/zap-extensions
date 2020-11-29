@@ -19,17 +19,16 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ViolationTest {
     class TestRule implements Rule {
@@ -54,7 +53,8 @@ class ViolationTest {
     void getTitle() throws HttpMalformedHeaderException, URIException {
         TestRule testRule = new TestRule();
         HttpMessage msg = createHttpMsg();
-        Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, null);
+        Violation violation =
+                new Violation(testRule.getName(), testRule.getDescription(), msg, null);
 
         assertEquals(violation.getTitle(), String.format("Rule_%s violated", testRule.getName()));
     }
@@ -63,7 +63,8 @@ class ViolationTest {
     void getTriggeringUri() throws HttpMalformedHeaderException, URIException {
         TestRule testRule = new TestRule();
         HttpMessage msg = createHttpMsg();
-        Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, null);
+        Violation violation =
+                new Violation(testRule.getName(), testRule.getDescription(), msg, null);
 
         assertEquals(violation.getTriggeringUri(), msg.getRequestHeader().getURI().toString());
     }
@@ -79,7 +80,8 @@ class ViolationTest {
             msgs.add(createHttpMsg());
         }
 
-        Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, msgs);
+        Violation violation =
+                new Violation(testRule.getName(), testRule.getDescription(), msg, msgs);
 
         assertEquals(violation.getEvidenceMessages(), msgs);
     }
@@ -94,7 +96,8 @@ class ViolationTest {
             msgs.add(createHttpMsg());
         }
 
-        Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, msgs);
+        Violation violation =
+                new Violation(testRule.getName(), testRule.getDescription(), msg, msgs);
         assertEquals(violation.getEvidenceMessages(), msgs);
 
         StringBuilder uris = new StringBuilder();
@@ -117,7 +120,8 @@ class ViolationTest {
     void getRuleName() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = createHttpMsg();
         for (TestRule testRule : getTestRules()) {
-            Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, null);
+            Violation violation =
+                    new Violation(testRule.getName(), testRule.getDescription(), msg, null);
             assertEquals(testRule.getName(), violation.getRuleName());
         }
     }
@@ -126,7 +130,8 @@ class ViolationTest {
     void getDescription() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = createHttpMsg();
         for (TestRule testRule : getTestRules()) {
-            Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, null);
+            Violation violation =
+                    new Violation(testRule.getName(), testRule.getDescription(), msg, null);
             assertEquals(testRule.getDescription(), violation.getDescription());
         }
     }
@@ -135,7 +140,8 @@ class ViolationTest {
     void getTriggeringMsg() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = createHttpMsg();
         for (TestRule testRule : getTestRules()) {
-            Violation violation = new Violation(testRule.getName(), testRule.getDescription(), msg, null);
+            Violation violation =
+                    new Violation(testRule.getName(), testRule.getDescription(), msg, null);
             assertEquals(msg, violation.getTriggeringMsg());
         }
     }

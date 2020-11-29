@@ -222,7 +222,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
             getRulesScanner().addRule(new CommonHeadersRule());
             getRulesScanner().addRule(new RequestPerformanceRule());
             getRulesScanner().addRule(new HiddenFieldRule());
-            View.getSingleton().showMessageDialog("Loaded btach rules sucessfully");
+            View.getSingleton().showMessageDialog("Loaded batch rules sucessfully");
         } catch (DuplicateRuleException e) {
             View.getSingleton().showMessageDialog("Error cannot load batch rules");
         }

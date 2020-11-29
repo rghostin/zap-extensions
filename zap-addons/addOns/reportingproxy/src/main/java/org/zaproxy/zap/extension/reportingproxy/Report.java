@@ -58,11 +58,11 @@ public class Report {
     public void addViolation(Violation violation) {
         rows.add(
                 String.format(
-                        "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
-                        "--", // todo fix
+                        "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td><div class=\"tooltip\">Evidence<span class=\"tooltiptext\">%s</span></div></td></tr>",
                         violation.getRuleName(),
+                        violation.getDescription(),
                         violation.getTriggeringUri(),
-                        violation.getDescription()));
+                        violation.getEvidenceUris()));
     }
 
     /**

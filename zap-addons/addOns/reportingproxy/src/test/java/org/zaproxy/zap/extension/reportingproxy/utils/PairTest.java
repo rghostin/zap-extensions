@@ -27,8 +27,10 @@ class PairTest {
 
     @Test
     public void testEquals_Symmetric() {
-        Pair<String, String> x = new Pair<>("lol","gg");  // equals and hashCode check name field value
-        Pair<String, String> y = new Pair<>("lol","gg");  // equals and hashCode check name field value
+        Pair<String, String> x =
+                new Pair<>("lol", "gg"); // equals and hashCode check name field value
+        Pair<String, String> y =
+                new Pair<>("lol", "gg"); // equals and hashCode check name field value
         assertTrue(x.equals(y) && y.equals(x));
         assertEquals(y.hashCode(), x.hashCode());
 
@@ -38,10 +40,9 @@ class PairTest {
 
     @Test
     public void testEquals_Symmetric_int() {
-        Pair<Integer, Integer> a = new Pair<>(1,2);  // equals and hashCode check name field value
-        Pair<Integer, Integer> b = new Pair<>(3,2);  // equals and hashCode check name field value
+        Pair<Integer, Integer> a = new Pair<>(1, 2); // equals and hashCode check name field value
+        Pair<Integer, Integer> b = new Pair<>(3, 2); // equals and hashCode check name field value
         assertFalse(a.equals(b) || b.equals(a));
         assertNotEquals(b.hashCode(), a.hashCode());
-
     }
 }

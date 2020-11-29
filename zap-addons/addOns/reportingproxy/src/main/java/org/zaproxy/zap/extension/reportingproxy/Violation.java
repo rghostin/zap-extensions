@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -38,7 +39,11 @@ public class Violation {
         this.ruleName = ruleName;
         this.description = description;
         this.triggeringMsg = triggeringMsg;
-        this.evidenceMessages = evidenceMessages;
+        if (evidenceMessages != null) {
+            this.evidenceMessages = evidenceMessages;
+        } else {
+            this.evidenceMessages = new ArrayList<>();
+        }
     }
 
     public String getRuleName() {
@@ -80,7 +85,7 @@ public class Violation {
     public String getEvidenceUris() {
         StringBuilder uris = new StringBuilder();
         for (HttpMessage msg : evidenceMessages) {
-            uris.append(getMsgUriHelper(msg)).append('\n');
+            uris.append(getMsgUriHelper(msg)).append("\n");
         }
         return uris.toString();
     }
