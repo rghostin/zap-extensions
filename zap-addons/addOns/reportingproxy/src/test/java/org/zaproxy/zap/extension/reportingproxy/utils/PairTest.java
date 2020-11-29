@@ -23,14 +23,23 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-// todo test
 class PairTest {
 
     @Test
-    void testEquals() {}
+    public void testEquals_Symmetric() {
+        Pair<String, String> x = new Pair<>("lol","gg");  // equals and hashCode check name field value
+        Pair<String, String> y = new Pair<>("lol","gg");  // equals and hashCode check name field value
+        assertTrue(x.equals(y) && y.equals(x));
+        assertTrue(x.hashCode() == y.hashCode());
 
-    @Test
-    void testHashCode() {}
+        Pair<Integer, Integer> a = new Pair<>(1,2);  // equals and hashCode check name field value
+        Pair<Integer, Integer> b = new Pair<>(3,2);  // equals and hashCode check name field value
+        assertFalse(a.equals(b) || b.equals(a));
+        assertFalse(a.hashCode() == b.hashCode());
 
-    // todo test construction
+        assertFalse(x.equals(a) || y.equals(b));
+
+        assertFalse(x.equals(null));
+        assertFalse(x.equals("LOL"));
+    }
 }
