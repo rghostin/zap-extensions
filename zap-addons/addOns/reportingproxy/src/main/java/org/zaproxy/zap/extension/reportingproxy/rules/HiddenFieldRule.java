@@ -128,7 +128,6 @@ public class HiddenFieldRule implements Rule {
         // Check whether an outgoing POST request contains the name:value from another domain
         String outgoingHostname = msg.getRequestHeader().getHostName();
 
-        System.out.println("method " + msg.getRequestHeader().getMethod());
         if (msg.getRequestHeader().getMethod().equals("POST")) {
             for (HtmlParameter htmlParam : msg.getFormParams()) {
                 if (htmlParam.getType() == HtmlParameter.Type.form) {
