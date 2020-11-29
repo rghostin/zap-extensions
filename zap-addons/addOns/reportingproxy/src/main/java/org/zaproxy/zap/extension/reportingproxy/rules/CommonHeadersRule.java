@@ -33,7 +33,7 @@ public class CommonHeadersRule implements Rule {
 
     private final int BUFFER_SIZE = 5;
 
-    private List<HttpResponseHeader> httpResponseHeaderContainer = new ArrayList<>();
+    private List<HttpMessage> httpMessageContainer = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -46,10 +46,6 @@ public class CommonHeadersRule implements Rule {
                 "present in previous requests.";
     }
 
-    public List<HttpResponseHeader> getHttpResponseHeaderContainer() {
-        return httpResponseHeaderContainer;
-    }
-
     /**
      * Returns the common headers of the messages stored in the buffer
      *
@@ -58,16 +54,17 @@ public class CommonHeadersRule implements Rule {
     private List<HashableHttpHeaderField> getCommonHeaderFields() {
         Map<HashableHttpHeaderField, Integer> field_times = new HashMap<>();
         List<HashableHttpHeaderField> commonHeaderFields = new ArrayList<>();
+        List<HttpResponseHeader> httpResponseHeaderContainer = getHttpResponseHeaderContainer();
 
         for (HttpResponseHeader httpResponseHeader : httpResponseHeaderContainer) {
             List<HttpHeaderField> headerFields = httpResponseHeader.getHeaders();
             List<HashableHttpHeaderField> headers = new ArrayList<>();
+
             for (HttpHeaderField headerField : headerFields) {
                 headers.add(new HashableHttpHeaderField(headerField));
             }
 
             for (HashableHttpHeaderField header : headers) {
-
                 if (!field_times.keySet().contains(header)) {
                     // If not contain header
                     field_times.put(header, 0);
@@ -75,7 +72,6 @@ public class CommonHeadersRule implements Rule {
                     // If contain header
                     field_times.put(header, field_times.get(header) + 1);
                 }
-
             }
         }
 
@@ -112,13 +108,26 @@ public class CommonHeadersRule implements Rule {
     }
 
     /**
-     * Update the buffer for the httpResponseHeaderContainer
+     * Updates the buffer for the httpResponseHeaderContainer
      *
-     * @param newHeader the HttpResponseHeader that will be updated to the container
+     * @param msg the HttpResponseHeader that will be updated to the container
      */
-    private void updateBufferWith(HttpResponseHeader newHeader) {
-        httpResponseHeaderContainer.remove(0);
-        httpResponseHeaderContainer.add(newHeader);
+    private void updateBufferWith(HttpMessage msg) {
+        httpMessageContainer.remove(0);
+        httpMessageContainer.add(msg);
+    }
+
+    /**
+     * Returns the container of the response headers store in the current http message container
+     *
+     * @return List of response header stored in the http message container
+     */
+    private List<HttpResponseHeader> getHttpResponseHeaderContainer() {
+        List<HttpResponseHeader> httpResponseHeaderContainer = new ArrayList<>();
+        for (HttpMessage httpMessage : httpMessageContainer) {
+            httpResponseHeaderContainer.add(httpMessage.getResponseHeader());
+        }
+        return httpResponseHeaderContainer;
     }
 
     /**
@@ -129,8 +138,8 @@ public class CommonHeadersRule implements Rule {
      */
     @Override
     public Violation checkViolation(HttpMessage msg) {
-        if (httpResponseHeaderContainer.size() != BUFFER_SIZE) {
-            httpResponseHeaderContainer.add(msg.getResponseHeader());
+        if (httpMessageContainer.size() != BUFFER_SIZE) {
+            httpMessageContainer.add(msg);
             return null;
         }
 
@@ -143,12 +152,12 @@ public class CommonHeadersRule implements Rule {
         }
 
         // update buffer
-        updateBufferWith(msg.getResponseHeader());
+        updateBufferWith(msg);
 
         if (!isViolatedAttribute) {
             return null;
         } else {
-            return new Violation(getName(), getDescription(), msg, null); // todo
+            return new Violation(getName(), getDescription(), msg, httpMessageContainer);
         }
     }
 }
