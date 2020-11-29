@@ -35,6 +35,7 @@ public class CommonHeadersRule implements Rule {
     private final int BUFFER_SIZE = 5;
 
     private List<HttpResponseHeader> httpResponseHeaderContainer = new ArrayList<>();
+    private List<HttpMessage> HTTP_MESSAGE_COMMON_HEADER = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -134,11 +135,11 @@ public class CommonHeadersRule implements Rule {
         // update buffer
         updateBufferWith(msg.getResponseHeader());
 
-        // todo fix return violation
         if (!isViolatedAttribute) {
             return null;
         } else {
-            return new Violation(getName(), getDescription(), msg, null);
+            HTTP_MESSAGE_COMMON_HEADER.add(msg);
+            return new Violation(getName(), getDescription(), msg, HTTP_MESSAGE_COMMON_HEADER);
         }
     }
 }

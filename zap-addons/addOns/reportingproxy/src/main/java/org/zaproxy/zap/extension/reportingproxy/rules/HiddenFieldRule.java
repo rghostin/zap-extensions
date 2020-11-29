@@ -4,15 +4,17 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// todo add tests
 public class HiddenFieldRule implements Rule {
 
     Map<String,String> hiddenFields = new HashMap<>();
+    List<HttpMessage> HTTP_MESSAGE_HIDDEN_INPUT = new ArrayList<>();
 
     private final Pattern INPUT_LINE =
             Pattern.compile("<\\s*input.*?>");
@@ -59,7 +61,8 @@ public class HiddenFieldRule implements Rule {
             } else {
                 String domain = hiddenFields.get(name);
                 if(!domain.equals(outgoingHostname)) {
-                    return new Violation(getName(), getDescription(), msg, null);
+                    HTTP_MESSAGE_HIDDEN_INPUT.add(msg);
+                    return new Violation(getName(), getDescription(), msg, HTTP_MESSAGE_HIDDEN_INPUT);
                 }
             }
         }
