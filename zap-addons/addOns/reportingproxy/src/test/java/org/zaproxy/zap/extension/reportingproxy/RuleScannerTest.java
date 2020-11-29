@@ -19,77 +19,102 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicateRuleException;
+import org.zaproxy.zap.extension.reportingproxy.exceptions.RuleNotFoundException;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-// todo fix
 class RuleScannerTest {
-    //    RuleScanner ruleScanner;
-    //
-    //    @BeforeEach
-    //    void setup() {
-    //        ruleScanner = new RuleScanner();
-    //    }
-    //
-    //    @Test
-    //    void getPluginId() {
-    //        assertEquals(500001, ruleScanner.getPluginId());
-    //    }
-    //
-    //    @Test
-    //    void getName() {
-    //        assertEquals("Policy scanner", ruleScanner.getName());
-    //    }
-    //
-    //    @Test
-    //    void addPolicy() {
-    //        String policyName = "testPolicy";
-    //        Set<Rule> rules = new HashSet<>();
-    //        Policy policy = new Policy(policyName);
-    //
-    //        try {
-    //            ruleScanner.addRule(policy);
-    //        } catch (DuplicateRuleException e) {
-    //            fail("Should not have thrown exception");
-    //        }
-    //        assertThrows(
-    //                DuplicateRuleException.class,
-    //                () -> {
-    //                    ruleScanner.addRule(policy);
-    //                });
-    //    }
-    //
-    //    @Test
-    //    void removePolicy() {
-    //        String policyName = "testPolicy";
-    //        Set<Rule> rules = new HashSet<>();
-    //        Policy policy = new Policy(policyName);
-    //
-    //        try {
-    //            ruleScanner.addRule(policy);
-    //        } catch (DuplicateRuleException e) {
-    //            fail("Should not have thrown exception");
-    //        }
-    //
-    //        try {
-    //            ruleScanner.removeRule(policyName);
-    //        } catch (RuleNotFoundException e) {
-    //            fail("Should not have thrown exception");
-    //        }
-    //
-    //        assertThrows(
-    //                RuleNotFoundException.class,
-    //                () -> {
-    //                    ruleScanner.removeRule("testPolicy");
-    //                });
-    //    }
-    //
-    //    @Test
-    //    void scanHttpRequestSend() {
-    //        // not active for now
-    //    }
-    //
-    //    @Test
-    //    void scanHttpResponseReceive() {
-    //        // not tested for now
-    //    }
+        RuleScanner ruleScanner;
+
+        @BeforeEach
+        void setup() {
+            ruleScanner = new RuleScanner();
+        }
+
+        @Test
+        void getPluginId() {
+            assertEquals(500001, ruleScanner.getPluginId());
+        }
+
+        @Test
+        void getName() {
+            assertEquals("Rule scanner", ruleScanner.getName());
+        }
+
+        private Rule getDummyRule(String name) {
+            return new Rule() {
+                @Override
+                public String getName() {
+                    return name;
+                }
+
+                @Override
+                public String getDescription() {
+                    return null;
+                }
+
+                @Override
+                public Violation checkViolation(HttpMessage msg) {
+                    return null;
+                }
+            };
+        }
+
+        @Test
+        void addPolicy() {
+            String name = "testRule";
+            Rule rule = getDummyRule(name);
+
+            try {
+                ruleScanner.addRule(rule);
+            } catch (DuplicateRuleException e) {
+                fail("Should not have thrown exception");
+            }
+            assertThrows(
+                    DuplicateRuleException.class,
+                    () -> {
+                        ruleScanner.addRule(rule);
+                    });
+        }
+
+        @Test
+        void removePolicy() {
+            String name = "testPolicy";
+            Rule rule = getDummyRule(name);
+
+            try {
+                ruleScanner.addRule(rule);
+            } catch (DuplicateRuleException e) {
+                fail("Should not have thrown exception");
+            }
+
+            try {
+                ruleScanner.removeRule(name);
+            } catch (RuleNotFoundException e) {
+                fail("Should not have thrown exception");
+            }
+
+            assertThrows(
+                    RuleNotFoundException.class,
+                    () -> {
+                        ruleScanner.removeRule("testPolicy");
+                    });
+        }
+
+        @Test
+        void scanHttpRequestSend() {
+            // not active for now
+        }
+
+        @Test
+        void scanHttpResponseReceive() {
+            // not tested for now
+        }
 }
