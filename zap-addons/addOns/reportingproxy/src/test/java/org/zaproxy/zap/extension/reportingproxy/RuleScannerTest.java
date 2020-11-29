@@ -30,7 +30,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// todo fix
 class RuleScannerTest {
         RuleScanner ruleScanner;
 
