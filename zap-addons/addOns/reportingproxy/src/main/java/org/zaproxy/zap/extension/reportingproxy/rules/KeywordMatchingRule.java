@@ -26,7 +26,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-/** This is a rule for flagging bad keywords */
+//todo rm
+/** This is a rule for flagging bad keywords  */
 public class KeywordMatchingRule implements Rule {
 
     @Override

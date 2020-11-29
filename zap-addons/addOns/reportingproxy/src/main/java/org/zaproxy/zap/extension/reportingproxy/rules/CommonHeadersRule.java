@@ -163,12 +163,21 @@ public class CommonHeadersRule implements Rule {
     }
 }
 
+/**
+ * HttpHeader field that is usable in a Hashset
+ * Implements equals and hashCode
+ */
 class HashableHttpHeaderField extends HttpHeaderField {
 
     public HashableHttpHeaderField(HttpHeaderField httpHeaderField) {
         super(httpHeaderField.getName(), httpHeaderField.getValue());
     }
 
+    /**
+     * Compares the header name and its value
+     * @param o : the object to compare to
+     * @return : true if equals else false
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

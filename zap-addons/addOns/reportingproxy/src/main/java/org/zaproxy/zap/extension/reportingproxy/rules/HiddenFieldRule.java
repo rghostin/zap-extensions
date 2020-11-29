@@ -50,6 +50,7 @@ public class HiddenFieldRule implements Rule {
         return "Check if Hidden Field ever sent to different domain";
     }
 
+    // todo split into methods and javadoc
     @Override
     public Violation checkViolation(HttpMessage msg) {
         String httpResponseBody = msg.getResponseBody().toString();

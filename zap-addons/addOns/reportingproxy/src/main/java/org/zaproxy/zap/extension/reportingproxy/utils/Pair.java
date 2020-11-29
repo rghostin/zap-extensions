@@ -19,6 +19,11 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.utils;
 
+/**
+ * Generic pair
+ * @param <X> : the first object type
+ * @param <Y> : the second object type
+ */
 public class Pair<X, Y> {
     public final X first;
     public final Y second;

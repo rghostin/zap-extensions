@@ -42,7 +42,7 @@ public interface Rule {
      * Checks whether the HttpMessage violates a specific rule
      *
      * @param msg the HttpMessage that will be checked
-     * @return A violation object if a violation occured else null
+     * @return A violation object if a violation occurred else null
      */
     Violation checkViolation(HttpMessage msg);
 }
