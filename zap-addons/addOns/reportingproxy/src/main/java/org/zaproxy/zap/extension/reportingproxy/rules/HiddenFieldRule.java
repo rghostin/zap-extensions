@@ -1,14 +1,11 @@
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.reportingproxy.Pair;
+import org.zaproxy.zap.extension.reportingproxy.utils.Pair;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +13,8 @@ public class HiddenFieldRule implements Rule {
 
     // Map< (Name, Value), Domain>
     Map<Pair<String,String>,String> hiddenFields = new HashMap<>();
-    List<HttpMessage> HTTP_MESSAGE_HIDDEN_INPUT = new ArrayList<>();
+    // Map <(Name, Value), HttpMessage>
+    Map<Pair<String, String>, HttpMessage> messageHistory = new HashMap<>();
 
     private final Pattern INPUT_LINE =
             Pattern.compile("<\\s*input.*?>");
@@ -64,16 +62,17 @@ public class HiddenFieldRule implements Rule {
             if(matcherValue.matches()){
                 value = matcherValue.group(1);
             }
-            Pair<String,String> p = new Pair<>(name,value);
+            Pair<String,String> inputNameValuePair = new Pair<>(name,value);
 
             String outgoingHostname = msg.getRequestHeader().getHostName();
-            if(!hiddenFields.containsKey(p)) {
-                hiddenFields.put(p, outgoingHostname);
+            if(!hiddenFields.containsKey(inputNameValuePair)) {
+                hiddenFields.put(inputNameValuePair, outgoingHostname);
+                messageHistory.put(inputNameValuePair, msg);
             } else {
-                String domain = hiddenFields.get(p);
+                String domain = hiddenFields.get(inputNameValuePair);
                 if(!domain.equals(outgoingHostname)) {
-                    HTTP_MESSAGE_HIDDEN_INPUT.add(msg);
-                    return new Violation(getName(), getDescription(), msg, HTTP_MESSAGE_HIDDEN_INPUT);
+                    HttpMessage violatedMessage = messageHistory.get(inputNameValuePair);
+                    return new Violation(getName(), getDescription(), msg, Arrays.asList(violatedMessage));
                 }
             }
         }

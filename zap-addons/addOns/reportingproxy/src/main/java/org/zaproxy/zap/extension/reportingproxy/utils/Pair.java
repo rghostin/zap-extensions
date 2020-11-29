@@ -1,4 +1,4 @@
-package org.zaproxy.zap.extension.reportingproxy;
+package org.zaproxy.zap.extension.reportingproxy.utils;
 
 public class Pair<X, Y> {
     public final X first;

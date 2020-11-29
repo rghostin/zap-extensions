@@ -2,11 +2,9 @@ package org.zaproxy.zap.extension.reportingproxy.rules;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.reportingproxy.Pair;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
 import java.util.*;
