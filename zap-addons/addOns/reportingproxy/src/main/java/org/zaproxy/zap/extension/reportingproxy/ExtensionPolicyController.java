@@ -79,8 +79,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
                     Control.getSingleton()
                             .getExtensionLoader()
                             .getExtension(ExtensionPassiveScan.class);
-            ruleScanner =
-                    (RuleScanner) extPassiveScan.getPluginPassiveScanner(SCANNER_PLUGIN_ID);
+            ruleScanner = (RuleScanner) extPassiveScan.getPluginPassiveScanner(SCANNER_PLUGIN_ID);
         }
         return ruleScanner;
     }
@@ -142,7 +141,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
             }
 
             // load the rules in the scanner
-            for (Rule loadedRule : rulesJarLoader.getRules() ) {
+            for (Rule loadedRule : rulesJarLoader.getRules()) {
                 try {
                     getRulesScanner().addRule(loadedRule);
                     loadedRulesNames.append(loadedRule.getName()).append("\n");

@@ -59,7 +59,7 @@ public class RuleScanner extends PluginPassiveScanner {
         newAlert()
                 .setName(violation.getTitle())
                 .setDescription(violation.getDescription())
-                .setMessage(violation.getMsg())
+                .setMessage(violation.getTriggeringMsg())
                 .setUri(violation.getUri())
                 .raise();
     }

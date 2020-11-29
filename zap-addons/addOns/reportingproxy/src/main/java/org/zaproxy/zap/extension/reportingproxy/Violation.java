@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
+import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 
 // todo support for evidence
@@ -26,12 +27,18 @@ import org.parosproxy.paros.network.HttpMessage;
 public class Violation {
     private String ruleName;
     private String description;
-    private HttpMessage msg;
+    private HttpMessage triggeringMsg;
+    private List<HttpMessage> evidenceMessages;
 
-    public Violation(String ruleName, String description, HttpMessage msg) {
+    public Violation(
+            String ruleName,
+            String description,
+            HttpMessage triggeringMsg,
+            List<HttpMessage> evidenceMessages) {
         this.ruleName = ruleName;
         this.description = description;
-        this.msg = msg;
+        this.triggeringMsg = triggeringMsg;
+        this.evidenceMessages = evidenceMessages;
     }
 
     public String getRuleName() {
@@ -42,8 +49,8 @@ public class Violation {
         return description;
     }
 
-    public HttpMessage getMsg() {
-        return msg;
+    public HttpMessage getTriggeringMsg() {
+        return triggeringMsg;
     }
 
     public String getTitle() {
@@ -51,6 +58,6 @@ public class Violation {
     }
 
     public String getUri() {
-        return getMsg().getRequestHeader().getURI().toString();
+        return getTriggeringMsg().getRequestHeader().getURI().toString();
     }
 }

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -28,15 +27,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.commons.io.FilenameUtils;
 
 /** Responsible of loading a JAR file containing policies */
 public class RulesJarLoader {
     Set<Rule> rules = new HashSet<>();
 
-    /**
-     * @return a set of the loaded rules
-     */
+    /** @return a set of the loaded rules */
     public Set<Rule> getRules() {
         return rules;
     }

@@ -27,7 +27,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-//todo fix return violation
 public class ThresholdRule implements Rule {
 
     // Timestamp array for keeping records
@@ -102,6 +101,7 @@ public class ThresholdRule implements Rule {
         return timestamps;
     }
 
+    // todo fix return violation
     /**
      * Checks whether the HttpMessage violates the threshold rule or not
      *
@@ -116,7 +116,7 @@ public class ThresholdRule implements Rule {
         if (matcher.matches()) {
             timestamps = updateTimestamps();
             if (timestamps.size() > getRequestThreshold()) {
-                return new Violation(getName(), getDescription(), msg);
+                return new Violation(getName(), getDescription(), msg, null);
             }
             return null;
         }

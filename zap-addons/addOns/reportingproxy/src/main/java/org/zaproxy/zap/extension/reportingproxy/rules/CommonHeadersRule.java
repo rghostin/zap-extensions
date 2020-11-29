@@ -19,18 +19,17 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import java.util.*;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-import java.util.*;
-import java.util.regex.Pattern;
-
-//todo fix return violation
-/** This is a rule for checking whether the HTTP response message contains the
- * common response headers present in previous requests */
+/**
+ * This is a rule for checking whether the HTTP response message contains the common response
+ * headers present in previous requests
+ */
 public class CommonHeadersRule implements Rule {
 
     private final int BUFFER_SIZE = 5;
@@ -44,8 +43,8 @@ public class CommonHeadersRule implements Rule {
 
     @Override
     public String getDescription() {
-        return "The HTTP response message does not contain common response header " +
-                "present in previous requests.";
+        return "The HTTP response message does not contain common response header "
+                + "present in previous requests.";
     }
 
     public List<HttpResponseHeader> getHttpResponseHeaderContainer() {
@@ -72,7 +71,6 @@ public class CommonHeadersRule implements Rule {
                     // If contain header
                     field_times.put(header, field_times.get(header) + 1);
                 }
-
             }
         }
 
@@ -95,7 +93,7 @@ public class CommonHeadersRule implements Rule {
     private boolean containsAllHeaders(HttpMessage msg, List<HttpHeaderField> headersToCheck) {
         List<HttpHeaderField> headers = msg.getResponseHeader().getHeaders();
         for (HttpHeaderField headerToCheck : headersToCheck) {
-            if (! headers.contains(headerToCheck)){
+            if (!headers.contains(headerToCheck)) {
                 return false;
             }
         }
@@ -129,17 +127,18 @@ public class CommonHeadersRule implements Rule {
 
         // checks violation
         List<HttpHeaderField> commonHeaderFields = getCommonHeaderFields();
-        if (! containsAllHeaders(msg, commonHeaderFields)) {
+        if (!containsAllHeaders(msg, commonHeaderFields)) {
             isViolatedAttribute = true;
         }
 
         // update buffer
         updateBufferWith(msg.getResponseHeader());
 
-        if (! isViolatedAttribute) {
+        // todo fix return violation
+        if (!isViolatedAttribute) {
             return null;
         } else {
-            return new Violation(getName(), getDescription(), msg);
+            return new Violation(getName(), getDescription(), msg, null);
         }
     }
 }

@@ -27,10 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 
-/**
- * Responsible for reporting rule violations
- * Builds an HTML report
- * */
+/** Responsible for reporting rule violations Builds an HTML report */
 public class Report {
 
     private List<String> rows = new ArrayList<>();
@@ -62,7 +59,7 @@ public class Report {
         rows.add(
                 String.format(
                         "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
-                        "--",  //todo fix
+                        "--", // todo fix
                         violation.getRuleName(),
                         violation.getUri(),
                         violation.getDescription()));
