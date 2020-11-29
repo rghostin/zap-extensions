@@ -43,12 +43,11 @@ class ThresholdRuleTest {
 
     private static HttpMessage createHttpMsg(String url)
             throws URIException, HttpMalformedHeaderException {
-        HttpMessage msg = new HttpMessage(new URI(url, true));
-        return msg;
+        return new HttpMessage(new URI(url, true));
     }
 
     private String getFlaggedURL() {
-        return "www.zerohedge.com";
+        return thresholdRule.getFlaggedDomain();
     }
 
     private String getNotFlaggedURL() {
@@ -56,7 +55,7 @@ class ThresholdRuleTest {
     }
 
     private ArrayList<Integer> getTimestampArrayExceed() {
-        ArrayList<Integer> timestamps = new ArrayList<Integer>();
+        ArrayList<Integer> timestamps = new ArrayList<>();
         int count = 0;
         while (count < 5) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -68,7 +67,7 @@ class ThresholdRuleTest {
     }
 
     private ArrayList<Integer> getTimestampArrayNotExceed() {
-        ArrayList<Integer> timestamps = new ArrayList<Integer>();
+        ArrayList<Integer> timestamps = new ArrayList<>();
         int count = 0;
         while (count < 1) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -80,7 +79,7 @@ class ThresholdRuleTest {
     }
 
     private List<HttpMessage> getHttpMessagesExceed(HttpMessage msg) {
-        List<HttpMessage> messages = new ArrayList<HttpMessage>();
+        List<HttpMessage> messages = new ArrayList<>();
         int count = 0;
         while (count < 5) {
             messages.add(msg);
@@ -90,7 +89,7 @@ class ThresholdRuleTest {
     }
 
     private List<HttpMessage> getHttpMessagesNotExceed(HttpMessage msg) {
-        List<HttpMessage> messages = new ArrayList<HttpMessage>();
+        List<HttpMessage> messages = new ArrayList<>();
         int count = 0;
         while (count < 1) {
             messages.add(msg);
@@ -99,14 +98,13 @@ class ThresholdRuleTest {
         return messages;
     }
 
-    private boolean assertViolation(Violation v1, Violation v2) {
-        if (v1.getRuleName().equals(v2.getRuleName())
+    private void assertViolation(Violation v1, Violation v2) {
+        assertTrue(
+                v1.getRuleName().equals(v2.getRuleName())
                 && v1.getDescription().equals(v2.getDescription())
                 && v1.getEvidenceMessages().equals(v2.getEvidenceMessages())
-                && (v1.getTriggeringMsg() == v2.getTriggeringMsg())) {
-            return true;
-        }
-        return false;
+                && (v1.getTriggeringMsg() == v2.getTriggeringMsg())
+        );
     }
 
     @Test
@@ -125,8 +123,7 @@ class ThresholdRuleTest {
     // threshold
     @Test
     void isViolatedMatchTrue() throws HttpMalformedHeaderException, URIException {
-        String url = getFlaggedURL();
-        HttpMessage msg = ThresholdRuleTest.createHttpMsg(url);
+        HttpMessage msg = new HttpMessage(new URI("https://localhost/", true));
         thresholdRule.timestamps = getTimestampArrayExceed();
         thresholdRule.messages = getHttpMessagesExceed(msg);
         Violation vio = thresholdRule.checkViolation(msg);

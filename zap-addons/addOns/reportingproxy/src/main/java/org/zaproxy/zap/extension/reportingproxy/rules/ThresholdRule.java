@@ -49,8 +49,8 @@ public class ThresholdRule implements Rule {
      *
      * @return Returns the domain string from a given list
      */
-    private String getFlaggedDomain() {
-        return "zerohedge.com";
+    public String getFlaggedDomain() {
+        return "localhost";
     }
 
     /**
@@ -59,7 +59,7 @@ public class ThresholdRule implements Rule {
      * @return Returns the threshold number for request matches
      */
     private int getRequestThreshold() {
-        return 5;
+        return 3;
     }
 
     /**
@@ -68,7 +68,7 @@ public class ThresholdRule implements Rule {
      * @return Returns the time threshold in millisecond
      */
     private int getTimeThreshold() {
-        int second = 1;
+        int second = 3;
         return second * 1000;
     }
 

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 
-// todo support for evidence
 /** Represents a rule violation */
 public class Violation {
     private String ruleName;
@@ -80,7 +79,6 @@ public class Violation {
         return msg.getRequestHeader().getURI().toString();
     }
 
-    // todo test
     /** @return : List in string format of the uris of the evidence messages */
     public String getEvidenceUris() {
         StringBuilder uris = new StringBuilder();
