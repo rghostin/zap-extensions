@@ -148,7 +148,7 @@ public class CommonHeadersRule implements Rule {
         if (!isViolatedAttribute) {
             return null;
         } else {
-            return new Violation(getName(), getDescription(), msg, null);
+            return new Violation(getName(), getDescription(), msg, null); // todo
         }
     }
 }
