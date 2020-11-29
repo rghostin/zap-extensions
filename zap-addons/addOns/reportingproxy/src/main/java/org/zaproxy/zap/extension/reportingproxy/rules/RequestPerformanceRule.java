@@ -150,7 +150,7 @@ public class RequestPerformanceRule implements Rule {
      * Checks whether the HttpMessage violates the request performance rule or not
      *
      * @param msg the HttpMessage that will be checked
-     * @return
+     * @return Violation object if a violation occurs else null
      */
     @Override
     public Violation checkViolation(HttpMessage msg) {

@@ -135,7 +135,7 @@ public class CommonHeadersRule implements Rule {
      * Checks whether the HttpMessage violates the CommentHeaders rule rule or not
      *
      * @param msg the HttpMessage that will be checked
-     * @return true if the HttpMessage violates the rule, false if not
+     * @return Violation object if a violation occurs else null
      */
     @Override
     public Violation checkViolation(HttpMessage msg) {

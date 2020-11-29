@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.reportingproxy.rules;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
@@ -34,10 +35,12 @@ public class HiddenFieldRule implements Rule {
     // Map <(Name, Value), HttpMessage>
     Map<Pair<String, String>, HttpMessage> messageHistory = new HashMap<>();
 
-    private final Pattern INPUT_LINE = Pattern.compile("<\\s*input.*?>");
-    private final Pattern HIDDEN_LINE = Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
-    private final Pattern NAME_HIDDEN_LINE = Pattern.compile("<\\s*input.*?name=\\\"(.*?)\\\".*?>");
-    private final Pattern NAME_HIDDEN_VALUE =
+    private static final Pattern INPUT_LINE = Pattern.compile("<\\s*input.*?>");
+    private static final Pattern HIDDEN_LINE =
+            Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
+    private static final Pattern NAME_HIDDEN_LINE =
+            Pattern.compile("<\\s*input.*?name=\\\"(.*?)\\\".*?>");
+    private static final Pattern NAME_HIDDEN_VALUE =
             Pattern.compile("<\\s*input.*?value=\\\"(.*?)\\\".*?>");
 
     @Override
@@ -50,19 +53,17 @@ public class HiddenFieldRule implements Rule {
         return "Check if Hidden Field ever sent to different domain";
     }
 
-    // todo rm
-    private void printMap(boolean isviolated) {
-        System.out.println("Isviolated: "+isviolated);
-        for (Map.Entry<Pair<String, String>, String> entry : hiddenFields.entrySet()) {
-            System.out.println(entry.getKey().first + "," + entry.getKey().second + ":" + entry.getValue());
-        }
-    }
+    /**
+     * Given a body (string) extracts all the hidden fields with name and value
+     *
+     * @param body : the body
+     * @return a list of pair<String, String> name:value of hidden fields
+     */
+    private static List<Pair<String, String>> extractHiddenFields(String body) {
 
-    // todo split into methods and javadoc
-    @Override
-    public Violation checkViolation(HttpMessage msg) {
-        String httpResponseBody = msg.getResponseBody().toString();
-        Matcher matcherInput = INPUT_LINE.matcher(httpResponseBody);
+        List<Pair<String, String>> fields = new ArrayList<>();
+
+        Matcher matcherInput = INPUT_LINE.matcher(body);
 
         while (matcherInput.find()) {
             String inputStr = matcherInput.group().trim();
@@ -84,25 +85,69 @@ public class HiddenFieldRule implements Rule {
             String value = "";
             if (matcherValue.matches()) {
                 value = matcherValue.group(1);
+            } else {
+                continue;
             }
             Pair<String, String> inputNameValuePair = new Pair<>(name, value);
+            fields.add(inputNameValuePair);
+        }
 
-            String outgoingHostname = msg.getRequestHeader().getHostName();
-            if (!hiddenFields.containsKey(inputNameValuePair)) {
-                hiddenFields.put(inputNameValuePair, outgoingHostname);
-                messageHistory.put(inputNameValuePair, msg);
-            } else {
-                String domain = hiddenFields.get(inputNameValuePair);
-                if (!domain.equals(outgoingHostname)) {
-                    HttpMessage violatedMessage = messageHistory.get(inputNameValuePair);
+        return fields;
+    }
 
-                    printMap(true);
-                    return new Violation(
-                            getName(), getDescription(), msg, Arrays.asList(violatedMessage));
+
+    /**
+     * Inspects a http response message and saves hidden fields name:value to hiddenFields Map
+     * @param msg : the http message for which the response body needs inspection
+     */
+    private void saveHiddenFieldsFromResponse(HttpMessage msg) {
+        String outgoingHostname = msg.getRequestHeader().getHostName();
+        String httpResponseBody = msg.getResponseBody().toString();
+        Matcher matcherInput = INPUT_LINE.matcher(httpResponseBody);
+        List<Pair<String, String>> extracted_hidden_Fields =
+                extractHiddenFields(msg.getResponseBody().toString());
+        for (Pair<String, String> fieldPair : extracted_hidden_Fields) {
+            if (!hiddenFields.containsKey(fieldPair)) {
+                hiddenFields.put(fieldPair, outgoingHostname);
+                messageHistory.put(fieldPair, msg);
+            }
+        }
+    }
+
+    /**
+     * Checks for rule violation
+     * For a given http message, if it is a get response, store the hidden fields
+     * If it is a POST request checks whether previously known inputs are sent
+     * @param msg the HttpMessage that will be checked
+     * @return : Violation object if a violation occurs else null
+     */
+    @Override
+    public Violation checkViolation(HttpMessage msg) {
+        saveHiddenFieldsFromResponse(msg);
+
+        // Check whether an outgoing POST request contains the name:value from another domain
+        String outgoingHostname = msg.getRequestHeader().getHostName();
+
+        System.out.println("method " + msg.getRequestHeader().getMethod());
+        if (msg.getRequestHeader().getMethod().equals("POST")) {
+            for (HtmlParameter htmlParam : msg.getFormParams()) {
+                if (htmlParam.getType() == HtmlParameter.Type.form) {
+                    Pair<String, String> fieldPair =
+                            new Pair<>(htmlParam.getName(), htmlParam.getValue());
+                    if (hiddenFields.containsKey(fieldPair)) {
+                        String registeredHostname = hiddenFields.get(fieldPair);
+                        if (!registeredHostname.equals(outgoingHostname)) {
+                            HttpMessage violatedMessage = messageHistory.get(fieldPair);
+                            return new Violation(
+                                    getName(),
+                                    getDescription(),
+                                    msg,
+                                    Arrays.asList(violatedMessage));
+                        }
+                    }
                 }
             }
         }
-        printMap(false);
         return null;
     }
 }
