@@ -55,13 +55,6 @@ class RequestPerformanceRuleTest {
         return testSiteElapsedTimeMap;
     }
 
-    private HashMap<String, Integer> getTestCounterMap() {
-        HashMap<String, Integer> testCounterMap = new HashMap<String, Integer>();
-        testCounterMap.put("cern.ch", 5);
-        testCounterMap.put("facebook.com", 6);
-        testCounterMap.put("zerohedge.com", 3);
-        return testCounterMap;
-    }
 
     private HashMap<String, List<HttpMessage>> getHttpMessagesMap()
             throws URIException, HttpMalformedHeaderException {
@@ -120,7 +113,6 @@ class RequestPerformanceRuleTest {
     void isViolatedHighHighLow() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = new HttpMessage(new URI("http://zerohedge.com/", true));
         msg.setTimeElapsedMillis(5000);
-        requestRule.siteCounterMap = getTestCounterMap();
         requestRule.siteElapsedTimeMap = getTestElapsedTimeMap();
         requestRule.siteHttpMessages = getHttpMessagesMap();
         Violation vio = requestRule.checkViolation(msg);
@@ -138,13 +130,10 @@ class RequestPerformanceRuleTest {
     void isViolatedLowHighLow() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = new HttpMessage(new URI("http://zerohedge.com/", true));
         msg.setTimeElapsedMillis(5000);
-        HashMap<String, Integer> test_map_req = getTestCounterMap();
-        test_map_req.remove("cern.ch");
         HashMap<String, Integer> test_map_time = getTestElapsedTimeMap();
         test_map_time.remove("cern.ch");
         HashMap<String, List<HttpMessage>> test_map_http = getHttpMessagesMap();
         test_map_http.remove("cern.ch");
-        requestRule.siteCounterMap = test_map_req;
         requestRule.siteElapsedTimeMap = test_map_time;
         requestRule.siteHttpMessages = test_map_http;
         assertNull(requestRule.checkViolation(msg));
@@ -155,13 +144,10 @@ class RequestPerformanceRuleTest {
     void isViolatedHighLowLow() throws HttpMalformedHeaderException, URIException {
         HttpMessage msg = new HttpMessage(new URI("http://zerohedge.com/", true));
         msg.setTimeElapsedMillis(5000);
-        HashMap<String, Integer> test_map_req = getTestCounterMap();
-        test_map_req.remove("zerohedge.com");
         HashMap<String, Integer> test_map_time = getTestElapsedTimeMap();
         test_map_time.remove("zerohedge.com");
         HashMap<String, List<HttpMessage>> test_map_http = getHttpMessagesMap();
         test_map_http.remove("zerohedge.com");
-        requestRule.siteCounterMap = test_map_req;
         requestRule.siteElapsedTimeMap = test_map_time;
         requestRule.siteHttpMessages = test_map_http;
         assertNull(requestRule.checkViolation(msg));
@@ -174,7 +160,6 @@ class RequestPerformanceRuleTest {
         msg.setTimeElapsedMillis(1000);
         HashMap<String, Integer> test_map_time = getTestElapsedTimeMap();
         test_map_time.replace("zerohedge.com", 1000);
-        requestRule.siteCounterMap = getTestCounterMap();
         requestRule.siteElapsedTimeMap = test_map_time;
         requestRule.siteHttpMessages = getHttpMessagesMap();
         assertNull(requestRule.checkViolation(msg));
