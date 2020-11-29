@@ -9,14 +9,19 @@ public class Pair<X, Y> {
         this.second = y;
     }
 
+    @Override
     public boolean equals(Object o) {
 
-        if (o == null || o.getClass() != this.getClass()) { return false; }
-        Pair<X, Y> that = (Pair<X, Y>) o;
+        if (o == null) { return false; }
+        if (!(o instanceof Pair)) {
+            return false;
+        }
+        Pair<?, ?> that = (Pair<?, ?>) o;
         return (first == null ? that.first == null : first.equals(that.first))
                 && (second == null ? that.second == null : second.equals(that.second));
     }
 
+    @Override
     public int hashCode() {
         return (first != null ? first.hashCode() : 0) + 31 * (second != null ? second.hashCode() : 0);
     }

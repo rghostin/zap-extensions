@@ -79,8 +79,4 @@ public class HiddenFieldRule implements Rule {
         }
         return null;
     }
-
-    public String test(){
-        return hiddenFields.keySet().toString();
-    }
 }

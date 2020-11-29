@@ -51,15 +51,6 @@ class HiddenFieldRuleTest {
     void getDescription() {
         HiddenFieldRule hiddenFieldRule = new HiddenFieldRule();
         assertEquals("Check if Hidden Field ever sent to different domain",hiddenFieldRule.getDescription());
-
-        Pair<String,String> p = new Pair<>("1","2");
-        Map<Pair<String,String>,String> hiddenFields = new HashMap<>();
-        hiddenFields.put(p,"lol");
-
-        Pair<String,String> p2 = new Pair<>("1","2");
-
-        System.out.println(hiddenFields.containsKey(p2));
-        System.out.println(p2.equals(p));
     }
 
     @Test
@@ -93,12 +84,9 @@ class HiddenFieldRuleTest {
             assertNull(hiddenFieldRule.checkViolation(httpMessageCorrect2));
 
             Violation v = hiddenFieldRule.checkViolation(httpMessageWrong);
-            //assertEquals(hiddenFieldRule.getName(),v.getRuleName());
-            //assertEquals(hiddenFieldRule.getDescription(),v.getDescription());
-            //assertEquals(httpMessageWrong.getRequestHeader().getURI().toString(),v.getUri());
-            System.out.println(hiddenFieldRule.test());
-            System.out.println(httpMessageWrong.getRequestHeader().getHostName());
-            System.out.println("one loop");
+            assertEquals(hiddenFieldRule.getName(),v.getRuleName());
+            assertEquals(hiddenFieldRule.getDescription(),v.getDescription());
+            assertEquals(httpMessageWrong.getRequestHeader().getURI().toString(),v.getUri());
         }
     }
 }
