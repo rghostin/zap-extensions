@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,11 +54,11 @@ class RequestPerformanceRuleTest {
         return testSiteElapsedTimeMap;
     }
 
-
     private HashMap<String, List<HttpMessage>> getHttpMessagesMap()
             throws URIException, HttpMalformedHeaderException {
 
-        HashMap<String, List<HttpMessage>> siteHttpMessages = new HashMap<String, List<HttpMessage>>();
+        HashMap<String, List<HttpMessage>> siteHttpMessages =
+                new HashMap<String, List<HttpMessage>>();
         HttpMessage msg_cern = new HttpMessage(new URI("http://zerohedge.com/", true));
         HttpMessage msg_facebook = new HttpMessage(new URI("http://zerohedge.com/", true));
         HttpMessage msg_zerohedge = new HttpMessage(new URI("http://zerohedge.com/", true));
@@ -80,9 +79,9 @@ class RequestPerformanceRuleTest {
         list_zerohedge.add(msg_zerohedge);
         list_zerohedge.add(msg_zerohedge);
         list_zerohedge.add(msg_zerohedge);
-        siteHttpMessages.put("cern.ch",list_cern);
-        siteHttpMessages.put("facebook.com",list_facebook);
-        siteHttpMessages.put("zerohedge.com",list_zerohedge);
+        siteHttpMessages.put("cern.ch", list_cern);
+        siteHttpMessages.put("facebook.com", list_facebook);
+        siteHttpMessages.put("zerohedge.com", list_zerohedge);
         return siteHttpMessages;
     }
 
@@ -90,7 +89,7 @@ class RequestPerformanceRuleTest {
         if (v1.getRuleName().equals(v2.getRuleName())
                 && v1.getDescription().equals(v2.getDescription())
                 && v1.getEvidenceMessages().equals(v2.getEvidenceMessages())
-                && (v1.getTriggeringMsg() == v2.getTriggeringMsg())){
+                && (v1.getTriggeringMsg() == v2.getTriggeringMsg())) {
             return true;
         }
         return false;
@@ -119,10 +118,14 @@ class RequestPerformanceRuleTest {
         HashMap<String, List<HttpMessage>> messages = requestRule.siteHttpMessages;
         List<HttpMessage> dummy = messages.get("zerohedge.com");
         dummy.add(msg);
-        messages.put("zerohedge.com",dummy);
-        Violation violation = new Violation(requestRule.getName(),requestRule.getDescription()
-                ,msg,messages.get("zerohedge.com"));
-        assertViolation(vio,violation);
+        messages.put("zerohedge.com", dummy);
+        Violation violation =
+                new Violation(
+                        requestRule.getName(),
+                        requestRule.getDescription(),
+                        msg,
+                        messages.get("zerohedge.com"));
+        assertViolation(vio, violation);
     }
 
     // LOW number of requests, HIGH number of domain specific request and LOW performance

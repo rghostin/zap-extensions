@@ -19,102 +19,99 @@
  */
 package org.zaproxy.zap.extension.reportingproxy;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicateRuleException;
 import org.zaproxy.zap.extension.reportingproxy.exceptions.RuleNotFoundException;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class RuleScannerTest {
-        RuleScanner ruleScanner;
+    RuleScanner ruleScanner;
 
-        @BeforeEach
-        void setup() {
-            ruleScanner = new RuleScanner();
-        }
+    @BeforeEach
+    void setup() {
+        ruleScanner = new RuleScanner();
+    }
 
-        @Test
-        void getPluginId() {
-            assertEquals(500001, ruleScanner.getPluginId());
-        }
+    @Test
+    void getPluginId() {
+        assertEquals(500001, ruleScanner.getPluginId());
+    }
 
-        @Test
-        void getName() {
-            assertEquals("Rule scanner", ruleScanner.getName());
-        }
+    @Test
+    void getName() {
+        assertEquals("Rule scanner", ruleScanner.getName());
+    }
 
-        private Rule getDummyRule(String name) {
-            return new Rule() {
-                @Override
-                public String getName() {
-                    return name;
-                }
-
-                @Override
-                public String getDescription() {
-                    return null;
-                }
-
-                @Override
-                public Violation checkViolation(HttpMessage msg) {
-                    return null;
-                }
-            };
-        }
-
-        @Test
-        void addPolicy() {
-            String name = "testRule";
-            Rule rule = getDummyRule(name);
-
-            try {
-                ruleScanner.addRule(rule);
-            } catch (DuplicateRuleException e) {
-                fail("Should not have thrown exception");
-            }
-            assertThrows(
-                    DuplicateRuleException.class,
-                    () -> {
-                        ruleScanner.addRule(rule);
-                    });
-        }
-
-        @Test
-        void removePolicy() {
-            String name = "testPolicy";
-            Rule rule = getDummyRule(name);
-
-            try {
-                ruleScanner.addRule(rule);
-            } catch (DuplicateRuleException e) {
-                fail("Should not have thrown exception");
+    private Rule getDummyRule(String name) {
+        return new Rule() {
+            @Override
+            public String getName() {
+                return name;
             }
 
-            try {
-                ruleScanner.removeRule(name);
-            } catch (RuleNotFoundException e) {
-                fail("Should not have thrown exception");
+            @Override
+            public String getDescription() {
+                return null;
             }
 
-            assertThrows(
-                    RuleNotFoundException.class,
-                    () -> {
-                        ruleScanner.removeRule("testPolicy");
-                    });
+            @Override
+            public Violation checkViolation(HttpMessage msg) {
+                return null;
+            }
+        };
+    }
+
+    @Test
+    void addPolicy() {
+        String name = "testRule";
+        Rule rule = getDummyRule(name);
+
+        try {
+            ruleScanner.addRule(rule);
+        } catch (DuplicateRuleException e) {
+            fail("Should not have thrown exception");
+        }
+        assertThrows(
+                DuplicateRuleException.class,
+                () -> {
+                    ruleScanner.addRule(rule);
+                });
+    }
+
+    @Test
+    void removePolicy() {
+        String name = "testPolicy";
+        Rule rule = getDummyRule(name);
+
+        try {
+            ruleScanner.addRule(rule);
+        } catch (DuplicateRuleException e) {
+            fail("Should not have thrown exception");
         }
 
-        @Test
-        void scanHttpRequestSend() {
-            // not active for now
+        try {
+            ruleScanner.removeRule(name);
+        } catch (RuleNotFoundException e) {
+            fail("Should not have thrown exception");
         }
 
-        @Test
-        void scanHttpResponseReceive() {
-            // not tested for now
-        }
+        assertThrows(
+                RuleNotFoundException.class,
+                () -> {
+                    ruleScanner.removeRule("testPolicy");
+                });
+    }
+
+    @Test
+    void scanHttpRequestSend() {
+        // not active for now
+    }
+
+    @Test
+    void scanHttpResponseReceive() {
+        // not tested for now
+    }
 }

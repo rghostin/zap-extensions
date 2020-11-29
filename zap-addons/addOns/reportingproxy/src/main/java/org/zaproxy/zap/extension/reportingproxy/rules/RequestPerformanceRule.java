@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.reportingproxy.rules;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
@@ -58,6 +57,7 @@ public class RequestPerformanceRule implements Rule {
 
     /**
      * Counts the number of requests to a given host
+     *
      * @param hostname : the hostname
      * @return : the number of requests
      */
@@ -85,12 +85,12 @@ public class RequestPerformanceRule implements Rule {
             siteElapsedTimeMap.put(outgoingHostname, new_avg);
             List<HttpMessage> list = siteHttpMessages.get(outgoingHostname);
             list.add(msg);
-            siteHttpMessages.put(outgoingHostname,list);
+            siteHttpMessages.put(outgoingHostname, list);
         } else {
             siteElapsedTimeMap.put(outgoingHostname, new_elapsed_time);
             List<HttpMessage> list = new ArrayList<HttpMessage>();
             list.add(msg);
-            siteHttpMessages.put(outgoingHostname,list);
+            siteHttpMessages.put(outgoingHostname, list);
         }
     }
     /**
@@ -163,8 +163,8 @@ public class RequestPerformanceRule implements Rule {
                     && domainAvgElapsedTime(outgoingHostname, new_elapsed_time)
                             > totalAvgElapsedTime(outgoingHostname) * COMPARISON_RATE) {
                 performanceUpdate(msg);
-                return new Violation(getName(), getDescription(), msg,
-                        siteHttpMessages.get(outgoingHostname));
+                return new Violation(
+                        getName(), getDescription(), msg, siteHttpMessages.get(outgoingHostname));
             }
         }
         performanceUpdate(msg);

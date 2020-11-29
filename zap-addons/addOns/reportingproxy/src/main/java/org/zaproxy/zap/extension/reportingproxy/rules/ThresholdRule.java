@@ -85,8 +85,8 @@ public class ThresholdRule implements Rule {
     }
 
     /**
-     * Updates the timestamps and http messages
-     * array lists for the timespan provided by the threshold
+     * Updates the timestamps and http messages array lists for the timespan provided by the
+     * threshold
      *
      * @return Returns the updated timestamps array list
      */

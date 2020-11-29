@@ -61,7 +61,7 @@ public class Violation {
         return getTriggeringMsg().getRequestHeader().getURI().toString();
     }
 
-    public List<HttpMessage>  getEvidenceMessages() {
+    public List<HttpMessage> getEvidenceMessages() {
         return evidenceMessages;
     }
 }
