@@ -30,16 +30,18 @@ class PairTest {
         Pair<String, String> x = new Pair<>("lol","gg");  // equals and hashCode check name field value
         Pair<String, String> y = new Pair<>("lol","gg");  // equals and hashCode check name field value
         assertTrue(x.equals(y) && y.equals(x));
-        assertTrue(x.hashCode() == y.hashCode());
+        assertEquals(y.hashCode(), x.hashCode());
 
+        assertNotEquals(x, null);
+        assertNotEquals(x, "LOL");
+    }
+
+    @Test
+    public void testEquals_Symmetric_int() {
         Pair<Integer, Integer> a = new Pair<>(1,2);  // equals and hashCode check name field value
         Pair<Integer, Integer> b = new Pair<>(3,2);  // equals and hashCode check name field value
         assertFalse(a.equals(b) || b.equals(a));
-        assertFalse(a.hashCode() == b.hashCode());
+        assertNotEquals(b.hashCode(), a.hashCode());
 
-        assertFalse(x.equals(a) || y.equals(b));
-
-        assertFalse(x.equals(null));
-        assertFalse(x.equals("LOL"));
     }
 }
