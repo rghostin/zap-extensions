@@ -57,11 +57,31 @@ public class Violation {
         return String.format("Rule_%s violated", ruleName);
     }
 
-    public String getUri() {
-        return getTriggeringMsg().getRequestHeader().getURI().toString();
+    public String getTriggeringUri() {
+        return getMsgUriHelper(getTriggeringMsg());
     }
 
     public List<HttpMessage> getEvidenceMessages() {
         return evidenceMessages;
+    }
+
+    /**
+     * return the URI of a given HttpMessage
+     *
+     * @param msg : the HttpMessage
+     * @return : the URI string
+     */
+    private static String getMsgUriHelper(HttpMessage msg) {
+        return msg.getRequestHeader().getURI().toString();
+    }
+
+    // todo test
+    /** @return : List in string format of the uris of the evidence messages */
+    public String getEvidenceUris() {
+        StringBuilder uris = new StringBuilder();
+        for (HttpMessage msg : evidenceMessages) {
+            uris.append(getMsgUriHelper(msg)).append('\n');
+        }
+        return uris.toString();
     }
 }

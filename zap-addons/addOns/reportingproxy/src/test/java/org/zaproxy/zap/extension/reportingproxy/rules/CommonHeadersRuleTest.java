@@ -122,7 +122,7 @@ class CommonHeadersRuleTest {
                 "The HTTP response message does not contain common response header "
                         + "present in previous requests.",
                 v.getDescription());
-        assertEquals("http://example.com/", v.getUri());
+        assertEquals("http://example.com/", v.getTriggeringUri());
         assertEquals("Rule_Common_Headers_Rule violated", v.getTitle());
         assertEquals(httpRespMsg3, v.getTriggeringMsg());
     }
