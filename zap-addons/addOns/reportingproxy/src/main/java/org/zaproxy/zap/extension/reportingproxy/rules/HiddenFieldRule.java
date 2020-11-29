@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 public class HiddenFieldRule implements Rule {
 
+    // todo
+    // Map< (Name, Value), Domain>
     Map<String,String> hiddenFields = new HashMap<>();
     List<HttpMessage> HTTP_MESSAGE_HIDDEN_INPUT = new ArrayList<>();
 
@@ -22,6 +24,8 @@ public class HiddenFieldRule implements Rule {
             Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
     private final Pattern NAME_HIDDEN_LINE =
             Pattern.compile("<\\s*input.*?name=\\\"(.*?)\\\".*?>");
+
+    // todo VALUE_HIDDEN_LINE    // value=""
 
     @Override
     public String getName() {
@@ -55,8 +59,11 @@ public class HiddenFieldRule implements Rule {
                 continue;
             }
 
+            // todo get its value
+
             String outgoingHostname = msg.getRequestHeader().getHostName();
             if(!hiddenFields.containsKey(name)) {
+                // todo put pair name,value
                 hiddenFields.put(name, outgoingHostname);
             } else {
                 String domain = hiddenFields.get(name);
