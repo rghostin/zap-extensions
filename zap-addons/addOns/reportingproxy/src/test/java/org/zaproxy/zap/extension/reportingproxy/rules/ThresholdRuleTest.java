@@ -101,10 +101,9 @@ class ThresholdRuleTest {
     private void assertViolation(Violation v1, Violation v2) {
         assertTrue(
                 v1.getRuleName().equals(v2.getRuleName())
-                && v1.getDescription().equals(v2.getDescription())
-                && v1.getEvidenceMessages().equals(v2.getEvidenceMessages())
-                && (v1.getTriggeringMsg() == v2.getTriggeringMsg())
-        );
+                        && v1.getDescription().equals(v2.getDescription())
+                        && v1.getEvidenceMessages().equals(v2.getEvidenceMessages())
+                        && (v1.getTriggeringMsg() == v2.getTriggeringMsg()));
     }
 
     @Test

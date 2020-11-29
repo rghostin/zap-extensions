@@ -163,10 +163,7 @@ public class CommonHeadersRule implements Rule {
     }
 }
 
-/**
- * HttpHeader field that is usable in a Hashset
- * Implements equals and hashCode
- */
+/** HttpHeader field that is usable in a Hashset Implements equals and hashCode */
 class HashableHttpHeaderField extends HttpHeaderField {
 
     public HashableHttpHeaderField(HttpHeaderField httpHeaderField) {
@@ -175,6 +172,7 @@ class HashableHttpHeaderField extends HttpHeaderField {
 
     /**
      * Compares the header name and its value
+     *
      * @param o : the object to compare to
      * @return : true if equals else false
      */

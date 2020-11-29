@@ -50,6 +50,14 @@ public class HiddenFieldRule implements Rule {
         return "Check if Hidden Field ever sent to different domain";
     }
 
+    // todo rm
+    private void printMap(boolean isviolated) {
+        System.out.println("Isviolated: "+isviolated);
+        for (Map.Entry<Pair<String, String>, String> entry : hiddenFields.entrySet()) {
+            System.out.println(entry.getKey().first + "," + entry.getKey().second + ":" + entry.getValue());
+        }
+    }
+
     // todo split into methods and javadoc
     @Override
     public Violation checkViolation(HttpMessage msg) {
@@ -87,11 +95,14 @@ public class HiddenFieldRule implements Rule {
                 String domain = hiddenFields.get(inputNameValuePair);
                 if (!domain.equals(outgoingHostname)) {
                     HttpMessage violatedMessage = messageHistory.get(inputNameValuePair);
+
+                    printMap(true);
                     return new Violation(
                             getName(), getDescription(), msg, Arrays.asList(violatedMessage));
                 }
             }
         }
+        printMap(false);
         return null;
     }
 }

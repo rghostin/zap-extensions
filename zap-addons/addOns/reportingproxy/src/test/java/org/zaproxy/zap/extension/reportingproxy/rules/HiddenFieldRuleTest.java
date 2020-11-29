@@ -34,21 +34,21 @@ class HiddenFieldRuleTest {
     private List<String> getURLStringsCorrect() {
         return new ArrayList<>(
                 Arrays.asList(
-                        "www.google.com",
-                        "www.zerohege.com",
-                        "www.youtube.com",
-                        "www.imd.com",
-                        "http://www.cer.ch"));
+                        "http://google.com",
+                        "http://zerohedge.com",
+                        "http://youtube.com",
+                        "http://imdb.com",
+                        "http://cern.ch"));
     }
 
     private List<String> getURLStringsWrong() {
         return new ArrayList<>(
                 Arrays.asList(
-                        "www.google2.com",
-                        "www.zerohege2.com",
-                        "www.youtube2.com",
-                        "www.imd2.com",
-                        "www.cern.ch"));
+                        "http://google2.com",
+                        "http://zerohedge2.com",
+                        "http://youtube2.com",
+                        "http://imdb2.com",
+                        "http://cern.ch"));
     }
 
     private HttpMessage createHttpMsg(String url)

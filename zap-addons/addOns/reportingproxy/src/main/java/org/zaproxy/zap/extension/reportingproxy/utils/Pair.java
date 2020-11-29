@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.reportingproxy.utils;
 
 /**
  * Generic pair
+ *
  * @param <X> : the first object type
  * @param <Y> : the second object type
  */

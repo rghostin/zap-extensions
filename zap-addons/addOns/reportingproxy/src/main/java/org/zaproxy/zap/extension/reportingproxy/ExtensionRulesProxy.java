@@ -33,7 +33,7 @@ import org.zaproxy.zap.extension.reportingproxy.rules.*;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** This is a rules loader for policies of jar file */
-public class ExtensionPolicyController extends ExtensionAdaptor {
+public class ExtensionRulesProxy extends ExtensionAdaptor {
 
     private ZapMenuItem menuRulesLoader;
     private ZapMenuItem menuRulesViolationsReport;
@@ -43,7 +43,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
     protected static final String PREFIX = "policyloader";
     private RuleScanner ruleScanner = null;
 
-    public ExtensionPolicyController() {
+    public ExtensionRulesProxy() {
         super(NAME);
         setI18nPrefix(PREFIX);
     }
@@ -222,7 +222,7 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
             getRulesScanner().addRule(new CommonHeadersRule());
             getRulesScanner().addRule(new RequestPerformanceRule());
             getRulesScanner().addRule(new HiddenFieldRule());
-            View.getSingleton().showMessageDialog("Loaded batch rules sucessfully");
+            View.getSingleton().showMessageDialog("Loaded batch rules successfully");
         } catch (DuplicateRuleException e) {
             View.getSingleton().showMessageDialog("Error cannot load batch rules");
         }

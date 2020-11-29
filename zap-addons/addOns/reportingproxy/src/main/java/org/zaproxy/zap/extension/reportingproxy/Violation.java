@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 
-/**
- * Represents a rule violation
- */
+/** Represents a rule violation */
 public class Violation {
     private String ruleName;
     private String description;
@@ -34,10 +32,12 @@ public class Violation {
 
     /**
      * Constructs a rule violation
+     *
      * @param ruleName : the rule name
      * @param description : description
      * @param triggeringMsg : the Http message which triggered the violation
-     * @param evidenceMessages : The evidence HTTP messages which contributed to the rule being violated
+     * @param evidenceMessages : The evidence HTTP messages which contributed to the rule being
+     *     violated
      */
     public Violation(
             String ruleName,
