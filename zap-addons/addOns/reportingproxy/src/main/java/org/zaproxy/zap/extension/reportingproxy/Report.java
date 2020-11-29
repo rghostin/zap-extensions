@@ -61,7 +61,7 @@ public class Report {
                         "<tr><td>%s</td><td>%s</td><td><a href=\"%s\">URL</a></td><td>%s</td></tr>",
                         "--", // todo fix
                         violation.getRuleName(),
-                        violation.getUri(),
+                        violation.getTriggeringUri(),
                         violation.getDescription()));
     }
 

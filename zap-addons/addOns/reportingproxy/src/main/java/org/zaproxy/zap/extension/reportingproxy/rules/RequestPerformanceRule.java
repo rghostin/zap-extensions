@@ -19,20 +19,21 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-// todo add test class
 public class RequestPerformanceRule implements Rule {
 
     // Threshold attributes
     int WEBSITE_THRESHOLD = 3;
     int TOTAL_THRESHOLD = 10;
     int COMPARISON_RATE = 2;
-    public HashMap<String, Integer> siteElapsedTimeMap = new HashMap<String, Integer>();
-    public HashMap<String, Integer> siteCounterMap = new HashMap<String, Integer>();
+    public HashMap<String, Integer> siteElapsedTimeMap = new HashMap<>();
+    public HashMap<String, List<HttpMessage>> siteHttpMessages = new HashMap<>();
 
     /**
      * Returns the name of the rule
@@ -55,7 +56,21 @@ public class RequestPerformanceRule implements Rule {
     }
 
     /**
-     * Adds the performance of the site to the performance map
+     * Counts the number of requests to a given host
+     *
+     * @param hostname : the hostname
+     * @return : the number of requests
+     */
+    private int getSiteCounter(String hostname) {
+        if (siteHttpMessages.containsKey(hostname)) {
+            return siteHttpMessages.get(hostname).size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Adds the performance of the site to the performance map and msg to http messages map
      *
      * @return Returns the updated timestamps array list
      */
@@ -64,14 +79,18 @@ public class RequestPerformanceRule implements Rule {
         int new_elapsed_time = msg.getTimeElapsedMillis();
         if (siteElapsedTimeMap.containsKey(outgoingHostname)) {
             int old_elapse_avg = siteElapsedTimeMap.get(outgoingHostname);
-            int count = siteCounterMap.get(outgoingHostname);
+            int count = getSiteCounter(outgoingHostname);
             int new_count = count + 1;
             int new_avg = (count * old_elapse_avg + new_elapsed_time) / new_count;
             siteElapsedTimeMap.put(outgoingHostname, new_avg);
-            siteCounterMap.put(outgoingHostname, new_count);
+            List<HttpMessage> list = siteHttpMessages.get(outgoingHostname);
+            list.add(msg);
+            siteHttpMessages.put(outgoingHostname, list);
         } else {
             siteElapsedTimeMap.put(outgoingHostname, new_elapsed_time);
-            siteCounterMap.put(outgoingHostname, 1);
+            List<HttpMessage> list = new ArrayList<HttpMessage>();
+            list.add(msg);
+            siteHttpMessages.put(outgoingHostname, list);
         }
     }
     /**
@@ -81,9 +100,9 @@ public class RequestPerformanceRule implements Rule {
      */
     private int requestCounter(String domain) {
         int total_count = 0;
-        for (String count_key : siteCounterMap.keySet()) {
+        for (String count_key : siteHttpMessages.keySet()) {
             if (!domain.equals(count_key)) {
-                total_count = total_count + siteCounterMap.get(count_key);
+                total_count = total_count + getSiteCounter(count_key);
             }
         }
         return total_count;
@@ -97,12 +116,12 @@ public class RequestPerformanceRule implements Rule {
     private int totalAvgElapsedTime(String domain) {
         int total_elapsed_time = 0;
         int total_count = 0;
-        for (String count_key : siteCounterMap.keySet()) {
+        for (String count_key : siteHttpMessages.keySet()) {
             if (!domain.equals(count_key)) {
-                total_count = total_count + siteCounterMap.get(count_key);
+                total_count = total_count + getSiteCounter(count_key);
                 total_elapsed_time =
                         total_elapsed_time
-                                + siteCounterMap.get(count_key) * siteElapsedTimeMap.get(count_key);
+                                + getSiteCounter(count_key) * siteElapsedTimeMap.get(count_key);
             }
         }
         return total_elapsed_time / total_count;
@@ -116,12 +135,12 @@ public class RequestPerformanceRule implements Rule {
     private int domainAvgElapsedTime(String domain, int new_time) {
         int total_elapsed_time = new_time;
         int total_count = 1;
-        for (String count_key : siteCounterMap.keySet()) {
+        for (String count_key : siteHttpMessages.keySet()) {
             if (domain.equals(count_key)) {
-                total_count = total_count + siteCounterMap.get(count_key);
+                total_count = total_count + getSiteCounter(count_key);
                 total_elapsed_time =
                         total_elapsed_time
-                                + siteCounterMap.get(count_key) * siteElapsedTimeMap.get(count_key);
+                                + getSiteCounter(count_key) * siteElapsedTimeMap.get(count_key);
             }
         }
         return total_elapsed_time / total_count;
@@ -136,15 +155,16 @@ public class RequestPerformanceRule implements Rule {
     @Override
     public Violation checkViolation(HttpMessage msg) {
         String outgoingHostname = msg.getRequestHeader().getHostName();
-        if (siteCounterMap.containsKey(outgoingHostname)) {
+        if (siteHttpMessages.containsKey(outgoingHostname)) {
             int new_elapsed_time = msg.getTimeElapsedMillis();
             int total_count = requestCounter(outgoingHostname);
-            if (siteCounterMap.get(outgoingHostname) > WEBSITE_THRESHOLD - 1
+            if (getSiteCounter(outgoingHostname) > WEBSITE_THRESHOLD - 1
                     && total_count > TOTAL_THRESHOLD - 1
                     && domainAvgElapsedTime(outgoingHostname, new_elapsed_time)
                             > totalAvgElapsedTime(outgoingHostname) * COMPARISON_RATE) {
                 performanceUpdate(msg);
-                return new Violation(getName(), getDescription(), msg, null);
+                return new Violation(
+                        getName(), getDescription(), msg, siteHttpMessages.get(outgoingHostname));
             }
         }
         performanceUpdate(msg);

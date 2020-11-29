@@ -123,7 +123,7 @@ public class CommonHeadersRule implements Rule {
      *
      * @return List of response header stored in the http message container
      */
-    private List<HttpResponseHeader> getHttpResponseHeaderContainer() {
+    public List<HttpResponseHeader> getHttpResponseHeaderContainer() {
         List<HttpResponseHeader> httpResponseHeaderContainer = new ArrayList<>();
         for (HttpMessage httpMessage : httpMessageContainer) {
             httpResponseHeaderContainer.add(httpMessage.getResponseHeader());

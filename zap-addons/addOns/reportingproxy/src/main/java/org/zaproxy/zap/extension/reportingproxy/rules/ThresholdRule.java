@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.reportingproxy.rules;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
@@ -31,6 +32,7 @@ public class ThresholdRule implements Rule {
 
     // Timestamp array for keeping records
     ArrayList<Integer> timestamps = new ArrayList<Integer>();
+    List<HttpMessage> messages = new ArrayList<HttpMessage>();
 
     @Override
     public String getName() {
@@ -83,25 +85,33 @@ public class ThresholdRule implements Rule {
     }
 
     /**
-     * Updates the timestamps array list for the timespan provided by the threshold
+     * Updates the timestamps and http messages array lists for the timespan provided by the
+     * threshold
      *
      * @return Returns the updated timestamps array list
      */
-    private ArrayList<Integer> updateTimestamps() {
+    private ArrayList<Integer> updateTimestamps(HttpMessage msg) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         int current_time_int = (int) timestamp.getTime();
         ArrayList<Integer> dummy_timestamps = new ArrayList<Integer>();
-        for (int timestmp : timestamps) {
-            if ((current_time_int - timestmp) < getTimeThreshold()) {
-                dummy_timestamps.add(timestmp);
+        List<HttpMessage> dummy_messages = new ArrayList<HttpMessage>();
+        int count = 0;
+        if (timestamps.size() > 0) {
+            for (int timestmp : timestamps) {
+                if ((current_time_int - timestmp) < getTimeThreshold()) {
+                    dummy_timestamps.add(timestmp);
+                    dummy_messages.add(messages.get(count));
+                }
+                count++;
             }
         }
         timestamps = dummy_timestamps;
+        messages = dummy_messages;
         timestamps.add(current_time_int);
+        messages.add(msg);
         return timestamps;
     }
 
-    // todo fix return violation
     /**
      * Checks whether the HttpMessage violates the threshold rule or not
      *
@@ -114,9 +124,9 @@ public class ThresholdRule implements Rule {
         Pattern pattern = getRegexDomain();
         Matcher matcher = pattern.matcher(outgoingHostname);
         if (matcher.matches()) {
-            timestamps = updateTimestamps();
+            timestamps = updateTimestamps(msg);
             if (timestamps.size() > getRequestThreshold()) {
-                return new Violation(getName(), getDescription(), msg, null);
+                return new Violation(getName(), getDescription(), msg, messages);
             }
             return null;
         }
