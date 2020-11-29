@@ -29,6 +29,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.reportingproxy.exceptions.DuplicateRuleException;
+import org.zaproxy.zap.extension.reportingproxy.rules.*;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /** This is a rules loader for policies of jar file */
@@ -113,8 +114,9 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            File[] files = getSelectedJARFiles();
-                            loadRulesJars(files);
+                            //                            File[] files = getSelectedJARFiles();
+                            //                            loadRulesJars(files);
+                            loadRulesBatch();
                         }
                     });
         }
@@ -210,5 +212,19 @@ public class ExtensionPolicyController extends ExtensionAdaptor {
         }
 
         scanReport.writeToFile(path);
+    }
+
+    // todo remove
+    private void loadRulesBatch() {
+        try {
+            getRulesScanner().addRule(new KeywordMatchingRule());
+            getRulesScanner().addRule(new ThresholdRule());
+            getRulesScanner().addRule(new CommonHeadersRule());
+            getRulesScanner().addRule(new RequestPerformanceRule());
+            getRulesScanner().addRule(new HiddenFieldRule());
+            View.getSingleton().showMessageDialog("Loaded btach rules sucessfully");
+        } catch (DuplicateRuleException e) {
+            View.getSingleton().showMessageDialog("Error cannot load batch rules");
+        }
     }
 }

@@ -19,16 +19,17 @@
  */
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
+import java.util.*;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-import java.util.*;
-
-/** This is a rule for checking whether the HTTP response message contains the
- * common response headers present in previous requests */
+/**
+ * This is a rule for checking whether the HTTP response message contains the common response
+ * headers present in previous requests
+ */
 public class CommonHeadersRule implements Rule {
 
     private final int BUFFER_SIZE = 5;
@@ -42,8 +43,8 @@ public class CommonHeadersRule implements Rule {
 
     @Override
     public String getDescription() {
-        return "The HTTP response message does not contain common response header " +
-                "present in previous requests.";
+        return "The HTTP response message does not contain common response header "
+                + "present in previous requests.";
     }
 
     /**
@@ -76,7 +77,7 @@ public class CommonHeadersRule implements Rule {
         }
 
         for (Map.Entry<HashableHttpHeaderField, Integer> entry : field_times.entrySet()) {
-            if (entry.getValue() == BUFFER_SIZE - 1 ) {
+            if (entry.getValue() == BUFFER_SIZE - 1) {
                 commonHeaderFields.add(entry.getKey());
             }
         }
@@ -91,16 +92,16 @@ public class CommonHeadersRule implements Rule {
      * @param headersToCheck the common headers needed to be checked with the HttpMessage
      * @return true if the HttpMessage contains all the specified the headers, false if not
      */
-    private boolean containsAllHeaders(HttpMessage msg, List<HashableHttpHeaderField> headersToCheck) {
+    private boolean containsAllHeaders(
+            HttpMessage msg, List<HashableHttpHeaderField> headersToCheck) {
         List<HttpHeaderField> headerFields = msg.getResponseHeader().getHeaders();
         List<HashableHttpHeaderField> headers = new ArrayList<>();
         for (HttpHeaderField headerField : headerFields) {
             headers.add(new HashableHttpHeaderField(headerField));
         }
 
-
         for (HashableHttpHeaderField headerToCheck : headersToCheck) {
-            if (! headers.contains(headerToCheck)){
+            if (!headers.contains(headerToCheck)) {
                 return false;
             }
         }
@@ -147,7 +148,7 @@ public class CommonHeadersRule implements Rule {
 
         // checks violation
         List<HashableHttpHeaderField> commonHeaderFields = getCommonHeaderFields();
-        if (! containsAllHeaders(msg, commonHeaderFields)) {
+        if (!containsAllHeaders(msg, commonHeaderFields)) {
             isViolatedAttribute = true;
         }
 
@@ -173,8 +174,8 @@ class HashableHttpHeaderField extends HttpHeaderField {
         if (this == o) return true;
         if (!(o instanceof HashableHttpHeaderField)) return false;
         HashableHttpHeaderField that = (HashableHttpHeaderField) o;
-        return Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getValue(), that.getValue());
+        return Objects.equals(getName(), that.getName())
+                && Objects.equals(getValue(), that.getValue());
     }
 
     @Override
@@ -182,5 +183,3 @@ class HashableHttpHeaderField extends HttpHeaderField {
         return Objects.hash(getName(), getValue());
     }
 }
-
-

@@ -142,7 +142,7 @@ public class RequestPerformanceRule implements Rule {
             if (siteCounterMap.get(outgoingHostname) > WEBSITE_THRESHOLD - 1
                     && total_count > TOTAL_THRESHOLD - 1
                     && domainAvgElapsedTime(outgoingHostname, new_elapsed_time)
-                    > totalAvgElapsedTime(outgoingHostname) * COMPARISON_RATE) {
+                            > totalAvgElapsedTime(outgoingHostname) * COMPARISON_RATE) {
                 performanceUpdate(msg);
                 return new Violation(getName(), getDescription(), msg, null);
             }
