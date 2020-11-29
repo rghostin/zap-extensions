@@ -94,11 +94,11 @@ class CommonHeadersRuleTest {
             assertNull(commonHeadersRule.checkViolation(httpRespMsg1));
             assertNull(commonHeadersRule.checkViolation(httpRespMsg1));
             assertNull(commonHeadersRule.checkViolation(httpRespMsg1));
-            List<HttpResponseHeader> container =
-            commonHeadersRule.getHttpResponseHeaderContainer();
-            assertTrue(container.contains(httpRespMsg2.getResponseHeader()));
-            commonHeadersRule.checkViolation(httpRespMsg1);
-            assertFalse(container.contains(httpRespMsg2.getResponseHeader()));
+//            List<HttpResponseHeader> container =
+//            commonHeadersRule.getHttpResponseHeaderContainer();
+//            assertTrue(container.contains(httpRespMsg2.getResponseHeader()));
+//            commonHeadersRule.checkViolation(httpRespMsg1);
+//            assertFalse(container.contains(httpRespMsg2.getResponseHeader()));
         }
 
         @Test

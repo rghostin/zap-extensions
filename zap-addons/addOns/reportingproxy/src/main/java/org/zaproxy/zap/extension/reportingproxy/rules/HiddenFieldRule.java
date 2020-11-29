@@ -1,7 +1,7 @@
 package org.zaproxy.zap.extension.reportingproxy.rules;
 
-import javafx.util.Pair;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.reportingproxy.Pair;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
@@ -70,7 +70,7 @@ public class HiddenFieldRule implements Rule {
             if(!hiddenFields.containsKey(p)) {
                 hiddenFields.put(p, outgoingHostname);
             } else {
-                String domain = hiddenFields.get(name);
+                String domain = hiddenFields.get(p);
                 if(!domain.equals(outgoingHostname)) {
                     HTTP_MESSAGE_HIDDEN_INPUT.add(msg);
                     return new Violation(getName(), getDescription(), msg, HTTP_MESSAGE_HIDDEN_INPUT);
@@ -78,5 +78,9 @@ public class HiddenFieldRule implements Rule {
             }
         }
         return null;
+    }
+
+    public String test(){
+        return hiddenFields.keySet().toString();
     }
 }
