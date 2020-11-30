@@ -31,11 +31,13 @@ import org.zaproxy.zap.extension.reportingproxy.utils.Pair;
 public class HiddenFieldRule implements Rule {
 
     // Map< (Name, Value), Domain>
-    Map<Pair<String, String>, String> hiddenFields = new HashMap<>();
+    Map<String, String> hiddenFields = new HashMap<>();
     // Map <(Name, Value), HttpMessage>
-    Map<Pair<String, String>, HttpMessage> messageHistory = new HashMap<>();
+    Map<String, HttpMessage> messageHistory = new HashMap<>();
 
     private static final Pattern INPUT_LINE = Pattern.compile("<\\s*input.*?>");
+    private static final Pattern ACTION_FROM =
+            Pattern.compile("<\\s*from\\s+action=\\\"(.*?)\\\".*?>");
     private static final Pattern HIDDEN_LINE =
             Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
     private static final Pattern NAME_HIDDEN_LINE =
@@ -59,9 +61,9 @@ public class HiddenFieldRule implements Rule {
      * @param body : the body
      * @return a list of pair<String, String> name:value of hidden fields
      */
-    private static List<Pair<String, String>> extractHiddenFields(String body) {
+    private static List<String> extractHiddenFields(String body) {
 
-        List<Pair<String, String>> fields = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
 
         Matcher matcherInput = INPUT_LINE.matcher(body);
 
@@ -81,15 +83,14 @@ public class HiddenFieldRule implements Rule {
                 continue;
             }
 
-            Matcher matcherValue = NAME_HIDDEN_VALUE.matcher(inputStr);
-            String value = "";
-            if (matcherValue.matches()) {
-                value = matcherValue.group(1);
-            } else {
-                continue;
-            }
-            Pair<String, String> inputNameValuePair = new Pair<>(name, value);
-            fields.add(inputNameValuePair);
+//            Matcher matcherValue = NAME_HIDDEN_VALUE.matcher(inputStr);
+//            String value = "";
+//            if (matcherValue.matches()) {
+//                value = matcherValue.group(1);
+//            } else {
+//                continue;
+//            }
+            fields.add(name);
         }
 
         return fields;
@@ -104,9 +105,9 @@ public class HiddenFieldRule implements Rule {
         String outgoingHostname = msg.getRequestHeader().getHostName();
         String httpResponseBody = msg.getResponseBody().toString();
         Matcher matcherInput = INPUT_LINE.matcher(httpResponseBody);
-        List<Pair<String, String>> extracted_hidden_Fields =
+        List<String> extracted_hidden_Fields =
                 extractHiddenFields(msg.getResponseBody().toString());
-        for (Pair<String, String> fieldPair : extracted_hidden_Fields) {
+        for (String fieldPair : extracted_hidden_Fields) {
             if (!hiddenFields.containsKey(fieldPair)) {
                 hiddenFields.put(fieldPair, outgoingHostname);
                 messageHistory.put(fieldPair, msg);
