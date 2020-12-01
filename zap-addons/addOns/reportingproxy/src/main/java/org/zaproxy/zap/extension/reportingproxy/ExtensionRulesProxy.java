@@ -114,9 +114,8 @@ public class ExtensionRulesProxy extends ExtensionAdaptor {
                     new java.awt.event.ActionListener() {
                         @Override
                         public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            //                            File[] files = getSelectedJARFiles();
-                            //                            loadRulesJars(files);
-                            loadRulesBatch();
+                                                        File[] files = getSelectedJARFiles();
+                                                        loadRulesJars(files);
                         }
                     });
         }
