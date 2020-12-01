@@ -34,21 +34,13 @@ class HiddenFieldRuleTest {
     private List<String> getURLStringsCorrect() {
         return new ArrayList<>(
                 Arrays.asList(
-                        "http://google.com",
-                        "http://zerohedge.com",
-                        "http://youtube.com",
-                        "http://imdb.com",
-                        "http://cern.ch"));
+                        "http://evil.com"));
     }
 
     private List<String> getURLStringsWrong() {
         return new ArrayList<>(
                 Arrays.asList(
-                        "http://google2.com",
-                        "http://zerohedge2.com",
-                        "http://youtube2.com",
-                        "http://imdb2.com",
-                        "http://cern.ch"));
+                        "http://evil2.com"));
     }
 
     private HttpMessage createHttpMsg(String url)
@@ -73,8 +65,12 @@ class HiddenFieldRuleTest {
 
     @Test
     void checkViolation() throws HttpMalformedHeaderException, URIException {
-        String responseBody = "<input type=\"hidden\" name=\"test\" value=\"babble\">";
-        String responseBody2 = "<input type=\"hidden\" id=\"123\" name=\"tes2t\" value=\"babble\">";
+        String responseBody = "<form action=\"evil.com\">\n" +
+                "  <input type=\"hidden\" name=\"password\">\n" +
+                "</input> </form>";
+        String responseBody2 = "<form action=\"evil.com\">\n" +
+                "  <input type=\"hidden\" name=\"password2\">\n" +
+                "</input> </form>>";
 
         List<String> url_correct = getURLStringsCorrect();
         List<String> url_correct2 = getURLStringsCorrect();
@@ -105,7 +101,7 @@ class HiddenFieldRuleTest {
             assertEquals(hiddenFieldRule.getName(), v.getRuleName());
             assertEquals(hiddenFieldRule.getDescription(), v.getDescription());
             assertEquals(
-                    httpMessageWrong.getRequestHeader().getURI().toString(), v.getTriggeringUri());
+                   httpMessageWrong.getRequestHeader().getHostName(), v.getTriggeringMsg().getRequestHeader().getHostName());
         }
     }
 }
