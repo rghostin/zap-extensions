@@ -95,9 +95,9 @@ public class HiddenFieldRule implements Rule {
         return fields;
     }
 
-
     /**
      * Inspects a http response message and saves hidden fields name:value to hiddenFields Map
+     *
      * @param msg : the http message for which the response body needs inspection
      */
     private void saveHiddenFieldsFromResponse(HttpMessage msg) {
@@ -115,9 +115,9 @@ public class HiddenFieldRule implements Rule {
     }
 
     /**
-     * Checks for rule violation
-     * For a given http message, if it is a get response, store the hidden fields
-     * If it is a POST request checks whether previously known inputs are sent
+     * Checks for rule violation For a given http message, if it is a get response, store the hidden
+     * fields If it is a POST request checks whether previously known inputs are sent
+     *
      * @param msg the HttpMessage that will be checked
      * @return : Violation object if a violation occurs else null
      */
