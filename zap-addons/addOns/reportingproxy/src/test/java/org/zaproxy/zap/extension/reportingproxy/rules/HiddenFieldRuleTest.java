@@ -64,12 +64,28 @@ class HiddenFieldRuleTest {
     }
 
     @Test
+    void flaggedNames() {
+        HiddenFieldRule hiddenFieldRule = new HiddenFieldRule();
+
+        List<String> names = Arrays.asList("password", "pwd", "pword", "token");
+        for ( String name : names) {
+            assertTrue(hiddenFieldRule.isFlagged(name));
+        }
+
+        List<String> names_bad = Arrays.asList("BC", "def", "ghujhg", "notflagged");
+        for ( String name : names_bad) {
+            assertFalse(hiddenFieldRule.isFlagged(name));
+        }
+
+    }
+
+    @Test
     void checkViolation() throws HttpMalformedHeaderException, URIException {
         String responseBody = "<form action=\"evil.com\">\n" +
                 "  <input type=\"hidden\" name=\"password\">\n" +
                 "</input> </form>";
         String responseBody2 = "<form action=\"evil.com\">\n" +
-                "  <input type=\"hidden\" name=\"password2\">\n" +
+                "  <input type=\"hidden\" name=\"pwd\">\n" +
                 "</input> </form>>";
 
         List<String> url_correct = getURLStringsCorrect();
@@ -104,4 +120,6 @@ class HiddenFieldRuleTest {
                    httpMessageWrong.getRequestHeader().getHostName(), v.getTriggeringMsg().getRequestHeader().getHostName());
         }
     }
+
+    // todo test for fail
 }

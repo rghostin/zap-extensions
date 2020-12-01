@@ -26,19 +26,17 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
+/**
+ * Rule to flag hidden inputs with name password that are to be submitted
+ * to different domain from the one that responded
+ */
 public class HiddenFieldRule implements Rule {
-
-    // Map< (Name, Value), Domain>
-    Map<String, String> hiddenFields = new HashMap<>();
-    // Map <(Name, Value), HttpMessage>
-    Map<String, HttpMessage> messageHistory = new HashMap<>();
-
-    private static final Pattern INPUT_LINE = Pattern.compile("<\\s*input.*?>");
+    private static final List<String> FLAGGED_NAMES = Arrays.asList("password", "pwd", "pword", "token");
     private static final Pattern ACTION_FORM =
-            Pattern.compile("<\\s*form\\s+action=\\\"(.*?)\\\".*?>((.|\\n)*)<\\/form>");
-    private static final Pattern HIDDEN_LINE =
+        Pattern.compile("<\\s*form\\s+action=\\\"(.*?)\\\".*?>((.|\\s)*?)<\\/form>");
+    private static final Pattern HIDDEN_INPUT =
             Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
-    private static final Pattern NAME_HIDDEN_LINE =
+    private static final Pattern NAME_HIDDEN_INPUT =
             Pattern.compile("<\\s*input.*?name=\\\"(.*?)\\\".*?>");
 
     @Override
@@ -52,45 +50,13 @@ public class HiddenFieldRule implements Rule {
     }
 
     /**
-     * Given a body (string) extracts all the hidden fields with name and value
-     *
-     * @param body : the body
-     * @return a list of pair<String, String> name:value of hidden fields
+     * Checks whether an input with the given name should be inspected
+     * @param name : the name of the input
+     * @return : true if it should be inspected else false
      */
-    /*private static List<String> extractHiddenFields(String body) {
-
-        List<String> fields = new ArrayList<>();
-
-        Matcher matcherInput = INPUT_LINE.matcher(body);
-
-        while (matcherInput.find()) {
-            String inputStr = matcherInput.group().trim();
-
-            // if it is from action
-            Matcher matcherAction = ACTION_FROM.matcher(inputStr);
-            if(matcherAction.find()) {
-                this.curDomain = matcherAction.group(1);
-                continue;
-            }
-
-            // if it is hidden
-            Matcher matcherHidden = HIDDEN_LINE.matcher(inputStr);
-            if (!matcherHidden.find()) continue;
-
-            // get its name
-            Matcher matcherName = NAME_HIDDEN_LINE.matcher(inputStr);
-            String name = "";
-            if (matcherName.matches()) {
-                name = matcherName.group(1);
-            } else {
-                continue;
-            }
-
-            fields.add(name);
-        }
-
-        return fields;
-    } */
+    public boolean isFlagged(String name) {
+        return FLAGGED_NAMES.contains(name);
+    }
 
 
     /**
@@ -100,42 +66,39 @@ public class HiddenFieldRule implements Rule {
      */
     @Override
     public Violation checkViolation(HttpMessage msg) {
+        String currentDomain = msg.getRequestHeader().getHostName();
         String httpResponseBody = msg.getResponseBody().toString();
         Matcher matcherAction = ACTION_FORM.matcher(httpResponseBody);
-        List<String> fields = new ArrayList<>();
-        String curDomain = "";
-        String name = "";
+        String formDomain = "";
 
+        // match a form in the body
         while(matcherAction.find()) {
 
-            curDomain = matcherAction.group(1);
-            String ActionBody = matcherAction.group(2);
-            Matcher matcherInput = INPUT_LINE.matcher(ActionBody);
+            formDomain = matcherAction.group(1);
+            String formBody = matcherAction.group(2);
+            Matcher matcherHiddenInput = HIDDEN_INPUT.matcher(formBody);
 
-            while (matcherInput.find()) {
+            // match any hidden input in the form
+            while (matcherHiddenInput.find()) {
 
-                String inputStr = matcherInput.group().trim();
+                String inputStr = matcherHiddenInput.group().trim();
 
-                // if it is hidden
-                Matcher matcherHidden = HIDDEN_LINE.matcher(inputStr);
-                if (!matcherHidden.find()) continue;
+                // if it is for the specified name
+                Matcher nameInputMatcher = NAME_HIDDEN_INPUT.matcher(inputStr);
+                if (nameInputMatcher.find()) {
 
-                // get its name
-                Matcher matcherName = NAME_HIDDEN_LINE.matcher(inputStr);
-                if (matcherName.matches()) {
-                    name = matcherName.group(1);
-                } else {
-                    continue;
+                    String name = nameInputMatcher.group(1);
+                    if (isFlagged(name)) {
+                        // if not form response domain - violation detected
+                        if ( ! formDomain.equals(currentDomain)) {
+                            return new Violation(
+                                    getName(),
+                                    getDescription(),
+                                    msg,
+                                    Arrays.asList(msg));
+                        }
+                    }
                 }
-
-                if (curDomain.equals(msg.getRequestHeader().getHostName())) {
-                    continue;
-                }
-                return new Violation(
-                        getName(),
-                        getDescription(),
-                        msg,
-                        Arrays.asList(msg));
             }
         }
         return null;
