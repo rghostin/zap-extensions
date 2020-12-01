@@ -53,12 +53,14 @@ public class CommonHeadersRule implements Rule {
      * @return common headers of previous requests
      */
     private List<HashableHttpHeaderField> getCommonHeaderFields() {
+        // todo Map<Pair<String, String>, Integer>
         Map<HashableHttpHeaderField, Integer> field_times = new HashMap<>();
         List<HashableHttpHeaderField> commonHeaderFields = new ArrayList<>();
         List<HttpResponseHeader> httpResponseHeaderContainer = getHttpResponseHeaderContainer();
 
         for (HttpResponseHeader httpResponseHeader : httpResponseHeaderContainer) {
             List<HttpHeaderField> headerFields = httpResponseHeader.getHeaders();
+            // headerFields.getName getValue
             List<HashableHttpHeaderField> headers = new ArrayList<>();
 
             for (HttpHeaderField headerField : headerFields) {
