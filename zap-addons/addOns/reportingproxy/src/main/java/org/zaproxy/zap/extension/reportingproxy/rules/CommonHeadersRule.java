@@ -63,7 +63,8 @@ public class CommonHeadersRule implements Rule {
             List<HttpHeaderField> headerFields = httpResponseHeader.getHeaders();
 
             for (HttpHeaderField headerField : headerFields) {
-                Pair<String, String> headerPair = new Pair<>(headerField.getName(), headerField.getValue());
+                Pair<String, String> headerPair =
+                        new Pair<>(headerField.getName(), headerField.getValue());
                 if (!field_times.containsKey(headerPair)) {
                     // If not contain header
                     field_times.put(headerPair, 0);
