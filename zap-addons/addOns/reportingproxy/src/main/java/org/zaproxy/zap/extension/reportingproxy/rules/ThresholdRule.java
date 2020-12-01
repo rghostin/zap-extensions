@@ -28,9 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
-/**
- * Rule to flag stonking requests to a given domain
- */
+/** Rule to flag stonking requests to a given domain */
 public class ThresholdRule implements Rule {
 
     // Timestamp array for keeping records
