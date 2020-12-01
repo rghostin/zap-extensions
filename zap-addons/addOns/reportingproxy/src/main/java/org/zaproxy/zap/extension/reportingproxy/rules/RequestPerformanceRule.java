@@ -26,6 +26,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
+/**
+ * Rule to flag under performant hosts
+ */
 public class RequestPerformanceRule implements Rule {
 
     // Threshold attributes
