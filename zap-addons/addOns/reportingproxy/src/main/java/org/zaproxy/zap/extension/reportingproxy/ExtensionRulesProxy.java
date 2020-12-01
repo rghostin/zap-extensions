@@ -214,10 +214,7 @@ public class ExtensionRulesProxy extends ExtensionAdaptor {
         scanReport.writeToFile(path);
     }
 
-    /**
-     * @Deprecated
-     * Used for debugging : load rules manually
-     */
+    /** @Deprecated Used for debugging : load rules manually */
     private void loadRulesBatch() {
         try {
             getRulesScanner().addRule(new ThresholdRule());

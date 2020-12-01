@@ -27,13 +27,14 @@ import org.zaproxy.zap.extension.reportingproxy.Rule;
 import org.zaproxy.zap.extension.reportingproxy.Violation;
 
 /**
- * Rule to flag hidden inputs with name password that are to be submitted
- * to different domain from the one that responded
+ * Rule to flag hidden inputs with name password that are to be submitted to different domain from
+ * the one that responded
  */
 public class HiddenFieldRule implements Rule {
-    private static final List<String> FLAGGED_NAMES = Arrays.asList("password", "pwd", "pword", "token");
+    private static final List<String> FLAGGED_NAMES =
+            Arrays.asList("password", "pwd", "pword", "token");
     private static final Pattern ACTION_FORM =
-        Pattern.compile("<\\s*form\\s+action=\\\"(.*?)\\\".*?>((.|\\s)*?)<\\/form>");
+            Pattern.compile("<\\s*form\\s+action=\\\"(.*?)\\\".*?>((.|\\s)*?)<\\/form>");
     private static final Pattern HIDDEN_INPUT =
             Pattern.compile("<\\s*input\\s+type=\\\"hidden\\\".*?>");
     private static final Pattern NAME_HIDDEN_INPUT =
@@ -51,6 +52,7 @@ public class HiddenFieldRule implements Rule {
 
     /**
      * Checks whether an input with the given name should be inspected
+     *
      * @param name : the name of the input
      * @return : true if it should be inspected else false
      */
@@ -58,9 +60,9 @@ public class HiddenFieldRule implements Rule {
         return FLAGGED_NAMES.contains(name);
     }
 
-
     /**
      * Inspects a http response message and saves hidden fields name:value to hiddenFields Map
+     *
      * @param msg : the http message for which the response body needs inspection
      * @return
      */
@@ -72,7 +74,7 @@ public class HiddenFieldRule implements Rule {
         String formDomain = "";
 
         // match a form in the body
-        while(matcherAction.find()) {
+        while (matcherAction.find()) {
 
             formDomain = matcherAction.group(1);
             String formBody = matcherAction.group(2);
@@ -90,12 +92,9 @@ public class HiddenFieldRule implements Rule {
                     String name = nameInputMatcher.group(1);
                     if (isFlagged(name)) {
                         // if not form response domain - violation detected
-                        if ( ! formDomain.equals(currentDomain)) {
+                        if (!formDomain.equals(currentDomain)) {
                             return new Violation(
-                                    getName(),
-                                    getDescription(),
-                                    msg,
-                                    Arrays.asList(msg));
+                                    getName(), getDescription(), msg, Arrays.asList(msg));
                         }
                     }
                 }

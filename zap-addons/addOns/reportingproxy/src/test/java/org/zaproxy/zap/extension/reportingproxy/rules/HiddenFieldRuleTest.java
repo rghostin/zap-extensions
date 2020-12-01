@@ -32,15 +32,11 @@ import org.zaproxy.zap.extension.reportingproxy.Violation;
 class HiddenFieldRuleTest {
 
     private List<String> getURLStringsCorrect() {
-        return new ArrayList<>(
-                Arrays.asList(
-                        "http://evil.com"));
+        return new ArrayList<>(Arrays.asList("http://evil.com"));
     }
 
     private List<String> getURLStringsWrong() {
-        return new ArrayList<>(
-                Arrays.asList(
-                        "http://evil2.com"));
+        return new ArrayList<>(Arrays.asList("http://evil2.com"));
     }
 
     private HttpMessage createHttpMsg(String url)
@@ -68,25 +64,26 @@ class HiddenFieldRuleTest {
         HiddenFieldRule hiddenFieldRule = new HiddenFieldRule();
 
         List<String> names = Arrays.asList("password", "pwd", "pword", "token");
-        for ( String name : names) {
+        for (String name : names) {
             assertTrue(hiddenFieldRule.isFlagged(name));
         }
 
         List<String> names_bad = Arrays.asList("BC", "def", "ghujhg", "notflagged");
-        for ( String name : names_bad) {
+        for (String name : names_bad) {
             assertFalse(hiddenFieldRule.isFlagged(name));
         }
-
     }
 
     @Test
     void checkViolation() throws HttpMalformedHeaderException, URIException {
-        String responseBody = "<form action=\"evil.com\">\n" +
-                "  <input type=\"hidden\" name=\"password\">\n" +
-                "</input> </form>";
-        String responseBody2 = "<form action=\"evil.com\">\n" +
-                "  <input type=\"hidden\" name=\"pwd\">\n" +
-                "</input> </form>>";
+        String responseBody =
+                "<form action=\"evil.com\">\n"
+                        + "  <input type=\"hidden\" name=\"password\">\n"
+                        + "</input> </form>";
+        String responseBody2 =
+                "<form action=\"evil.com\">\n"
+                        + "  <input type=\"hidden\" name=\"pwd\">\n"
+                        + "</input> </form>>";
 
         List<String> url_correct = getURLStringsCorrect();
         List<String> url_correct2 = getURLStringsCorrect();
@@ -117,7 +114,8 @@ class HiddenFieldRuleTest {
             assertEquals(hiddenFieldRule.getName(), v.getRuleName());
             assertEquals(hiddenFieldRule.getDescription(), v.getDescription());
             assertEquals(
-                   httpMessageWrong.getRequestHeader().getHostName(), v.getTriggeringMsg().getRequestHeader().getHostName());
+                    httpMessageWrong.getRequestHeader().getHostName(),
+                    v.getTriggeringMsg().getRequestHeader().getHostName());
         }
     }
 
