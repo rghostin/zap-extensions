@@ -54,27 +54,22 @@ public class CommonHeadersRule implements Rule {
      * @return common headers of previous requests
      */
     private List<Pair<String, String>> getCommonHeaderFields() {
-        // todo Map<Pair<String, String>, Integer>
+        // Map( (HeaderName, HeaderValue) : numberOfOccurence )
         Map<Pair<String, String>, Integer> field_times = new HashMap<>();
         List<Pair<String, String>> commonHeaderFields = new ArrayList<>();
         List<HttpResponseHeader> httpResponseHeaderContainer = getHttpResponseHeaderContainer();
 
         for (HttpResponseHeader httpResponseHeader : httpResponseHeaderContainer) {
             List<HttpHeaderField> headerFields = httpResponseHeader.getHeaders();
-            // headerFields.getName getValue
-            List<Pair<String, String>> headers = new ArrayList<>();
 
             for (HttpHeaderField headerField : headerFields) {
-                headers.add(new Pair<>(headerField.getName(), headerField.getValue()));
-            }
-
-            for (Pair<String, String> header : headers) {
-                if (!field_times.keySet().contains(header)) {
+                Pair<String, String> headerPair = new Pair<>(headerField.getName(), headerField.getValue());
+                if (!field_times.containsKey(headerPair)) {
                     // If not contain header
-                    field_times.put(header, 0);
+                    field_times.put(headerPair, 0);
                 } else {
                     // If contain header
-                    field_times.put(header, field_times.get(header) + 1);
+                    field_times.put(headerPair, field_times.get(headerPair) + 1);
                 }
             }
         }
