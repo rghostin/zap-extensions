@@ -49,7 +49,7 @@ public class RulesJarLoader {
     public RulesJarLoader(String pathToJar)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
                     IOException {
-        loadPolicyJar(pathToJar);
+        loadJar(pathToJar);
     }
 
     /**
@@ -61,7 +61,7 @@ public class RulesJarLoader {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void loadPolicyJar(String pathToJar)
+    private void loadJar(String pathToJar)
             throws IOException, ClassNotFoundException, IllegalAccessException,
                     InstantiationException {
         JarFile jarFile = new JarFile(pathToJar);
