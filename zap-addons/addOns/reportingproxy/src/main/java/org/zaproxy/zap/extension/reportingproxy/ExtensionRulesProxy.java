@@ -214,10 +214,12 @@ public class ExtensionRulesProxy extends ExtensionAdaptor {
         scanReport.writeToFile(path);
     }
 
-    // todo remove
+    /**
+     * @Deprecated
+     * Used for debugging : load rules manually
+     */
     private void loadRulesBatch() {
         try {
-            getRulesScanner().addRule(new KeywordMatchingRule());
             getRulesScanner().addRule(new ThresholdRule());
             getRulesScanner().addRule(new CommonHeadersRule());
             getRulesScanner().addRule(new RequestPerformanceRule());
