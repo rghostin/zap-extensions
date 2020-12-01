@@ -1,14 +1,14 @@
 SIGNOFF CARD
 
 Group:                                     17
-User Story:                                03 ("Policy rule verifier ***")
+User Story:                                03 ("Reporting proxy")
 Level of completeness:                     Completed.
 Date completed:                            1/12/2020
 Number of unit tests:                      39
 Number of scenario tests:                  7
 Total test coverage:                       66% of lines of code
-GIT commit identifier at start of story:   9e08b93eef0259ee7b0495e6fa45067dea17f7e6
-GIT commit identifier at end of story      7ce645be786b4c739ec79606c07f39c6f6f45b5a
+GIT commit identifier at start of story:   7ce645be786b4c739ec79606c07f39c6f6f45b5a
+GIT commit identifier at end of story      6d9a5e9c513048a6af9e100a10a8417e8c32981c
 Time spent on user story:                  Deniz Alp Savaskan: 15h
                                            Rawad Ghostin: 15h
                                            Tianjian Song: 15h
