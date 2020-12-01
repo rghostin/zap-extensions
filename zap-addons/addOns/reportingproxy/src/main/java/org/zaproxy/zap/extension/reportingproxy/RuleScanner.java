@@ -85,18 +85,12 @@ public class RuleScanner extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        Set<Violation> newViolations = new HashSet<>();
         for (Rule rule : rules) {
             Violation violation = rule.checkViolation(msg);
             if (violation != null) {
-                newViolations.add(violation);
+                violationHistory.add(violation);
+                raiseAlert(violation);
             }
-        }
-
-        violationHistory.addAll(newViolations);
-
-        for (Violation violation : newViolations) {
-            raiseAlert(violation);
         }
     }
 
