@@ -71,12 +71,11 @@ public class HiddenFieldRule implements Rule {
         String currentDomain = msg.getRequestHeader().getHostName();
         String httpResponseBody = msg.getResponseBody().toString();
         Matcher matcherAction = ACTION_FORM.matcher(httpResponseBody);
-        String formDomain = "";
 
         // match a form in the body
         while (matcherAction.find()) {
 
-            formDomain = matcherAction.group(1);
+            String formDomain = matcherAction.group(1);
             String formBody = matcherAction.group(2);
             Matcher matcherHiddenInput = HIDDEN_INPUT.matcher(formBody);
 

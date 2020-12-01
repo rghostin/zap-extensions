@@ -118,6 +118,4 @@ class HiddenFieldRuleTest {
                     v.getTriggeringMsg().getRequestHeader().getHostName());
         }
     }
-
-    // todo test for fail
 }

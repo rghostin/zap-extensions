@@ -41,11 +41,6 @@ class RequestPerformanceRuleTest {
         requestRule = new RequestPerformanceRule();
     }
 
-    static HttpMessage createHttpMsg(String url) throws URIException, HttpMalformedHeaderException {
-        HttpMessage msg = new HttpMessage(new URI(url, true));
-        return msg;
-    }
-
     private HashMap<String, Integer> getTestElapsedTimeMap() {
         HashMap<String, Integer> testSiteElapsedTimeMap = new HashMap<String, Integer>();
         testSiteElapsedTimeMap.put("cern.ch", 1000);
@@ -59,8 +54,8 @@ class RequestPerformanceRuleTest {
 
         HashMap<String, List<HttpMessage>> siteHttpMessages =
                 new HashMap<String, List<HttpMessage>>();
-        HttpMessage msg_cern = new HttpMessage(new URI("http://zerohedge.com/", true));
-        HttpMessage msg_facebook = new HttpMessage(new URI("http://zerohedge.com/", true));
+        HttpMessage msg_cern = new HttpMessage(new URI("http://cern.ch/", true));
+        HttpMessage msg_facebook = new HttpMessage(new URI("http://facebook.com/", true));
         HttpMessage msg_zerohedge = new HttpMessage(new URI("http://zerohedge.com/", true));
         List<HttpMessage> list_cern = new ArrayList<HttpMessage>();
         list_cern.add(msg_cern);
