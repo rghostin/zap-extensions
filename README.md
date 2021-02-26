@@ -1,29 +1,44 @@
-# Group17
+# README
 
-Hi everyone, I think we should have some communication ways other than github.
+## Description
+ZAP custom extensions consists of a set of addons to the OWASP ZAP Zed Attack Proxy.
 
-Which one do you prefer?
-A. Discord
-B. Whats app
-C. Facebook
-D. others
+The project is part of the course "Design of Software Systems" at KU Leuven.
 
-Just edit this readme file, we shall remove it after we set up communication
+Score: 20/20.
 
-
-Hi this is Deniz. Whatsapp might initially be the easiest platform to communicate effectively. My phone number is +32 494 17 86 99. I am also on facebook.
-
-Hello, I think Discord would the most suited, given that we eventually might need to share code, files or livestream the screen, etc. We could keep it all centralized in several channels. I'm also on whatsapp +32 477 53 10 08 - Rawad
+This is a mirror repository, credit goes to my colleagues:
+- Deniz Alp Savaskan
+- Tianjian Song
+- Xinhai Zhou
 
 
-Hello, I am Olympia. We can use initially the whats up application and later if we want to share files and see that it is not convenient we can find another way. My phone number is +30 6976902403 - Olympia. I am also on Facebook if you want to form a group. Furthermore we could use Skype.
+## The extensions
+- Passive scanner that generate alerts on various channels (UI,HTML report) when a violation is detected. The scanning happens per request so only stateless violations are supported. Some violations we implemented:
+
+      - Request that are not under HTTPs are flagged
+      - Requests containing cookies without Secure; http_only;Samesite flags are flagged.
+      - Bodies containing email addresses are flagged.
+      - Requests going to a some blacklisted domains are flagged.
+      - HTTPs responses that don't include HSTS are flagged.
+      
+The addon also includes a mechanism for users to implement custom violations easily and load them into ZAP.
 
 
-Hi, I just created a whatsapp group so that we can set a call to decide where to start project. You can join via:
-https://chat.whatsapp.com/JF22U9ofW6D5wMBqqKl0Rx
+- Designed a simple declarative Domain Spefic language (DSL) that greatly improve the usability(ISO25010) of specifying violations as predicates. The DSL is inspired from the Wireshark's filtering language. Example:
+```
+Rule "RULE_TITLE" "RULE_DESCRIPTION":
+response.body.values=["X","Y", "Z"] and not request.header.re="^AB.*c[0-9]"
 
-Was any of us able to contact Xinhai, he seems to be not enrolled at CW-OSS so far? Or maybe I was not able to see him on the members list. -Deniz
+Rule "ANOTHER_RULE" "ANOTHER_DESCRIPTION":
+request.header.value="ABC" or request.header.re="^AB.*c[0-9]"
+```
 
-I sent him a mail, waiting for his input. - Rawad
+- Passive scanner that generates alerts on various channels (UI, HTML report) when a violation is detected. Violations are stateful and can span over multiple requests.
 
-Just trying git - Deniz
+Some of violations we implemented:
+
+- Detect the number if the number of requests to a certain domain in a  certain timespan exceeds a preset threshold. This rule can be used to warn about hitting API rate limits.
+- Detect the common reponse headers present in the 5 previous requests from the origin and are absent in the current request. Example HSTS.
+- Detect forms that are submitted to a domain different from their origin.
+- Detect if a website is on average 10x slower than other visited websites in the same session.
