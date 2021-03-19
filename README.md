@@ -3,7 +3,7 @@
 ## Description
 ZAP custom extensions consists of a set of addons to the OWASP ZAP Zed Attack Proxy.
 
-The project is part of the course "Design of Software Systems" at KU Leuven.
+The project is part of the course "Design of Software Systems" at KU Leuven with Prof. Roel Wuyts.
 
 Score: 20/20.
 
